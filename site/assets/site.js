@@ -17,12 +17,14 @@
     var keys=['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
     var hit={}; keys.forEach(function(k){ var v=q.get(k); if(v){ hit[k]=v.slice(0,200); } });
     var ref=document.referrer||''; var external=ref && ref.indexOf(location.hostname)<0;
+    var us=(q.get('utm_source')||'').toLowerCase(); var aiUtm=/chatgpt|openai|perplexity|gemini|copilot|claude|anthropic/.test(us)?us:'';
     var first=store.get('miraj_ft');
     if(!first || now-first.t>90*864e5){
-      first={t:now,landing_page:location.pathname+location.search,first_referrer:external?ref.slice(0,300):'',ai_referrer:(external&&AI.test(ref))?ref.split('/')[2]:''};
+      first={t:now,landing_page:location.pathname+location.search,first_referrer:external?ref.slice(0,300):'',ai_referrer:(external&&AI.test(ref))?ref.split('/')[2]:aiUtm};
       store.set('miraj_ft',first);
     }
     if(Object.keys(hit).length){ hit.t=now; store.set('miraj_click',hit); }
+    if(aiUtm && !(external && AI.test(ref))){ var b=store.get('miraj_ft')||{}; if(!b.ai_referrer){ b.ai_referrer=aiUtm; store.set('miraj_ft',b); } gt('event','ai_referral',{ai_source:aiUtm}); }
     if(external && AI.test(ref)){ var a=store.get('miraj_ft')||{}; if(!a.ai_referrer){ a.ai_referrer=ref.split('/')[2]; store.set('miraj_ft',a); } gt('event','ai_referral',{ai_source:ref.split('/')[2]}); }
   })();
   function attribution(){
@@ -174,6 +176,7 @@
       var fd=new FormData(form);
       var ev=fd.getAll('events[]'); fd.delete('events[]'); if(ev.length){ fd.append('events_list',ev.join(', ')); }
       var val=leadValue(fd); fd.append('value',String(val));
+      Array.from(fd.keys()).forEach(function(k){ if(k!=='form-name' && !String(fd.get(k)||'').trim()){ fd.delete(k); } });
       busy(form,true);
       var id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
       store.set('miraj_lead',{id:id,value:val,pkg:fd.get('package')||'',form:fd.get('form-name'),email:(fd.get('email')||'').trim().toLowerCase(),phone:normPhone(fd.get('phone'))},true);
