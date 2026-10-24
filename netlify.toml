@@ -1,0 +1,97 @@
+# Netlify config for www.mirajevent.com
+# Static site: no build step. Netlify publishes /site as-is (regenerate with: python3 tools/build.py).
+
+[build]
+  publish = "site"
+  command = ""
+
+# ---------- 301s for every Squarespace URL (protects SEO + Google Ads links) ----------
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services-overview"
+  to = "/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/partial-service-planning"
+  to = "/services#planning"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/full-service-planning"
+  to = "/services#full"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/business"
+  to = "/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/celebrations"
+  to = "/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/other"
+  to = "/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contact-1"
+  to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/gallery"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/weddingplanner/*"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/thankyou"
+  to = "/thank-you"
+  status = 301
+  force = true
+
+# ---------- headers ----------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/thank-you"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/netlify-forms.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
