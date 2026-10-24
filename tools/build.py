@@ -338,8 +338,20 @@ os.makedirs(os.path.join(OUT, 'assets'))
 
 REV_URL = esc(reviews['reviews_url'])
 
+PRESS = [('Bloomberg', 'https://www.bloomberg.com/news/articles/2025-04-16/stock-market-drop-has-couples-cutting-wedding-costs'),
+         ('Voyage Michigan', 'https://voyagemichigan.com/interview/meet-mehreen-buksh-of-miraj-events'),
+         ('Peerspace · #2 in Detroit', 'https://www.peerspace.com/resources/wedding-planners-in-detroit/')]
+LISTINGS = [('The Knot', 'K', 'https://www.theknot.com/marketplace/miraj-events-llc-sterling-heights-mi-2089876'),
+            ('WeddingWire', 'W', 'https://www.weddingwire.com/biz/miraj-events-llc/e0bb1fcf9e27fb41.html')]
+def press_html(cls):
+    links = ''.join('<a class="%s" href="%s" target="_blank" rel="noopener">%s</a>' % (cls, esc(u), esc(n)) for n, u in PRESS)
+    marks = ''.join('<a class="lst-mark" href="%s" target="_blank" rel="noopener" aria-label="Miraj Events on %s" title="Miraj Events on %s">'
+                    '<span aria-hidden="true">%s</span></a>' % (esc(u), n, n, ch) for n, ch, u in LISTINGS)
+    return links + '<span class="lst-marks">' + marks + '</span>'
+
 # HOME
 home = prep('home')
+home = home.replace('<span class="hp-logo">The Knot</span><span class="hp-logo">WeddingWire</span><span class="hp-logo">Bloomberg</span><span class="hp-logo">Voyage Michigan</span>', press_html('hp-logo'))
 # Section order (Tariq, Oct 24): hero -> packages -> why Miraj -> weekend traditions -> proof/reviews -> inquire
 _wk_i = home.index('<div class="band" id="weekend">')
 _why_i = home.index('<div class="band band-white rule-top"><div class="wrap">\n    <div class="why-head')
@@ -370,6 +382,7 @@ page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroi
 
 # ABOUT
 ab = prep('about')
+ab = ab.replace('<span class="logo-slot">The Knot</span><span class="logo-slot">WeddingWire</span><span class="logo-slot">Bloomberg</span><span class="logo-slot">Voyage Michigan</span>', press_html('logo-slot'))
 ab = ab.replace('<p>Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.',
                 '<p>Founded and led by Mehreen Buksh, Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.')
 page('about.html', 'About Miraj Events | Mehreen Buksh, Detroit Wedding Planner',
