@@ -105,14 +105,14 @@ def reviews_block(variant=''):
         '<section class="rv %s" aria-roledescription="carousel" aria-label="Google reviews">'
         '<a class="rv-head" href="%s" target="_blank" rel="noopener">'
         '<span class="rv-score">%.1f</span><span class="rv-meta"><span class="rv-stars" aria-hidden="true">★★★★★</span>'
-        '<span class="rv-g">%d reviews on Google</span></span></a>'
+        '<span class="rv-g">Google reviews</span></span></a>'
         '<div class="rv-track" aria-live="polite">%s</div>'
         '<div class="rv-nav"><button type="button" class="rv-arrow rv-prev" aria-label="Previous review">‹</button>'
         '<div class="rv-dots">%s</div>'
         '<button type="button" class="rv-arrow rv-next" aria-label="Next review">›</button></div>'
-        '<a class="textlink" href="%s" target="_blank" rel="noopener">Read all %d reviews on Google →</a>'
-        '</section>' % (variant, esc(r['reviews_url']), r['rating'], r['count'], ''.join(slides), dots,
-                        esc(r['reviews_url']), r['count']))
+        '<a class="textlink" href="%s" target="_blank" rel="noopener">Read our reviews on Google →</a>'
+        '</section>' % (variant, esc(r['reviews_url']), r['rating'], ''.join(slides), dots,
+                        esc(r['reviews_url'])))
 
 
 # ---------------------------------------------------------------- forms
@@ -341,7 +341,7 @@ REV_URL = esc(reviews['reviews_url'])
 # HOME
 home = prep('home')
 home = home.replace('<a class="rating" href="#" aria-label="Read our Google reviews"><span class="stars" aria-hidden="true">★</span><span>See our Google reviews →</span></a>',
-                    '<a class="rating" href="#reviews"><span class="stars" aria-hidden="true">★★★★★</span><span>%.1f on Google · %d reviews</span></a>' % (reviews['rating'], reviews['count']))
+                    '<a class="rating" href="#reviews"><span class="stars" aria-hidden="true">★★★★★</span><span>Rated %.1f on Google</span></a>' % reviews['rating'])
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
