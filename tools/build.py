@@ -396,17 +396,76 @@ press_list = ('<div class="band rule-top" id="press"><div class="wrap two-col" s
                   '<li><a href="%s" target="_blank" rel="noopener"><span class="pl-outlet">%s</span><span class="pl-title">%s</span>'
                   '<span class="pl-meta">%s · Read →</span></a></li>' % (esc(u), esc(o), esc(t), esc(m)) for o, t, m, u in ARTICLES)
               + '</ul></div></div>')
-ab = ab.replace('<div class="band band-white short-form"', press_list + '\n\n  <div class="band band-white short-form"', 1)
-ab = ab.replace('<p>Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.',
-                '<p>Founded and led by Mehreen Buksh, Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.')
+# About layout v2 (Oct 24): founder hero with portrait slot, light stats row, how-we-work, press, one CTA band
+MONO = '<svg viewBox="0 0 2386 1632" aria-hidden="true" focusable="false"><use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg>' % VERSION
+ab = (
+'<section class="ab-hero"><div class="wrap ab-grid">'
+  '<div class="ab-copy reveal">'
+    '<p class="eyebrow">About Miraj Events</p>'
+    '<h1>An experienced lead planner, on <em>every</em> event.</h1>'
+    '<p class="lead">Founded and led by Mehreen Buksh, Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.</p>'
+    '<p>Our specialty is the multi-event wedding weekend: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
+    '<p>We take a limited number of weddings each season, so every event has a lead planner and one assistant per 100 guests.</p>'
+    '<div class="actions"><a class="btn" href="/contact#contact-form">Check your date</a><a class="btn btn-outline" href="/services">Services &amp; pricing</a></div>'
+  '</div>'
+  '<figure class="ab-portrait reveal" data-photo="mehreen">'
+    '<div class="ab-ph">' + MONO + '</div>'
+    '<figcaption><strong>Mehreen Buksh</strong><span>Founder &amp; lead planner</span></figcaption>'
+  '</figure>'
+'</div>'
+'<div class="wrap"><dl class="ab-stats reveal">'
+  '<div><dt>50+</dt><dd>Multicultural, multi-event weddings in the past two years</dd></div>'
+  '<div><dt>900+</dt><dd>Guests at our largest event</dd></div>'
+  '<div><dt>3 yrs</dt><dd>Running the same nonprofit gala, year after year</dd></div>'
+  '<div><dt>1:100</dt><dd>Assistants to guests on every event</dd></div>'
+'</dl></div></section>'
+'<div class="band band-white rule-top"><div class="wrap two-col" style="align-items:start">'
+  '<div class="stack reveal"><p class="eyebrow">How we work</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">Calm, prepared, and on your side.</h2></div>'
+  '<div class="ab-pillars reveal">'
+    '<div><h3>Calm under pressure</h3><p>Problems are solved before they reach you or your family.</p></div>'
+    '<div><h3>Every tradition respected</h3><p>Prayer times, seating, halal menus and ritual timing are built into the plan.</p></div>'
+    '<div><h3>Clear pricing</h3><p>A flat fee, quoted up front. Never a percentage of your budget.</p></div>'
+  '</div>'
+'</div></div>'
++ press_list +
+'<div class="band band-dark ab-cta"><div class="wrap ab-cta-in">'
+  '<div><h2 class="h2" style="font-size:clamp(28px,3.4vw,44px)">Let&#8217;s talk about your celebration.</h2>'
+  '<p class="lead">A 30-minute call about your events, your families and your budget.</p></div>'
+  '<div class="actions"><a class="btn btn-gold" href="/contact#contact-form">Check your date</a><a class="btn btn-ivory" href="tel:+15865040207">Call (586) 504-0207</a></div>'
+'</div></div>'
+)
 page('about.html', 'About Miraj Events | Mehreen Buksh, Detroit Wedding Planner',
      'Founded by Mehreen Buksh, Miraj Events plans and runs multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago. 50+ weddings in two years; largest event 900+ guests.',
      '/about', 'about', ab, schema=[org_schema()])
 
 # CONTACT
 ct = prep('contact')
-ct = re.sub(r'<div class="rev-card reveal">.*?</div>\s*</div></div>',
-            '<div class="rev-card rv-card reveal">' + reviews_block('contact') + '</div>\n  </div></div>', ct, count=1, flags=re.S)
+# Contact layout v2 (Oct 24): form above the fold; compact package strip; reviews below
+_form = re.search(r'<form class="card form js-inquiry" id="contactForm".*?</form>', ct, re.S).group(0)
+_tiers = ct[ct.index('<div class="tiers">'):ct.index('<p class="small" style="text-align:center;margin-top:16px">')]
+ct = (
+'<section class="ct-top" id="contact-form"><div class="wrap ct-grid">'
+  '<div class="ct-copy">'
+    '<p class="eyebrow">Contact</p>'
+    '<h1>Let&#8217;s check <em>your</em> date.</h1>'
+    '<p class="lead">Two short steps. We reply within 24 hours with availability and next steps.</p>'
+  '</div>'
+  '<div class="ct-more">'
+    '<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li><li><span>3</span>Your customized package within 48 hours</li></ol>'
+    '<ul class="ct-direct">'
+      '<li><span class="eyebrow">Call or text</span><a href="tel:+15865040207">(586) 504-0207</a></li>'
+      '<li><span class="eyebrow">WhatsApp</span><a href="https://wa.me/15865040207">Message us</a></li>'
+      '<li><span class="eyebrow">Email</span><a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></li>'
+    '</ul>'
+  '</div>'
+  + _form +
+'</div></section>'
+'<div class="band rule-top"><div class="wrap">'
+  '<div class="ct-pk-head"><p class="eyebrow">Considering a package?</p><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'
+  + _tiers +
+'</div></div>'
+'<div class="band band-dark proof"><div class="wrap"><div class="proof-quote" id="reviews" style="margin-top:0;padding-top:0;border-top:0">' + reviews_block('contact') + '</div></div></div>'
+)
 page('contact.html', 'Contact Miraj Events | Check Your Wedding Date',
      'Tell us your date and traditions. Miraj Events replies within 24 hours. Call (586) 504-0207 or WhatsApp. Wedding planning and day-of coordination in Metro Detroit.',
      '/contact', 'contact', ct, schema=[org_schema()])
