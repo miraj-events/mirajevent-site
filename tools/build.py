@@ -361,7 +361,7 @@ _wk, _why, _pk = home[_wk_i:_why_i], home[_why_i:_pk_i], home[_pk_i:_pr_i]
 _wk = _wk.replace('<div class="band" id="weekend">', '<div class="band rule-top" id="weekend">', 1)
 home = home[:_wk_i] + _pk + _why + _wk + home[_pr_i:]
 home = home.replace('<a class="rating" href="#" aria-label="Read our Google reviews"><span class="stars" aria-hidden="true">★</span><span>See our Google reviews →</span></a>',
-                    '<a class="rating" href="#reviews"><span class="stars" aria-hidden="true">★★★★★</span><span>Rated %.1f on Google</span></a>' % reviews['rating'])
+                    '<a class="rating" href="#reviews" aria-label="Rated %.1f out of 5 on Google. Read reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',

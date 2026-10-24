@@ -571,7 +571,6 @@ button[disabled]{opacity:.6;cursor:wait}
 .rv-dot[aria-current="true"]{background:var(--gold);transform:scale(1.25)}
 .rv .textlink{align-self:flex-start;color:var(--gold-deep)!important}
 .rv-card{gap:0}
-.hero .rating .stars{letter-spacing:2px;color:#E5A823}
 
 /* inner pages (day-of, privacy) */
 .page-hero{padding-block:56px 44px;background:var(--surface);border-bottom:1px solid var(--rule)}
@@ -610,3 +609,10 @@ a.hp-logo:hover,a.logo-slot:hover{color:var(--gold-deep)}
 .pl-title{font-family:var(--display);font-size:22px;line-height:1.25}
 .pl-meta{font-size:12px;color:var(--muted);white-space:nowrap}
 @media (max-width:700px){.press-list a{grid-template-columns:1fr}.pl-meta{white-space:normal}}
+
+/* hero rating: centered stars over a small caption */
+html[data-theme] .hero .rating{display:inline-flex;flex-direction:column;align-items:center;gap:6px;align-self:center;margin-top:6px;color:var(--fg-2)}
+html[data-theme] .hero .rating .stars{font-size:21px;letter-spacing:5px;margin-right:-5px;line-height:1;color:var(--gold)}
+html[data-theme] .hero .rating .r-txt{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--fg-2)}
+html[data-theme] .hero .rating .r-txt strong{font-weight:500;color:var(--fg)}
+html[data-theme] .hero .rating:hover .r-txt{color:var(--gold-deep)}
