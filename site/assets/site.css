@@ -600,3 +600,13 @@ a.hp-logo:hover,a.logo-slot:hover{color:var(--gold-deep)}
 .lst-marks{display:inline-flex;gap:10px;align-items:center}
 .lst-mark{width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);color:var(--gold-deep);display:inline-grid;place-items:center;font-family:var(--display);font-size:17px;font-weight:500;line-height:1}
 .lst-mark:hover{background:var(--gold);color:var(--ivory)}
+
+/* about: press list */
+.press-list{display:grid;gap:0;border-top:1px solid var(--rule)}
+.press-list li{border-bottom:1px solid var(--rule)}
+.press-list a{display:grid;grid-template-columns:170px 1fr auto;gap:6px 24px;align-items:baseline;padding:18px 0;color:var(--fg)}
+.press-list a:hover .pl-title{color:var(--gold-deep)}
+.pl-outlet{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-deep)}
+.pl-title{font-family:var(--display);font-size:22px;line-height:1.25}
+.pl-meta{font-size:12px;color:var(--muted);white-space:nowrap}
+@media (max-width:700px){.press-list a{grid-template-columns:1fr}.pl-meta{white-space:normal}}

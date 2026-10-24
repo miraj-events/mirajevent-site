@@ -383,6 +383,20 @@ page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroi
 # ABOUT
 ab = prep('about')
 ab = ab.replace('<span class="logo-slot">The Knot</span><span class="logo-slot">WeddingWire</span><span class="logo-slot">Bloomberg</span><span class="logo-slot">Voyage Michigan</span>', press_html('logo-slot'))
+ARTICLES = [
+    ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'April 2025', PRESS[0][1]),
+    ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview', PRESS[1][1]),
+    ('Peerspace', 'Top wedding planners in Detroit: Miraj Events at #2', 'Ranking', PRESS[2][1]),
+    ('Shoutout Michigan', 'Meet Mehreen Buksh, founder and lead coordinator', 'Interview', 'https://shoutoutmichigan.com/meet-mehreen-buksh-founder-lead-coordinator/'),
+    ('CanvasRebel', 'Meet Mehreen Buksh', 'Interview', 'https://canvasrebel.com/meet-mehreen-buksh/'),
+]
+press_list = ('<div class="band rule-top" id="press"><div class="wrap two-col" style="align-items:start">'
+              '<div class="stack reveal"><p class="eyebrow">Press</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">In the news.</h2></div>'
+              '<ul class="press-list reveal">' + ''.join(
+                  '<li><a href="%s" target="_blank" rel="noopener"><span class="pl-outlet">%s</span><span class="pl-title">%s</span>'
+                  '<span class="pl-meta">%s · Read →</span></a></li>' % (esc(u), esc(o), esc(t), esc(m)) for o, t, m, u in ARTICLES)
+              + '</ul></div></div>')
+ab = ab.replace('<div class="band band-white short-form"', press_list + '\n\n  <div class="band band-white short-form"', 1)
 ab = ab.replace('<p>Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.',
                 '<p>Founded and led by Mehreen Buksh, Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.')
 page('about.html', 'About Miraj Events | Mehreen Buksh, Detroit Wedding Planner',
