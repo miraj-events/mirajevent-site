@@ -340,6 +340,14 @@ REV_URL = esc(reviews['reviews_url'])
 
 # HOME
 home = prep('home')
+# Section order (Tariq, Oct 24): hero -> packages -> why Miraj -> weekend traditions -> proof/reviews -> inquire
+_wk_i = home.index('<div class="band" id="weekend">')
+_why_i = home.index('<div class="band band-white rule-top"><div class="wrap">\n    <div class="why-head')
+_pk_i = home.index('<div class="band rule-top" id="packages">')
+_pr_i = home.index('<div class="band band-dark proof">')
+_wk, _why, _pk = home[_wk_i:_why_i], home[_why_i:_pk_i], home[_pk_i:_pr_i]
+_wk = _wk.replace('<div class="band" id="weekend">', '<div class="band rule-top" id="weekend">', 1)
+home = home[:_wk_i] + _pk + _why + _wk + home[_pr_i:]
 home = home.replace('<a class="rating" href="#" aria-label="Read our Google reviews"><span class="stars" aria-hidden="true">★</span><span>See our Google reviews →</span></a>',
                     '<a class="rating" href="#reviews"><span class="stars" aria-hidden="true">★★★★★</span><span>Rated %.1f on Google</span></a>' % reviews['rating'])
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
