@@ -32,6 +32,13 @@ gtag('js',new Date());
 if(window.MIRAJ_LIVE){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
 else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
+<!-- OpenAI Ads measurement pixel (DQ1HpbhhjYa76ncDFrtMaF); live domain only -->
+<script>
+(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
+var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
+})(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
+if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
+</script>
 
 </head>
 <body data-view="thanks">

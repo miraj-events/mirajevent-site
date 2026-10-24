@@ -16,6 +16,7 @@ SITE = 'https://www.mirajevent.com'
 GA4 = 'G-PVV95TW26B'
 ADS = 'AW-16694224609'
 ADS_FORM_LABEL = 'AW-16694224609/zLObCLKztNAZEOHNtpg-'
+OAI_PIXEL = 'DQ1HpbhhjYa76ncDFrtMaF'
 PHONE = '(586) 504-0207'
 TEL = '+15865040207'
 EMAIL = 'admin@mirajevent.com'
@@ -115,7 +116,7 @@ def reviews_block(variant=''):
 
 
 # ---------------------------------------------------------------- forms
-HIDDEN_ATTR = ['gclid', 'gbraid', 'wbraid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+HIDDEN_ATTR = ['gclid', 'gbraid', 'wbraid', 'oppref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
                'landing_page', 'first_referrer', 'ai_referrer', 'page']
 
 def hidden_fields(form_name):
@@ -281,6 +282,13 @@ gtag('js',new Date());
 if(window.MIRAJ_LIVE){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
 else{{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
 </script>
+<!-- OpenAI Ads measurement pixel ({OAI_PIXEL}); live domain only -->
+<script>
+(function(w,d,s,u){{if(!w.MIRAJ_LIVE||w.oaiq){{return;}}var q=function(){{q.q.push(arguments);}};q.q=[];w.oaiq=q;
+var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
+}})(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
+if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
+</script>
 {''.join(ld(s) for s in schema)}
 </head>
 <body data-view="{view}">
@@ -408,6 +416,7 @@ conv_js = '''<script>
   var ud={}; if(lead.email){ ud.email=lead.email; } if(lead.phone){ ud.phone_number=lead.phone; }
   if(ud.email||ud.phone_number){ gtag('set','user_data',ud); }
   gtag('event','conversion',{'send_to':'%s','value':lead.value||1,'currency':'USD','transaction_id':tid});
+  if(window.oaiq){ oaiq('measure','lead_created',{type:'customer_action'},{event_id:tid}); }
   gtag('event','generate_lead',{'value':lead.value||1,'currency':'USD','form_name':lead.form||'inquiry','package':lead.pkg||''});
   try{ sessionStorage.removeItem('miraj_lead'); }catch(e){}
 })();

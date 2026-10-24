@@ -32,6 +32,13 @@ gtag('js',new Date());
 if(window.MIRAJ_LIVE){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
 else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
+<!-- OpenAI Ads measurement pixel (DQ1HpbhhjYa76ncDFrtMaF); live domain only -->
+<script>
+(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
+var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
+})(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
+if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
+</script>
 
 </head>
 <body data-view="privacy">
@@ -69,7 +76,7 @@ else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sendi
   <h2>Information you give us</h2>
   <p>When you send an inquiry or request our services guide, we collect what you enter, such as your name, email, phone number, event type, date, venue, guest count, budget range and message. If you complete the first step of a two-step form, we save that step so we can follow up even if you don't finish.</p>
   <h2>Information collected automatically</h2>
-  <p>We use Google Analytics and Google Ads to understand how visitors find and use the site and to measure our advertising. These services use cookies and similar technologies to collect information such as pages viewed, the site or ad that referred you, device and browser type, and approximate location. We also record the page you first landed on and the ad or campaign that brought you, and attach it to any inquiry you send.</p>
+  <p>We use Google Analytics, Google Ads and OpenAI Ads (ChatGPT) measurement to understand how visitors find and use the site and to measure our advertising. These services use cookies and similar technologies to collect information such as pages viewed, the site or ad that referred you, device and browser type, and approximate location. We also record the page you first landed on and the ad or campaign that brought you, and attach it to any inquiry you send.</p>
   <p>When you submit an inquiry, your email address and phone number may be shared with Google in a hashed (encoded) form to measure which ads led to inquiries ("enhanced conversions").</p>
   <h2>How we use information</h2>
   <ul>
@@ -79,7 +86,7 @@ else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sendi
   </ul>
   <p>We do not sell your personal information.</p>
   <h2>Service providers</h2>
-  <p>Our website is hosted by Netlify, which receives form submissions on our behalf. We use Google (Analytics and Ads) and Google Workspace for email. These providers process information under their own terms and privacy policies.</p>
+  <p>Our website is hosted by Netlify, which receives form submissions on our behalf. We use Google (Analytics and Ads), OpenAI (ads measurement) and Google Workspace for email. These providers process information under their own terms and privacy policies.</p>
   <h2>Your choices</h2>
   <ul>
     <li>You can block or delete cookies in your browser settings.</li>

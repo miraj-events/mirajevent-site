@@ -14,10 +14,10 @@
   var AI=/(chatgpt\.com|chat\.openai\.com|openai\.com|perplexity\.ai|gemini\.google\.com|bard\.google\.com|copilot\.microsoft\.com|bing\.com\/chat|claude\.ai|you\.com|phind\.com|poe\.com|meta\.ai|deepseek\.com|grok\.com)/i;
   (function(){
     var q=new URLSearchParams(location.search), now=Date.now();
-    var keys=['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+    var keys=['gclid','gbraid','wbraid','oppref','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
     var hit={}; keys.forEach(function(k){ var v=q.get(k); if(v){ hit[k]=v.slice(0,200); } });
     var ref=document.referrer||''; var external=ref && ref.indexOf(location.hostname)<0;
-    var us=(q.get('utm_source')||'').toLowerCase(); var aiUtm=/chatgpt|openai|perplexity|gemini|copilot|claude|anthropic/.test(us)?us:'';
+    var us=(q.get('utm_source')||'').toLowerCase(); var aiUtm=/chatgpt|openai|perplexity|gemini|copilot|claude|anthropic/.test(us)?us:(q.get('oppref')?'chatgpt-ads':'');
     var first=store.get('miraj_ft');
     if(!first || now-first.t>90*864e5){
       first={t:now,landing_page:location.pathname+location.search,first_referrer:external?ref.slice(0,300):'',ai_referrer:(external&&AI.test(ref))?ref.split('/')[2]:aiUtm};
@@ -30,7 +30,7 @@
   function attribution(){
     var ft=store.get('miraj_ft')||{}, ck=store.get('miraj_click')||{};
     if(ck.t && Date.now()-ck.t>90*864e5){ ck={}; }
-    return {gclid:ck.gclid||'',gbraid:ck.gbraid||'',wbraid:ck.wbraid||'',utm_source:ck.utm_source||'',utm_medium:ck.utm_medium||'',
+    return {gclid:ck.gclid||'',oppref:ck.oppref||'',gbraid:ck.gbraid||'',wbraid:ck.wbraid||'',utm_source:ck.utm_source||'',utm_medium:ck.utm_medium||'',
       utm_campaign:ck.utm_campaign||'',utm_term:ck.utm_term||'',utm_content:ck.utm_content||'',landing_page:ft.landing_page||'',
       first_referrer:ft.first_referrer||'',ai_referrer:ft.ai_referrer||'',page:location.pathname};
   }
