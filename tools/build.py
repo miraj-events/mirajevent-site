@@ -276,9 +276,10 @@ def head(title, desc, path, view, schema=(), noindex=False):
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA4}"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}
+window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
 gtag('js',new Date());
-gtag('config','{GA4}');
-gtag('config','{ADS}',{{allow_enhanced_conversions:true}});
+if(window.MIRAJ_LIVE){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
+else{{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
 </script>
 {''.join(ld(s) for s in schema)}
 </head>
@@ -399,6 +400,7 @@ conv_js = '''<script>
   var lead=null; try{ lead=JSON.parse(sessionStorage.getItem('miraj_lead')||'null'); }catch(e){}
   var fromSite=document.referrer && document.referrer.indexOf(location.hostname)>-1;
   var nav=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};
+  if(!window.MIRAJ_LIVE){ console.info('Miraj: conversion skipped on staging', lead); return; }
   if(!lead && (!fromSite || nav.type==='reload' || nav.type==='back_forward')){ return; }
   lead=lead||{};
   var tid=lead.id||('ty-'+Date.now());

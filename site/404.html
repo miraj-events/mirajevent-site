@@ -27,9 +27,10 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PVV95TW26B"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
 gtag('js',new Date());
-gtag('config','G-PVV95TW26B');
-gtag('config','AW-16694224609',{allow_enhanced_conversions:true});
+if(window.MIRAJ_LIVE){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
+else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
 
 </head>

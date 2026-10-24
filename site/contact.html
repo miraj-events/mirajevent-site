@@ -27,9 +27,10 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PVV95TW26B"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
 gtag('js',new Date());
-gtag('config','G-PVV95TW26B');
-gtag('config','AW-16694224609',{allow_enhanced_conversions:true});
+if(window.MIRAJ_LIVE){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
+else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["ProfessionalService","LocalBusiness"],"@id":"https://www.mirajevent.com/#business","name":"Miraj Events","legalName":"Miraj Events, LLC","url":"https://www.mirajevent.com/","logo":"https://www.mirajevent.com/assets/miraj-logo-512.png","image":"https://www.mirajevent.com/assets/og-image.png","description":"Wedding planner and day-of coordinator for multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago.","telephone":"+1-586-504-0207","email":"admin@mirajevent.com","priceRange":"$1,975–$9,500+","address":{"@type":"PostalAddress","addressLocality":"Sterling Heights","addressRegion":"MI","postalCode":"48314","addressCountry":"US"},"areaServed":[{"@type":"City","name":"Detroit, MI"},{"@type":"City","name":"Sterling Heights, MI"},{"@type":"City","name":"Troy, MI"},{"@type":"City","name":"Rochester Hills, MI"},{"@type":"City","name":"Dearborn, MI"},{"@type":"City","name":"Ann Arbor, MI"},{"@type":"City","name":"Novi, MI"},{"@type":"City","name":"Farmington Hills, MI"},{"@type":"City","name":"Bloomfield Hills, MI"},{"@type":"City","name":"Toledo, OH"},{"@type":"City","name":"Chicago, IL"}],"founder":{"@type":"Person","name":"Mehreen Buksh"},"sameAs":["https://www.instagram.com/miraj.events/","https://www.facebook.com/p/Miraj-Events-61559780220825/"],"knowsAbout":["Wedding planning","Day-of wedding coordination","Multi-event wedding weekends","South Asian weddings","Arab and Chaldean weddings","Interfaith weddings","Event planning"]}</script>
 </head>
