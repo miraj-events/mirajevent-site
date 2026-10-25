@@ -431,7 +431,7 @@ def inq_upgrade(h, slim=False):
     def left(m):
         if slim:  # Home (Tariq, Oct 25): heading + one line only; no steps, no call/text/WhatsApp boxes
             return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
-                    '<p class="lead">Date in mind or still deciding? We reply within 24 hours.</p></div>')
+                    '<p class="lead">Date in mind or still deciding? Either way, we&#8217;d love to hear from you.</p></div>')
         return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
                 '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
                 + QUICK + STEPS + '</div>')
