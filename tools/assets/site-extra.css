@@ -216,3 +216,42 @@ html[data-theme] .hero.has-photo .hero-shade{background:linear-gradient(180deg,r
 .svc-hero .svc-head h1{color:#F8F5EE}
 .svc-hero .svc-head .lead{color:#E8E4DA}
 @media (max-width:700px){.svc-hero-inner{padding-left:32px;padding-right:32px}}
+
+/* ===== About v3 (Oct 25): photo hero, founder on linen, team on dark, no white bands ===== */
+.ab3-hero{position:relative;overflow:hidden;background:#1E1F21;color:#F8F5EE}
+.ab3-photo{position:absolute;inset:0}
+.ab3-photo img{width:100%;height:100%;object-fit:cover;object-position:center 55%}
+.ab3-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(22,23,25,.84) 0%,rgba(22,23,25,.68) 45%,rgba(22,23,25,.46) 100%)}
+.ab3-hero::after{content:"";position:absolute;inset:16px;border:1px solid rgba(201,168,94,.45);pointer-events:none}
+.ab3-inner{position:relative;display:flex;flex-direction:column;gap:56px;padding-block:80px 44px}
+@media (min-width:900px){.ab3-inner{padding-block:112px 52px;gap:84px}}
+@media (max-width:700px){.ab3-inner{padding-left:32px;padding-right:32px;padding-top:64px;gap:44px}}
+.ab3-copy{display:flex;flex-direction:column;gap:16px;max-width:660px}
+.ab3-copy .eyebrow{color:#D9BC7A}
+.ab3-copy h1{font-size:clamp(40px,5.4vw,68px);color:#F8F5EE}
+.ab3-copy h1 em{font-style:italic;color:#D9BC7A}
+.ab3-copy .lead{color:#E8E4DA;max-width:32em}
+.ab3-copy .actions{margin-top:10px}
+.ab3-hero .btn-ivory{border-color:#F8F5EE;color:#F8F5EE}
+.ab3-hero .btn-ivory:hover{background:#F8F5EE;color:#2C2E31}
+.ab3-stats{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px;border-top:1px solid rgba(248,245,238,.28);padding-top:26px}
+@media (min-width:760px){.ab3-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ab3-stats dt{font-family:var(--display);font-size:clamp(34px,3.6vw,48px);line-height:1;color:#F8F5EE}
+.ab3-stats dd{margin:8px 0 0;font-size:13px;line-height:1.45;color:#D6D0C4;max-width:17em}
+.ab3-founder,.ab3-linen{background:#F1ECE2}
+.ab3-fgrid{display:grid;gap:36px;align-items:center}
+@media (min-width:760px){.ab3-fgrid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px}}
+@media (min-width:1100px){.ab3-fgrid{gap:96px}}
+.ab3-founder .ab-portrait{max-width:440px}
+.ab3-founder .ab-ph{aspect-ratio:4/5}
+@media (max-width:759px){.ab3-founder .ab-portrait{max-width:340px}}
+.ab3-story{display:flex;flex-direction:column;gap:16px}
+.ab3-story .h2{font-size:clamp(30px,3.4vw,46px)}
+.ab3-story .h2 em{font-style:italic;color:var(--gold-deep)}
+.ab3-story p:not(.eyebrow){color:var(--fg-2);max-width:36em}
+.ab3-team-head{display:flex;flex-direction:column;gap:12px;max-width:680px;margin-bottom:32px}
+.ab3-team .h2{font-size:clamp(30px,3.4vw,46px);color:var(--on-dark)}
+.ab3-strip img{border:1px solid rgba(201,168,94,.3)}
+.ab3-strip figcaption{color:#D9BC7A}
+@media (min-width:701px) and (max-width:899px){.ab3-inner,.svc-hero-inner{padding-left:40px;padding-right:40px}}
+@media (max-width:700px){.photo-strip{scroll-padding-inline:16px}}

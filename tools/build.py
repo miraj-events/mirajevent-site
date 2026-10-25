@@ -30,6 +30,11 @@ for _f in ['tools/source/preview-v47.html', 'tools/assets/site-extra.css', 'tool
 VERSION = _h.hexdigest()[:10]
 
 src = open(SRC, encoding='utf-8').read()
+# Nav label (Tariq, Oct 25): "Inquire" -> "Contact Us" everywhere it is a link/label
+src = src.replace('data-nav="contact">Inquire</a>', 'data-nav="contact">Contact Us</a>')
+src = src.replace('<a href="#contact">Inquire</a>', '<a href="#contact">Contact Us</a>')
+src = src.replace('<p class="eyebrow">Inquire</p>', '<p class="eyebrow">Contact us</p>')
+src = src.replace('<li><strong>Inquire</strong>', '<li><strong>Contact us</strong>')
 reviews = json.load(open(os.path.join(DATA, 'reviews.json'), encoding='utf-8'))
 
 
@@ -427,36 +432,62 @@ ARTICLES = [
     ('Shoutout Michigan', 'Meet Mehreen Buksh, founder and lead coordinator', 'Interview', 'https://shoutoutmichigan.com/meet-mehreen-buksh-founder-lead-coordinator/'),
     ('CanvasRebel', 'Meet Mehreen Buksh', 'Interview', 'https://canvasrebel.com/meet-mehreen-buksh/'),
 ]
-press_list = ('<div class="band rule-top" id="press"><div class="wrap two-col" style="align-items:start">'
+press_list = ('<div class="band ab3-linen" id="press"><div class="wrap two-col" style="align-items:start">'
               '<div class="stack reveal"><p class="eyebrow">Press</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">In the news.</h2></div>'
               '<ul class="press-list reveal">' + ''.join(
                   '<li><a href="%s" target="_blank" rel="noopener"><span class="pl-outlet">%s</span><span class="pl-title">%s</span>'
                   '<span class="pl-meta">%s · Read →</span></a></li>' % (esc(u), esc(o), esc(t), esc(m)) for o, t, m, u in ARTICLES)
               + '</ul></div></div>')
-# About layout v2 (Oct 24): founder hero with portrait slot, light stats row, how-we-work, press, one CTA band
+# About layout v3 (Tariq, Oct 25): photo hero (no white) with stats; founder on linen; real team photos on dark;
+# how-we-work on ivory; press on linen; dark CTA band
 MONO = '<svg viewBox="0 0 2386 1632" aria-hidden="true" focusable="false"><use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg>' % VERSION
+def team_fig(name, alt, cap, w=900, h=1200):
+    return '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(name, alt, w, h), esc(cap))
 ab = (
-'<section class="ab-hero"><div class="wrap ab-grid">'
-  '<div class="ab-copy reveal">'
-    '<p class="eyebrow">About Miraj Events</p>'
-    '<h1>An experienced lead planner, on <em>every</em> event.</h1>'
-    '<p class="lead">Founded and led by Mehreen Buksh, Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.</p>'
-    '<p>Our specialty is the multi-event wedding weekend: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
-    '<p>We take a limited number of weddings each season, so every event has a lead planner and one assistant per 100 guests.</p>'
-    '<div class="actions"><a class="btn" href="/contact#contact-form">Check your date</a><a class="btn btn-outline" href="/services">Services &amp; pricing</a></div>'
+'<section class="ab3-hero">'
+  '<picture class="ab3-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-about-sm.webp">'
+  '<img src="/assets/img-about-md.webp" srcset="/assets/img-about-md.webp 1400w, /assets/img-about-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1200" fetchpriority="high" decoding="async"></picture>'
+  '<div class="ab3-shade" aria-hidden="true"></div>'
+  '<div class="wrap ab3-inner">'
+    '<div class="ab3-copy">'
+      '<p class="eyebrow">About Miraj Events</p>'
+      '<h1>An experienced lead planner, on <em>every</em> event.</h1>'
+      '<p class="lead">Founded and led by Mehreen Buksh, Miraj Events plans, designs and runs weddings across Metro Detroit, Toledo and Chicago.</p>'
+      '<div class="actions"><a class="btn btn-gold" href="/contact#contact-form">Check your date</a><a class="btn btn-ivory" href="/services">Services &amp; pricing</a></div>'
+    '</div>'
+    '<dl class="ab3-stats">'
+      '<div><dt>50+</dt><dd>Multicultural, multi-event weddings in the past two years</dd></div>'
+      '<div><dt>900+</dt><dd>Guests at our largest event</dd></div>'
+      '<div><dt>3 yrs</dt><dd>Running the same nonprofit gala, year after year</dd></div>'
+      '<div><dt>1:100</dt><dd>Assistants to guests on every event</dd></div>'
+    '</dl>'
   '</div>'
+'</section>'
+'<div class="band ab3-founder"><div class="wrap ab3-fgrid">'
   '<figure class="ab-portrait reveal" data-photo="mehreen">'
     '<div class="ab-ph has-img">' + pic('mehreen', 'Mehreen Buksh, founder and lead planner of Miraj Events', 1000, 1250) + '</div>'
     '<figcaption><strong>Mehreen Buksh</strong><span>Founder &amp; lead planner</span></figcaption>'
   '</figure>'
-'</div>'
-'<div class="wrap"><dl class="ab-stats reveal">'
-  '<div><dt>50+</dt><dd>Multicultural, multi-event weddings in the past two years</dd></div>'
-  '<div><dt>900+</dt><dd>Guests at our largest event</dd></div>'
-  '<div><dt>3 yrs</dt><dd>Running the same nonprofit gala, year after year</dd></div>'
-  '<div><dt>1:100</dt><dd>Assistants to guests on every event</dd></div>'
-'</dl></div></section>'
-'<div class="band band-white rule-top"><div class="wrap two-col" style="align-items:start">'
+  '<div class="ab3-story reveal">'
+    '<p class="eyebrow">Our story</p>'
+    '<h2 class="h2">Built for the multi-event wedding <em>weekend</em>.</h2>'
+    '<p>Our specialty is the multi-event wedding weekend: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
+    '<p>We take a limited number of weddings each season, so every event has a lead planner and one assistant per 100 guests.</p>'
+  '</div>'
+'</div></div>'
+'<div class="band band-dark ab3-team" id="team"><div class="wrap">'
+  '<div class="ab3-team-head reveal">'
+    '<p class="eyebrow">The team</p>'
+    '<h2 class="h2">A Miraj team on every event.</h2>'
+    '<p class="lead">A lead planner and one assistant per 100 guests, on site from setup to send-off.</p>'
+  '</div>'
+  '<div class="photo-strip ab3-strip reveal">'
+    + team_fig('team-c', 'Mehreen Buksh with a Miraj Events coordinator, both in uniform with name badges', 'Mehreen with the team', 675, 900)
+    + team_fig('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 'On site, on headset')
+    + team_fig('team-b', 'Two Miraj Events coordinators in black uniforms with gold name badges', 'Our coordinators') +
+  '</div>'
+'</div></div>'
+'<div class="band"><div class="wrap two-col" style="align-items:start">'
   '<div class="stack reveal"><p class="eyebrow">How we work</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">Calm, prepared, and on your side.</h2></div>'
   '<div class="ab-pillars reveal">'
     '<div><h3>Calm under pressure</h3><p>Problems are solved before they reach you or your family.</p></div>'
