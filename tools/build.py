@@ -22,7 +22,12 @@ TEL = '+15865040207'
 EMAIL = 'admin@mirajevent.com'
 IG = 'https://www.instagram.com/miraj.events/'
 FB = 'https://www.facebook.com/p/Miraj-Events-61559780220825/'
-VERSION = datetime.date.today().strftime('%Y%m%d')
+import hashlib
+# cache-buster = hash of everything that ends up in site.css / site.js / sprite (assets are cached for a year)
+_h = hashlib.sha1()
+for _f in ['tools/source/preview-v47.html', 'tools/assets/site-extra.css', 'tools/assets/site.js']:
+    _h.update(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), _f), 'rb').read())
+VERSION = _h.hexdigest()[:10]
 
 src = open(SRC, encoding='utf-8').read()
 reviews = json.load(open(os.path.join(DATA, 'reviews.json'), encoding='utf-8'))
@@ -444,11 +449,16 @@ ct = prep('contact')
 _form = re.search(r'<form class="card form js-inquiry" id="contactForm".*?</form>', ct, re.S).group(0)
 _tiers = ct[ct.index('<div class="tiers">'):ct.index('<p class="small" style="text-align:center;margin-top:16px">')]
 ct = (
+'<section class="ct-rv"><div class="wrap">' + reviews_block('wide') + '</div></section>'
 '<section class="ct-top" id="contact-form"><div class="wrap ct-grid">'
   '<div class="ct-copy">'
     '<p class="eyebrow">Contact</p>'
     '<h1>Let&#8217;s check <em>your</em> date.</h1>'
     '<p class="lead">Two short steps. We reply within 24 hours with availability and next steps.</p>'
+  '</div>'
+  '<div class="ct-formwrap">'
+    '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
+    + _form +
   '</div>'
   '<div class="ct-more">'
     '<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li><li><span>3</span>Your customized package within 48 hours</li></ol>'
@@ -458,13 +468,11 @@ ct = (
       '<li><span class="eyebrow">Email</span><a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></li>'
     '</ul>'
   '</div>'
-  + _form +
 '</div></section>'
-'<div class="band rule-top"><div class="wrap">'
-  '<div class="ct-pk-head"><p class="eyebrow">Considering a package?</p><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'
+'<div class="band rule-top" id="packages-ct"><div class="wrap">'
+  '<div class="ct-pk-head"><p class="eyebrow">Our packages</p><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'
   + _tiers +
 '</div></div>'
-'<div class="band band-dark proof"><div class="wrap"><div class="proof-quote" id="reviews" style="margin-top:0;padding-top:0;border-top:0">' + reviews_block('contact') + '</div></div></div>'
 )
 page('contact.html', 'Contact Miraj Events | Check Your Wedding Date',
      'Tell us your date and traditions. Miraj Events replies within 24 hours. Call (586) 504-0207 or WhatsApp. Wedding planning and day-of coordination in Metro Detroit.',

@@ -668,3 +668,33 @@ html[data-theme] .hero .rating:hover .r-txt{color:var(--gold-deep)}
 .ct-grid{grid-template-areas:"head" "form" "more"}
 .ct-copy{grid-area:head}.ct-grid>form{grid-area:form}.ct-more{grid-area:more;display:flex;flex-direction:column;gap:18px;min-width:0}
 @media (min-width:900px){.ct-grid{grid-template-areas:"head form" "more form";grid-template-rows:auto 1fr;row-gap:22px}}
+
+/* Contact v3: wide reviews strip on top, form high */
+.ct-rv{background:var(--dark);padding-block:18px}
+.rv.wide{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px 32px;color:var(--on-dark)}
+.rv.wide .rv-head{color:var(--on-dark);align-self:center}
+.rv.wide .rv-score{color:var(--on-dark);font-size:40px}
+.rv.wide .rv-g{color:var(--on-dark-3)}
+.rv.wide .rv-track{min-width:0}
+.rv.wide .rv-slide{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.rv.wide .rv-who{order:2;gap:8px}
+.rv.wide .rv-av,.rv.wide .rv-src,.rv.wide .rv-st,.rv.wide .rv-more{display:none}
+.rv.wide .rv-id{flex-direction:row;gap:8px;align-items:baseline}
+.rv.wide .rv-id strong{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);font-weight:400}
+.rv.wide .rv-id span{color:var(--on-dark-3)}
+.rv.wide .rv-text{order:1;width:100%;font-family:var(--display);font-style:italic;font-size:19px;line-height:1.4;color:var(--on-dark);-webkit-line-clamp:2}
+.rv.wide .rv-text p+p{display:none}
+.rv.wide .rv-nav{gap:10px}
+.rv.wide .rv-dots{display:none}
+.rv.wide .rv-arrow{background:transparent;color:var(--on-dark);border-color:var(--dark-rule)}
+.rv.wide>.textlink{display:none}
+@media (max-width:760px){.rv.wide{grid-template-columns:1fr auto}.rv.wide .rv-head{grid-column:1/-1}.rv.wide .rv-score{font-size:32px}.rv.wide .rv-text{font-size:17px}}
+.ct-top{padding-block:36px 56px}
+@media (min-width:900px){.ct-top{padding-block:48px 72px}}
+.ct-grid{grid-template-areas:"head" "form" "more"}
+.ct-copy{grid-area:head}.ct-formwrap{grid-area:form;min-width:0;display:flex;flex-direction:column;gap:10px}.ct-more{grid-area:more}
+@media (min-width:900px){.ct-grid{grid-template-areas:"head form" "more form";grid-template-rows:auto 1fr}}
+.ct-note{font-size:13px;color:var(--muted);text-align:right}
+.ct-note a{color:var(--gold-deep);text-decoration:underline;text-underline-offset:3px}
+@media (max-width:899px){.ct-note{text-align:left}}
+@media (max-width:899px){.ab-portrait{max-width:300px}.ab-ph{aspect-ratio:1/1}}
