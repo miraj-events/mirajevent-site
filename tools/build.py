@@ -459,6 +459,11 @@ def ladder2():
                  '<p class="lad2-adds">%s</p></li>'
                  % (' class="is-pop"' if n == '03' else '', n, tag, esc(name), cells, esc(adds)))
     return '<ol class="lad2 reveal">' + rows + '</ol>\n    '
+# Packages heading (Tariq, Oct 25): friendlier, flows better
+_pk_old = ('<p class="eyebrow">Wedding planning services</p>\n      <h2 class="h2" style="font-size:clamp(28px,3.4vw,42px)">Four packages. Each includes the one before it.</h2>')
+assert home.count(_pk_old) == 1
+home = home.replace(_pk_old, '<p class="eyebrow">What we offer</p>\n      <h2 class="h2" style="font-size:clamp(28px,3.4vw,42px)">From the day itself to the whole weekend.</h2>'
+                    '\n      <p class="lead pk-lead">Pick how much you&#8217;d like us to take on. Each package includes everything before it.</p>')
 home, _n = re.subn(r'<div class="ladder reveal">.*?(?=<div class="pk-foot reveal">)', lambda m: ladder2(), home, count=1, flags=re.S)
 assert _n == 1
 home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning, design and day&#8209;of coordination for multicultural, multi&#8209;event weddings.</p>', 1)
