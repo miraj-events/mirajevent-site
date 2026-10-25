@@ -323,17 +323,13 @@ def header():
     h = relink(h, 'x')
     h = logo_use(h)
     h = h.replace('href="#home"', 'href="/"')
-    # Phone menu v2 (Tariq, Oct 25): serif items with gold numerals + descriptors, gold hairlines,
-    # a Check availability button and quick contact links; fills the screen below the header
+    # Phone menu v2 (Tariq, Oct 25): compact serif items with gold numerals and gold hairlines + one slim CTA
     mob = ('<nav id="mobnav" class="mobnav" hidden aria-label="Mobile"><div class="wrap mobnav-in">'
            '<ul class="mn-list">' + ''.join(
-               '<li><a href="%s" data-nav="%s"><span class="mn-n">%s</span><span class="mn-t">%s</span><span class="mn-d">%s</span></a></li>' % it
+               '<li><a href="%s" data-nav="%s"><span class="mn-n">%s</span><span class="mn-t">%s</span></a></li>' % it[:4]
                for it in MENU_ITEMS) + '</ul>'
-           '<div class="mn-foot"><a class="btn btn-gold btn-block" href="/contact#contact-form">Check availability</a>'
-           '<div class="mn-quick"><a href="tel:%s">Call</a><a href="sms:%s">Text</a><a href="https://wa.me/15865040207">WhatsApp</a>'
-           '<a href="%s" target="_blank" rel="noopener">Instagram</a></div>'
-           '<p class="mn-mail"><a href="mailto:%s">%s</a></p></div>'
-           '</div></nav>' % (TEL, TEL, IG, EMAIL, EMAIL))
+           '<div class="mn-foot"><a class="btn btn-gold btn-block" href="/contact#contact-form">Check availability</a></div>'
+           '</div></nav>')
     h, n = re.subn(r'<nav id="mobnav".*?</nav>', mob, h, flags=re.S)
     assert n == 1
     # menu button: elegant hamburger (short middle line) that turns into a close X when open
@@ -415,7 +411,7 @@ def photo_strip(items):
 # HOME
 home = prep('home')
 # Package ladder v2 (Tariq, Oct 25): segmented "what's included" meter instead of plain bars; spacing fixed;
-# starting prices shown (same as the Services page)
+# no prices on Home (Tariq, Oct 25); pricing lives on Services
 LAYERS = ['The day', 'The look', 'Planning', 'All of it']
 LADDER = [('01', 'Day-of Coordination', 'The final month and the day, setup to send-off.', '$1,975'),
           ('02', 'Design + Coordination', 'Adds the look: concept, floor plan and décor team.', '$4,750'),
@@ -428,8 +424,8 @@ def ladder2():
         tag = '<span class="tag">Most couples choose</span>' if n == '03' else ''
         rows += ('<li%s><div class="lad2-top"><span class="n">%s</span>%s</div><h3>%s</h3>'
                  '<div class="lad2-meter" aria-hidden="true">%s</div>'
-                 '<p class="lad2-adds">%s</p><p class="lad2-from">from %s</p></li>'
-                 % (' class="is-pop"' if n == '03' else '', n, tag, esc(name), cells, esc(adds), price))
+                 '<p class="lad2-adds">%s</p></li>'
+                 % (' class="is-pop"' if n == '03' else '', n, tag, esc(name), cells, esc(adds)))
     return '<ol class="lad2 reveal">' + rows + '</ol>\n    '
 home, _n = re.subn(r'<div class="ladder reveal">.*?(?=<div class="pk-foot reveal">)', lambda m: ladder2(), home, count=1, flags=re.S)
 assert _n == 1

@@ -369,3 +369,11 @@ html.menu-open .sticky-cta{display:none}
   .lad2-meter span{min-height:40px;font-size:10px;letter-spacing:2px}
 }
 .pk-foot{border-top:0!important;margin-top:28px!important;padding-top:0!important}
+/* Phone menu: compact (Oct 25) */
+.mobnav{min-height:0}
+.mobnav-in{gap:18px;padding-block:2px 22px}
+.mn-list a{grid-template-columns:30px minmax(0,1fr) auto;padding:13px 2px 12px}
+.mn-list .mn-n{grid-row:auto;align-self:center;padding-top:0}
+.mn-list .mn-t{font-size:25px;line-height:1.1}
+.mn-list a::after{grid-row:auto;font-size:16px}
+.mn-foot .btn{min-height:46px}
