@@ -449,3 +449,82 @@ html.menu-open .sticky-cta{display:none}
 .press-card.feat:not(.dark) .pc-title{color:var(--fg)}
 .press-card.feat:not(.dark) .pc-meta{color:var(--muted)}
 .press-card.feat:not(.dark) .pc-read{color:var(--gold-deep)}
+
+/* ===== Inquiry section v2 (Home + Day-of, Oct 25) ===== */
+.inq2{background:#F1ECE2}
+.inq2-grid{display:grid;gap:28px;align-items:start}
+@media (min-width:900px){.inq2-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px}}
+.inq2-head{display:flex;flex-direction:column;gap:16px}
+.inq2-head .h2{font-size:clamp(32px,3.8vw,48px)}
+.inq2-head .lead{max-width:30em}
+.inq2 .card,.ct4 .card{background:#FFFFFF;border:1px solid #E6DFD0;border-top:2px solid #C9A85E;box-shadow:0 22px 50px rgba(43,42,38,.10)}
+.inq2 .card input,.inq2 .card select,.inq2 .card textarea,.ct4 .card input,.ct4 .card select,.ct4 .card textarea{background:#FBF9F4}
+@media (max-width:899px){
+  .inq2{padding-top:0}
+  .inq2-head{position:relative;margin-inline:-16px;padding:44px 32px 36px;color:#F8F5EE;background:#1E1F21 url(img-contact-sm.webp) center 40%/cover no-repeat;isolation:isolate}
+  .inq2-head::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(22,23,25,.62) 0%,rgba(22,23,25,.72) 60%,rgba(22,23,25,.84) 100%)}
+  .inq2-head::after{content:"";position:absolute;inset:12px;border:1px solid rgba(201,168,94,.45);pointer-events:none}
+  .inq2-head .eyebrow{color:#D9BC7A}
+  .inq2-head .h2{color:#F8F5EE}
+  .inq2-head .lead{color:#E8E4DA}
+  .inq2-head .ct4-btn{border-color:rgba(248,245,238,.85);color:#F8F5EE}
+  .inq2-head .ct-steps li{color:#E8E4DA}
+  .inq2-head .ct-steps span{color:#D9BC7A}
+}
+/* form progress bar (step 1 = half, step 2 = full) */
+form.js-inquiry .form-meta{position:relative;padding-bottom:14px}
+form.js-inquiry .form-meta::before{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#EDE5D6}
+form.js-inquiry .form-meta::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:50%;background:#C9A85E;transition:width .35s ease}
+form.js-inquiry[data-step="2"] .form-meta::after{width:100%}
+
+/* ===== Contact: Google reviews as a light card under the photo heading (Oct 25) ===== */
+.rv.ct{display:flex;flex-direction:column;gap:12px;padding:22px 24px 18px;background:linear-gradient(180deg,#FFFFFF 0%,#FBF7EF 100%);border:1px solid #EADFC9;border-top:2px solid #C9A85E;color:var(--fg)}
+.rv.ct .rv-head{align-self:flex-start;gap:12px}
+.rv.ct .rv-score{font-size:38px;color:var(--fg)}
+.rv.ct .rv-av,.rv.ct .rv-src,.rv.ct .rv-st{display:none}
+.rv.ct .rv-slide{gap:8px}
+.rv.ct .rv-text{font-family:var(--display);font-style:italic;font-size:20px;line-height:1.45;color:var(--fg);-webkit-line-clamp:3}
+.rv.ct .rv-who{order:2}
+.rv.ct .rv-id{flex-direction:row;gap:8px;align-items:baseline}
+.rv.ct .rv-id strong{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-deep);font-weight:400}
+.rv.ct .rv-more{font-size:12px}
+.rv.ct .rv-nav{gap:10px;margin-top:2px}
+.rv.ct .rv-arrow{width:26px;height:26px;font-size:16px;padding:0 0 2px;border-color:#E2D7C1;background:transparent}
+.rv.ct .rv-dot{width:6px;height:6px}
+.rv.ct>.textlink{font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+@media (max-width:899px){
+  .rv.ct{margin-top:-4px;text-align:center;align-items:center}
+  .rv.ct .rv-head{align-self:center}
+  .rv.ct .rv-slide{align-items:center}
+  .rv.ct .rv-who{justify-content:center}
+  .rv.ct .rv-more{align-self:center}
+  .rv.ct .rv-nav{justify-content:center}
+  .rv.ct>.textlink{align-self:center}
+}
+
+/* ===== Footer: compact (Oct 25) ===== */
+.foot{padding-block:30px 26px;gap:18px 40px;align-items:center}
+.foot .brandline{gap:4px}
+.lockup{flex-direction:row;align-items:center;gap:12px;margin-bottom:4px}
+.lk-logo{width:54px}
+.lk-name{font-size:15px;letter-spacing:6px}
+.foot-links{gap:10px 22px}
+@media (max-width:899px){.foot{padding-block:24px 20px;gap:14px}.foot-links{gap:10px 18px;font-size:10.5px}}
+
+/* ===== Sticky CTA: slimmer on phones, steps aside near forms + footer (Oct 25) ===== */
+.sticky-cta{transition:transform .3s ease,opacity .3s ease}
+@media (max-width:899px){.sticky-cta{min-height:48px;padding-top:2px;padding-bottom:calc(2px + env(safe-area-inset-bottom,0px));font-size:11px}body{padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}}
+html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:none}
+@media (min-width:900px){html.cta-off .sticky-cta{transform:translateY(20px)}}
+
+/* ===== Contact v4.1 (Oct 25): flat grid so the reviews card sits under the photo on desktop, under the heading on phones ===== */
+.ct4-flat{display:grid;gap:22px;grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "rv" "form" "next";align-items:start}
+.ct4-flat>.ct4-head{grid-area:head}.ct4-flat>.rv{grid-area:rv}.ct4-flat>.ct-formwrap{grid-area:form;margin-top:6px}
+.ct4-flat>.ct4-photo{grid-area:photo}.ct4-flat>.ct4-next{grid-area:next;display:flex;flex-direction:column;gap:16px}
+@media (max-width:899px){.ct4-flat>.ct4-photo{display:none}}
+@media (min-width:900px){
+  .ct4-flat{grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:56px;row-gap:22px;grid-template-areas:"head photo" "form photo" "form rv" "form next" "form ."}
+  .ct4-flat>.ct-formwrap{margin-top:0}
+}
+@media (min-width:1100px){.ct4-flat{column-gap:80px}}
+.ct4-flat .ct4-photo img{aspect-ratio:1044/1000}

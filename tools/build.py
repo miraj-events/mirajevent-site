@@ -414,6 +414,29 @@ def photo_strip(items):
         cap = ('<strong>%s</strong><span>%s</span>' % (esc(it[2]), esc(it[3]))) if len(it) > 3 else esc(it[2])
         figs += '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(it[0], it[1], 900, 1200), cap)
     return '<div class="photo-strip%s reveal">' % (' has-desc' if has_desc else '') + figs + '</div>'
+_ico = lambda d: '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="%s"/></svg>' % d
+QUICK = ('<div class="ct4-quick">'
+         '<a class="ct4-btn" href="tel:+15865040207">' + _ico('M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z') + 'Call</a>'
+         '<a class="ct4-btn" href="sms:+15865040207">' + _ico('M4 5h16v11H9l-5 4z') + 'Text</a>'
+         '<a class="ct4-btn" href="https://wa.me/15865040207">' + _ico('M4 20l1.5-4A8 8 0 1 1 8 18.5L4 20z') + 'WhatsApp</a>'
+         '</div>')
+STEPS = ('<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li>'
+         '<li><span>3</span>Your customized package within 48 hours</li></ol>')
+def inq_upgrade(h):
+    """Inquiry section v2 (Tariq, Oct 25): linen band, photo-backed heading on phones, Call/Text/WhatsApp buttons,
+    what-happens-next steps, and an elevated white form card instead of a plain list + flat card."""
+    h, n = re.subn(r'<div class="band band-white rule-top" id="inquire"><div class="wrap two-col" style="align-items:start">',
+                   '<div class="band inq2" id="inquire"><div class="wrap inq2-grid">', h, count=1)
+    assert n == 1
+    def left(m):
+        return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
+                '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
+                + QUICK + STEPS + '</div>')
+    h, n = re.subn(r'<div class="stack reveal">\s*<p class="eyebrow">Contact us</p>\s*(<h2 class="h2">.*?</h2>)\s*<ul class="contact-list">.*?</ul>\s*</div>',
+                   left, h, count=1, flags=re.S)
+    assert n == 1
+    return h
+
 # HOME
 home = prep('home')
 # Package ladder v2 (Tariq, Oct 25): segmented "what's included" meter instead of plain bars; spacing fixed;
@@ -464,7 +487,7 @@ home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
      'Miraj Events specializes in Detroit wedding and event planning, delivering polished, stress free celebrations from start to finish. Day-of coordination to full planning for multi-event weddings.',
-     '/', 'home', home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1),
+     '/', 'home', inq_upgrade(home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),
      schema=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "Miraj Events", "url": SITE + "/"}])
 
 # SERVICES
@@ -550,7 +573,7 @@ ab = (
     '<dl class="ab3-stats">'
       '<div><dt>50+</dt><dd>Multicultural, multi-event weddings in the past two years</dd></div>'
       '<div><dt>900+</dt><dd>Guests at our largest event</dd></div>'
-      '<div><dt>3 yrs</dt><dd>Running the same nonprofit gala, year after year</dd></div>'
+      '<div><dt>#2</dt><dd>Detroit wedding planner, ranked by Peerspace</dd></div>'
       '<div><dt>1:100</dt><dd>Assistants to guests on every event</dd></div>'
     '</dl>'
   '</div>'
@@ -615,34 +638,28 @@ ct = prep('contact')
 # Contact layout v2 (Oct 24): form above the fold; compact package strip; reviews below
 _form = re.search(r'<form class="card form js-inquiry" id="contactForm".*?</form>', ct, re.S).group(0)
 _tiers = ct[ct.index('<div class="tiers">'):ct.index('<p class="small" style="text-align:center;margin-top:16px">')]
-# Contact layout v4 (Tariq, Oct 25): Google reviews strip stays first; generic heading for people without a date;
+# Contact layout v4.1 (Tariq, Oct 25): Google reviews as a light card below the photo (desktop: under the side photo;
+# phones: under the photo heading); generic heading for people without a date;
 # Call / Text / WhatsApp as simple buttons between the heading and the form; the current site's contact photo
 # beside the form (desktop) or behind the heading (phones); warm linen instead of white
 _ico = lambda d: '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="%s"/></svg>' % d
 ct = (
-'<section class="ct-rv"><div class="wrap">' + reviews_block('wide') + '</div></section>'
-'<section class="ct4" id="contact-form"><div class="wrap ct4-grid">'
-  '<div class="ct4-main">'
-    '<div class="ct4-head">'
-      '<p class="eyebrow">Contact us</p>'
-      '<h1>Let&#8217;s start planning <em>your</em> celebration.</h1>'
-      '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
-      '<div class="ct4-quick">'
-        '<a class="ct4-btn" href="tel:+15865040207">' + _ico('M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z') + 'Call</a>'
-        '<a class="ct4-btn" href="sms:+15865040207">' + _ico('M4 5h16v11H9l-5 4z') + 'Text</a>'
-        '<a class="ct4-btn" href="https://wa.me/15865040207">' + _ico('M4 20l1.5-4A8 8 0 1 1 8 18.5L4 20z') + 'WhatsApp</a>'
-      '</div>'
-    '</div>'
-    '<div class="ct-formwrap">'
-      '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
-      + _form +
-    '</div>'
+'<section class="ct4" id="contact-form"><div class="wrap ct4-flat">'
+  '<div class="ct4-head">'
+    '<p class="eyebrow">Contact us</p>'
+    '<h1>Let&#8217;s start planning <em>your</em> celebration.</h1>'
+    '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
+    + QUICK +
   '</div>'
-  '<aside class="ct4-side">'
-    '<figure class="ct4-photo"><img src="/assets/img-contact-side.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
-    '<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li><li><span>3</span>Your customized package within 48 hours</li></ol>'
+  + reviews_block('ct') +
+  '<div class="ct-formwrap">'
+    '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
+    + _form +
+  '</div>'
+  '<figure class="ct4-photo"><img src="/assets/img-contact-side.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
+  '<div class="ct4-next">' + STEPS +
     '<p class="ct4-email">Prefer email? <a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></p>'
-  '</aside>'
+  '</div>'
 '</div></section>'
 '<div class="band rule-top" id="packages-ct"><div class="wrap">'
   '<div class="ct-pk-head"><p class="eyebrow">Our packages</p><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'
@@ -660,7 +677,7 @@ dayof_form = re.search(r'<div class="band band-white rule-top" id="inquire">.*?<
 dayof_form = dayof_form.replace('id="inquire"', 'id="inquire"').replace('<option>Wedding weekend (multiple events)</option><option>Wedding (single event)</option>',
                                                                         '<option>Wedding (single event)</option><option>Wedding weekend (multiple events)</option>')
 dayof_form = dayof_form.replace('data-start="inquiry-start" novalidate>', 'data-start="inquiry-start" data-package="Day-of Coordination" novalidate>')
-dayof = dayof.replace('{{FORM}}', dayof_form)
+dayof = inq_upgrade(dayof.replace('{{FORM}}', dayof_form))
 dayof_faq = [q for q in re.findall(r'<details[^>]*>.*?</details>', svc, re.S)
              if any(k in q for k in ['How do payments work', 'Do we have to use your vendors', 'Can you run our whole wedding weekend', 'Do you travel', 'postpone'])]
 dayof = dayof.replace('{{FAQ}}', '\n'.join(dayof_faq).replace('<details open>', '<details>'))

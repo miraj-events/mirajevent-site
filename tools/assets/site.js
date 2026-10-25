@@ -46,6 +46,14 @@
   var view=document.body.getAttribute('data-view');
   $$('[data-nav]').forEach(function(a){ a.classList.toggle('active',a.getAttribute('data-nav')===view); });
 
+  /* ---------- sticky CTA: step aside while a form or the footer is on screen ---------- */
+  var cta=$('.sticky-cta');
+  if(cta&&'IntersectionObserver' in window){
+    var seen=[];
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ var i=seen.indexOf(e.target); if(e.isIntersecting&&i<0){ seen.push(e.target); } else if(!e.isIntersecting&&i>-1){ seen.splice(i,1); } }); document.documentElement.classList.toggle('cta-off',seen.length>0); },{threshold:0});
+    $$('#inquire,#contact-form,footer').forEach(function(el){ io.observe(el); });
+  }
+
   /* ---------- click tracking: phone / WhatsApp / email ---------- */
   document.addEventListener('click',function(e){
     var a=e.target.closest && e.target.closest('a[href]'); if(!a){ return; }
@@ -165,7 +173,8 @@
   $$('form.js-inquiry').forEach(function(form){
     var steps=$$('.fstep',form), meta=$('[data-stepmeta]',form)||$('.form-meta span',form);
     if(form.dataset.package){ var sel=$('select[name=package]',form); if(sel){ sel.value=form.dataset.package; } }
-    function showStep(n){ steps.forEach(function(s){ s.hidden=(s.getAttribute('data-fstep')!==String(n)); }); var m=$('[data-fstep="'+n+'"] .form-meta span',form); if(meta&&!m){ meta.textContent='Step '+n+' of 2'; } }
+    form.setAttribute('data-step','1');
+    function showStep(n){ form.setAttribute('data-step',String(n)); steps.forEach(function(s){ s.hidden=(s.getAttribute('data-fstep')!==String(n)); }); var m=$('[data-fstep="'+n+'"] .form-meta span',form); if(meta&&!m){ meta.textContent='Step '+n+' of 2'; } }
     var next=$('[data-next]',form);
     if(next){
       next.addEventListener('click',function(){
