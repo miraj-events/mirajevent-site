@@ -393,10 +393,19 @@ page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
 
 # SERVICES
 svc = prep('services')
+_sh_start = svc.index('<div class="svc-head reveal">')
+_sh_end = svc.index('</div>', svc.index('<p class="lead">', _sh_start)) + len('</div>')
+_svc_head = svc[_sh_start:_sh_end]
+svc = svc[:_sh_start] + svc[_sh_end:]
+svc = ('<section class="svc-hero">'
+       '<picture class="svc-hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-svc-sm.webp">'
+       '<img src="/assets/img-svc-md.webp" srcset="/assets/img-svc-md.webp 1400w, /assets/img-svc-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1050" fetchpriority="high" decoding="async"></picture>'
+       '<div class="svc-hero-shade" aria-hidden="true"></div>'
+       '<div class="wrap svc-hero-inner">' + _svc_head.replace(' reveal', '') + '</div></section>\n') + svc
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
     '<div class="band"><div class="wrap">' + photo_strip([
         ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'Stage design'),
-        ('ballroom-gold', 'Gilded ballroom with chandeliers, florals and set reception tables', 'Ballroom receptions'),
+        ('ballroom-library', 'Library ballroom with chandelier, white tables and floral centerpieces', 'Receptions'),
         ('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 'Tablescapes')]) + '</div></div>\n\n  <div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head', 1)
 svc = svc.replace('<h1>Four packages. Each includes the one before it.</h1>',
                   '<h1>Wedding planning packages. Each includes the one before it.</h1>')
