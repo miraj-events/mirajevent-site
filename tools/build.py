@@ -461,7 +461,7 @@ def ladder2():
     return '<ol class="lad2 reveal">' + rows + '</ol>\n    '
 home, _n = re.subn(r'<div class="ladder reveal">.*?(?=<div class="pk-foot reveal">)', lambda m: ladder2(), home, count=1, flags=re.S)
 assert _n == 1
-home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning, design and day-of coordination for multicultural, multi-event weddings.</p>', 1)
+home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning, design and day&#8209;of coordination for multicultural, multi&#8209;event weddings.</p>', 1)
 home = home.replace('<span class="hp-logo">The Knot</span><span class="hp-logo">WeddingWire</span><span class="hp-logo">Bloomberg</span><span class="hp-logo">Voyage Michigan</span>', press_html('hp-logo'))
 # Section order (Tariq, Oct 24): hero -> packages -> why Miraj -> weekend traditions -> proof/reviews -> inquire
 _wk_i = home.index('<div class="band" id="weekend">')
@@ -471,6 +471,9 @@ _pr_i = home.index('<div class="band band-dark proof">')
 _wk, _why, _pk = home[_wk_i:_why_i], home[_why_i:_pk_i], home[_pk_i:_pr_i]
 _wk = _wk.replace('<div class="band" id="weekend">', '<div class="band rule-top" id="weekend">', 1)
 home = home[:_wk_i] + _pk + _why + _wk + home[_pr_i:]
+# Hero eyebrow (Tariq, Oct 25): cities on their own line under "Wedding planner"
+home = home.replace('<p class="eyebrow">Wedding planner · Detroit · Toledo · Chicago</p>',
+                    '<div class="hero-ey"><p class="eyebrow">Wedding planner</p><p class="hero-cities">Detroit · Toledo · Chicago</p></div>', 1)
 home = home.replace('<div class="hero">', '<div class="hero has-photo">', 1)
 home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<picture class="hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-hero-sm.webp">'
