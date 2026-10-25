@@ -488,24 +488,6 @@ home = home.replace('<a class="rating" href="#" aria-label="Read our Google revi
                     '<a class="rating" href="#reviews" aria-label="Rated %.1f out of 5 on Google. Read reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
-# Why Miraj v2 (Tariq, Oct 25): concrete reasons in plain language instead of icon tiles with one-line titles
-WHY_NEW = (
-'<div class="why2">'
-  '<div class="why2-head reveal"><p class="eyebrow">Why Miraj</p>'
-    '<h2 class="h2">Built for big, multi&#8209;event weddings.</h2>'
-    '<p class="lead">Several events, two families and hundreds of guests, on one timeline with one team.</p></div>'
-  '<ol class="why2-list reveal">'
-    '<li><span class="why2-n">01</span><h3>One timeline for the whole weekend</h3><p>Welcome party to farewell brunch, with every vendor and family member working from the same run of show.</p></li>'
-    '<li><span class="why2-n">02</span><h3>Staffed for big guest counts</h3><p>One assistant for every 100 guests. Our largest event welcomed 900+ guests.</p></li>'
-    '<li><span class="why2-n">03</span><h3>Traditions handled with care</h3><p>Ceremony order, ritual timing and seating planned for both families, so nothing important gets rushed.</p></li>'
-    '<li><span class="why2-n">04</span><h3>Design direction included</h3><p>From Design + Coordination up, we shape the look of the room and direct your décor team.</p></li>'
-  '</ol>'
-'</div>')
-_w0 = home.index('<div class="why-head reveal">')
-_w1 = home.index('<div class="band rule-top" id="weekend">', _w0)
-_close = home.rindex('</div></div>', _w0, _w1)
-home = home[:_w0] + WHY_NEW + '\n  ' + home[_close:]
-
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
      'Miraj Events specializes in Detroit wedding and event planning, delivering polished, stress free celebrations from start to finish. Day-of coordination to full planning for multi-event weddings.',
      '/', 'home', inq_upgrade(slim=True, h=home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),

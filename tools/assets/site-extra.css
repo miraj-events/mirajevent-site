@@ -547,16 +547,3 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
   .inq2-slim .inq2-head .lead{color:var(--fg-2)}
   .inq2-slim .inq2-grid{gap:18px}
 }
-
-/* ===== Why Miraj v2 (Oct 25): concrete reasons, no icon tiles ===== */
-.why2{display:grid;gap:28px}
-@media (min-width:900px){.why2{grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:72px;align-items:start}}
-.why2-head{display:flex;flex-direction:column;gap:14px}
-.why2-head .h2{font-size:clamp(32px,3.8vw,50px)}
-.why2-head .lead{max-width:26em}
-.why2-list{list-style:none;margin:0;padding:0;display:grid}
-@media (min-width:700px){.why2-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px}}
-.why2-list li{display:flex;flex-direction:column;gap:8px;padding:20px 0 22px;border-top:1px solid var(--rule)}
-.why2-n{font-size:11px;letter-spacing:2.5px;color:var(--gold-deep)}
-.why2-list h3{font-size:clamp(23px,2.2vw,28px);line-height:1.15}
-.why2-list p{font-size:15px;line-height:1.6;color:var(--fg-2)}
