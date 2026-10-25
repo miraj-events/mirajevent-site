@@ -360,7 +360,7 @@ def pic(name, alt, w, h, cls='', eager=False):
             % (cls, name, esc(alt), w, h, '' if eager else ' loading="lazy"'))
 def photo_strip(items):
     return ('<div class="photo-strip reveal">' + ''.join(
-        '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(n, a, 800, 1067), esc(c)) for n, a, c in items) + '</div>')
+        '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(n, a, 900, 1200), esc(c)) for n, a, c in items) + '</div>')
 # HOME
 home = prep('home')
 home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning and day-of coordination for multicultural, multi-event weddings.</p>', 1)
@@ -376,12 +376,12 @@ home = home[:_wk_i] + _pk + _why + _wk + home[_pr_i:]
 home = home.replace('<div class="hero">', '<div class="hero has-photo">', 1)
 home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<picture class="hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-hero-sm.webp">'
-    '<img src="/assets/img-hero-lg.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async"></picture>'
+    '<img src="/assets/img-hero-md.webp" srcset="/assets/img-hero-md.webp 1400w, /assets/img-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
     '<div class="hero-shade" aria-hidden="true"></div>', 1)
 _strip = ('<div class="band band-white rule-top"><div class="wrap">' + photo_strip([
-    ('489', 'Candlelit reception tables with floating florals', 'Candlelit reception'),
-    ('340', 'Couple at sunset on a rooftop terrace', 'Golden hour, every time'),
-    ('26', 'Ivory stage chair framed by a floral column and emerald drapes', 'Stage design')]) + '</div></div>')
+    ('stage-white', 'Sweetheart table with gold oval chairs before a wall of white blossoms', 'Stage & florals'),
+    ('ballroom-chandeliers', 'Wood-paneled ballroom with crystal chandeliers and white round tables', 'The reception'),
+    ('place-setting', 'Gold-rimmed glass charger with gold flatware on white linen', 'The details')]) + '</div></div>')
 home = home.replace('<div class="band band-white rule-top"><div class="wrap">\n    <div class="why-head', _strip + '\n\n  <div class="band rule-top"><div class="wrap">\n    <div class="why-head', 1)
 home = home.replace('<a class="rating" href="#" aria-label="Read our Google reviews"><span class="stars" aria-hidden="true">★</span><span>See our Google reviews →</span></a>',
                     '<a class="rating" href="#reviews" aria-label="Rated %.1f out of 5 on Google. Read reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
@@ -395,9 +395,9 @@ page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
 svc = prep('services')
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
     '<div class="band"><div class="wrap">' + photo_strip([
-        ('628', 'Reception table set with candles and gold-rimmed place settings', 'The details'),
-        ('18', 'Gold and ivory chair with white floral arch', 'Design + coordination'),
-        ('465', '"Just married" cake on a candlelit table', 'Every last moment')]) + '</div></div>\n\n  <div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head', 1)
+        ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'Stage design'),
+        ('ballroom-gold', 'Gilded ballroom with chandeliers, florals and set reception tables', 'Ballroom receptions'),
+        ('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 'Tablescapes')]) + '</div></div>\n\n  <div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head', 1)
 svc = svc.replace('<h1>Four packages. Each includes the one before it.</h1>',
                   '<h1>Wedding planning packages. Each includes the one before it.</h1>')
 svc = svc.replace('<p class="lead">Starting prices for a single event. Multi-event weekends are packaged together on your call.</p>',
@@ -436,8 +436,8 @@ ab = (
     '<p>We take a limited number of weddings each season, so every event has a lead planner and one assistant per 100 guests.</p>'
     '<div class="actions"><a class="btn" href="/contact#contact-form">Check your date</a><a class="btn btn-outline" href="/services">Services &amp; pricing</a></div>'
   '</div>'
-  '<figure class="ab-portrait reveal" data-photo="team">'
-    '<div class="ab-ph has-img">' + pic('team', 'Mehreen Buksh with the Miraj Events team at an event', 900, 1125) + '</div>'
+  '<figure class="ab-portrait reveal" data-photo="mehreen">'
+    '<div class="ab-ph has-img">' + pic('mehreen', 'Mehreen Buksh, founder and lead planner of Miraj Events', 1000, 1250) + '</div>'
     '<figcaption><strong>Mehreen Buksh</strong><span>Founder &amp; lead planner</span></figcaption>'
   '</figure>'
 '</div>'
@@ -503,7 +503,7 @@ page('contact.html', 'Contact Miraj Events | Check Your Wedding Date',
 
 # DAY-OF landing page (keeps the indexed /day-of-coordination URL alive)
 dayof = open(os.path.join(ASSETS_SRC, 'day-of.html'), encoding='utf-8').read()
-dayof = dayof.replace('{{REVIEWS}}', reviews_block('dayof')).replace('{{IMG}}', pic('531', 'Bride and groom at golden hour on a lawn', 800, 1067, 'dayof-img'))
+dayof = dayof.replace('{{REVIEWS}}', reviews_block('dayof')).replace('{{IMG}}', pic('head-table', 'Candlelit head table with draped linens and warm florals', 900, 1200, 'dayof-img'))
 dayof_form = re.search(r'<div class="band band-white rule-top" id="inquire">.*?</div></div>', home, re.S).group(0)
 dayof_form = dayof_form.replace('id="inquire"', 'id="inquire"').replace('<option>Wedding weekend (multiple events)</option><option>Wedding (single event)</option>',
                                                                         '<option>Wedding (single event)</option><option>Wedding weekend (multiple events)</option>')
