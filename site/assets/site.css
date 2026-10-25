@@ -972,3 +972,10 @@ html.menu-open .sticky-cta{display:none}
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:300;font-display:swap;src:url(font-dm-300.woff2) format('woff2')}
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(font-dm-400.woff2) format('woff2')}
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url(font-dm-500.woff2) format('woff2')}
+/* Press v2.2 (Oct 25): only the #2 ranking is dark (neutral black, no blue cast); "Meet Mehreen" featured as a light card */
+.press-card.feat.dark{background:#262626;border-color:#262626}
+.press-card.feat:not(.dark){background:#FFFFFF;border-color:#E6DFD0;border-top:2px solid #C9A85E;color:var(--fg)}
+.press-card.feat:not(.dark) .pc-outlet{color:var(--gold-deep)}
+.press-card.feat:not(.dark) .pc-title{color:var(--fg)}
+.press-card.feat:not(.dark) .pc-meta{color:var(--muted)}
+.press-card.feat:not(.dark) .pc-read{color:var(--gold-deep)}

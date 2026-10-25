@@ -418,9 +418,9 @@ def photo_strip(items):
 home = prep('home')
 # Package ladder v2 (Tariq, Oct 25): segmented "what's included" meter instead of plain bars; spacing fixed;
 # no prices on Home (Tariq, Oct 25); pricing lives on Services
-LAYERS = ['The day', 'The look', 'Planning', 'All of it']
+LAYERS = ['The day', 'Design', 'Planning', 'All of it']
 LADDER = [('01', 'Day-of Coordination', 'The final month and the day, setup to send-off.', '$1,975'),
-          ('02', 'Design + Coordination', 'Adds the look: concept, floor plan and décor team.', '$4,750'),
+          ('02', 'Design + Coordination', 'Adds design direction: concept, floor plan and décor team.', '$4,750'),
           ('03', 'Planning + Design', 'Adds planning from signing: vendors, budget, hotel block.', '$6,500'),
           ('04', 'Full Planning', 'All of it. You make the choices; we carry the rest.', '$9,500')]
 def ladder2():
@@ -435,7 +435,7 @@ def ladder2():
     return '<ol class="lad2 reveal">' + rows + '</ol>\n    '
 home, _n = re.subn(r'<div class="ladder reveal">.*?(?=<div class="pk-foot reveal">)', lambda m: ladder2(), home, count=1, flags=re.S)
 assert _n == 1
-home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning and day-of coordination for multicultural, multi-event weddings.</p>', 1)
+home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning, design and day-of coordination for multicultural, multi-event weddings.</p>', 1)
 home = home.replace('<span class="hp-logo">The Knot</span><span class="hp-logo">WeddingWire</span><span class="hp-logo">Bloomberg</span><span class="hp-logo">Voyage Michigan</span>', press_html('hp-logo'))
 # Section order (Tariq, Oct 24): hero -> packages -> why Miraj -> weekend traditions -> proof/reviews -> inquire
 _wk_i = home.index('<div class="band" id="weekend">')
@@ -480,7 +480,7 @@ svc = ('<section class="svc-hero">'
        '<div class="wrap svc-hero-inner">' + _svc_head.replace(' reveal', '') + '</div></section>\n') + svc
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
     '<div class="band"><div class="wrap">' + photo_strip([
-        ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'The look',
+        ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'Design direction',
          'Concept, floor plan and the décor team, from Design + Coordination up.'),
         ('ballroom-library', 'Library ballroom with chandelier, white tables and floral centerpieces', 'The run of show',
          'One timeline for every event, shared with every vendor and run on the day.'),
@@ -514,8 +514,8 @@ ab = prep('about')
 ab = ab.replace('<span class="logo-slot">The Knot</span><span class="logo-slot">WeddingWire</span><span class="logo-slot">Bloomberg</span><span class="logo-slot">Voyage Michigan</span>', press_html('logo-slot'))
 ARTICLES = [
     ('Peerspace', 'Top wedding planners in Detroit', 'Ranked #2 · Ranking', PRESS[2][1]),
+    ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview · How Mehreen got started and what sets Miraj apart', PRESS[1][1]),
     ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'April 2025 · Feature', PRESS[0][1]),
-    ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview', PRESS[1][1]),
     ('Shoutout Michigan', 'Meet Mehreen Buksh, founder and lead coordinator', 'Interview', 'https://shoutoutmichigan.com/meet-mehreen-buksh-founder-lead-coordinator/'),
     ('CanvasRebel', 'Meet Mehreen Buksh', 'Interview', 'https://canvasrebel.com/meet-mehreen-buksh/'),
 ]
@@ -526,7 +526,7 @@ press_list = ('<div class="band ab3-linen ab3-press" id="press"><div class="wrap
               '<div class="press-grid reveal">' + ''.join(
                   '<a class="press-card%s" href="%s" target="_blank" rel="noopener"><span class="pc-outlet">%s</span>%s'
                   '<span class="pc-title">%s</span><span class="pc-meta">%s</span><span class="pc-read">Read%s &#8594;</span></a>'
-                  % (' feat' if i < 2 else '', esc(u), esc(o), '<span class="pc-big">#2</span>' if o == 'Peerspace' else '',
+                  % (' feat dark' if i == 0 else (' feat' if i == 1 else ''), esc(u), esc(o), '<span class="pc-big">#2</span>' if o == 'Peerspace' else '',
                      esc(t), esc(m), (' on ' + esc(o)) if i < 2 else '')
                   for i, (o, t, m, u) in enumerate(ARTICLES))
               + '</div></div></div>')
