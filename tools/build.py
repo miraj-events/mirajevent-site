@@ -288,9 +288,10 @@ def head(title, desc, path, view, schema=(), noindex=False):
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap">
+<link rel="preload" href="/assets/font-cg-300.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/font-cg-300-i.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/font-dm-300.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/font-dm-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css?v={VERSION}">
 <!-- Google tag (GA4 {GA4} + Google Ads {ADS}) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA4}"></script>
@@ -398,8 +399,13 @@ def press_html(cls):
 
 
 def pic(name, alt, w, h, cls='', eager=False):
-    return ('<img class="%s" src="/assets/img-%s.webp" alt="%s" width="%d" height="%d"%s decoding="async">'
-            % (cls, name, esc(alt), w, h, '' if eager else ' loading="lazy"'))
+    # phones get a 600px file when one exists (assets__img-NAME-600.webp)
+    ss = ''
+    if os.path.exists(os.path.join(ASSETS_SRC, 'static', 'assets__img-%s-600.webp' % name)):
+        ss = (' srcset="/assets/img-%s-600.webp 600w, /assets/img-%s.webp %dw" sizes="(max-width:700px) 72vw, (max-width:1240px) 34vw, 420px"'
+              % (name, name, w))
+    return ('<img class="%s" src="/assets/img-%s.webp"%s alt="%s" width="%d" height="%d"%s decoding="async">'
+            % (cls, name, ss, esc(alt), w, h, '' if eager else ' loading="lazy"'))
 def photo_strip(items):
     # items: (name, alt, title) or (name, alt, title, description)
     has_desc = any(len(it) > 3 for it in items)
@@ -486,6 +492,19 @@ svc = svc.replace('<p class="lead">Starting prices for a single event. Multi-eve
                   '<p class="lead">Day-of coordination to full planning in Metro Detroit, Toledo and Chicago. Starting prices for a single event; multi-event weekends are packaged together on your call.</p>')
 svc = svc.replace('<h2>Day-of Coordination</h2>', '<h2><a href="/day-of-coordination">Day-of Coordination</a></h2>')
 svc = svc.replace('<a class="textlink" href="/contact">Tell us about yours →</a>', '<a class="textlink" href="/contact#contact-form">Tell us about yours →</a>')
+# FAQ cut to 8 key questions (Tariq, Oct 25); cancel + postpone merged into one answer
+_faq_items = {html.unescape(re.sub(r'<[^>]+>', '', m.group(1))).strip(): m.group(0)
+              for m in re.finditer(r'<details[^>]*><summary>(.*?)</summary>.*?</details>', svc, re.S)}
+assert len(_faq_items) == 12, len(_faq_items)
+_merged = ('<details><summary>What if we need to postpone or cancel?</summary><p class="ans">We know plans change. Postponing is free: '
+           'everything you&#8217;ve paid moves to your new date, as long as it&#8217;s within 12 months. If you cancel, the retainer is '
+           'non-refundable; more than 90 days out we keep what&#8217;s been paid to date, and within 90 days the full fee is due.</p></details>')
+_keep = ['Can you run our whole wedding weekend?', "We've already booked our venue and caterer. Can you take it from here?",
+         'Do you plan weddings that blend two cultures or faiths?', 'Do you help with design?', 'How do payments work?',
+         None, 'Do you travel?', 'Do you do events other than weddings?']
+_new_faq = '\n'.join(_merged if k is None else _faq_items[k] for k in _keep)
+_all = list(re.finditer(r'<details[^>]*><summary>.*?</details>', svc, re.S))
+svc = svc[:_all[0].start()] + _new_faq + svc[_all[-1].end():]
 page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroit',
      'Day-of coordination from $1,975, design + coordination, planning + design and full wedding planning in Metro Detroit, Toledo and Chicago. Multi-event wedding weekends packaged together.',
      '/services', 'services', svc, schema=[services_schema(), faq_schema(svc)])
@@ -494,20 +513,21 @@ page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroi
 ab = prep('about')
 ab = ab.replace('<span class="logo-slot">The Knot</span><span class="logo-slot">WeddingWire</span><span class="logo-slot">Bloomberg</span><span class="logo-slot">Voyage Michigan</span>', press_html('logo-slot'))
 ARTICLES = [
+    ('Peerspace', 'Top wedding planners in Detroit', 'Ranked #2 · Ranking', PRESS[2][1]),
     ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'April 2025 · Feature', PRESS[0][1]),
     ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview', PRESS[1][1]),
-    ('Peerspace', 'Top wedding planners in Detroit: Miraj Events at #2', 'Ranking', PRESS[2][1]),
     ('Shoutout Michigan', 'Meet Mehreen Buksh, founder and lead coordinator', 'Interview', 'https://shoutoutmichigan.com/meet-mehreen-buksh-founder-lead-coordinator/'),
     ('CanvasRebel', 'Meet Mehreen Buksh', 'Interview', 'https://canvasrebel.com/meet-mehreen-buksh/'),
 ]
-# Press v2 (Tariq, Oct 25): featured Bloomberg card + four cards, instead of a plain list
+# Press v2 (Tariq, Oct 25): Peerspace #2 and Bloomberg featured on top, three interviews below
 press_list = ('<div class="band ab3-linen ab3-press" id="press"><div class="wrap">'
               '<div class="ab3-press-head reveal"><p class="eyebrow">Press</p><h2 class="h2">In the news.</h2>'
-              '<p class="lead">Featured in Bloomberg, ranked #2 among Detroit wedding planners by Peerspace, and interviewed by Michigan&#8217;s local press.</p></div>'
+              '<p class="lead">Ranked #2 among Detroit wedding planners by Peerspace, featured in Bloomberg, and interviewed by Michigan&#8217;s local press.</p></div>'
               '<div class="press-grid reveal">' + ''.join(
-                  '<a class="press-card%s" href="%s" target="_blank" rel="noopener"><span class="pc-outlet">%s</span>'
+                  '<a class="press-card%s" href="%s" target="_blank" rel="noopener"><span class="pc-outlet">%s</span>%s'
                   '<span class="pc-title">%s</span><span class="pc-meta">%s</span><span class="pc-read">Read%s &#8594;</span></a>'
-                  % (' feat' if i == 0 else '', esc(u), esc(o), esc(t), esc(m), (' on ' + esc(o)) if i == 0 else '')
+                  % (' feat' if i < 2 else '', esc(u), esc(o), '<span class="pc-big">#2</span>' if o == 'Peerspace' else '',
+                     esc(t), esc(m), (' on ' + esc(o)) if i < 2 else '')
                   for i, (o, t, m, u) in enumerate(ARTICLES))
               + '</div></div></div>')
 # About layout v4 (Tariq, Oct 25): photo hero with stats; Meet the founder (bio) on linen; team on dark;

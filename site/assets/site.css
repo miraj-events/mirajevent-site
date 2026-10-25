@@ -957,3 +957,18 @@ html.menu-open .sticky-cta{display:none}
 .press-card.feat .pc-read{color:#D9BC7A}
 .press-card.feat:hover{border-color:#C9A85E}
 @media (max-width:759px){.press-grid{gap:10px}.press-card{padding:18px 18px 16px;gap:6px}.press-card .pc-title{font-size:21px}.press-card .pc-read{padding-top:4px}.press-card.feat{padding:24px 20px 20px}}
+/* Press v2.1 (Oct 25): two featured cards on top (Peerspace #2, Bloomberg), three interviews below */
+@media (min-width:760px){.press-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.press-card.feat{grid-column:span 3;grid-row:auto}.press-card:not(.feat){grid-column:span 2}}
+@media (min-width:1080px){.press-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.press-card.feat{grid-column:span 3;grid-row:auto}}
+.pc-big{font-family:var(--display);font-size:clamp(64px,7vw,96px);line-height:.9;color:#D9BC7A;font-weight:300;margin:2px 0 -2px}
+.press-card.feat .pc-title{font-size:clamp(26px,2.6vw,34px)}
+
+/* Self-hosted fonts (Oct 25): faster first paint than Google Fonts, no third-party request. SIL Open Font License. */
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(font-cg-300.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(font-cg-400.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:500;font-display:swap;src:url(font-cg-500.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(font-cg-300-i.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(font-cg-400-i.woff2) format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:300;font-display:swap;src:url(font-dm-300.woff2) format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(font-dm-400.woff2) format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url(font-dm-500.woff2) format('woff2')}
