@@ -364,8 +364,13 @@ def pic(name, alt, w, h, cls='', eager=False):
     return ('<img class="%s" src="/assets/img-%s.webp" alt="%s" width="%d" height="%d"%s decoding="async">'
             % (cls, name, esc(alt), w, h, '' if eager else ' loading="lazy"'))
 def photo_strip(items):
-    return ('<div class="photo-strip reveal">' + ''.join(
-        '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(n, a, 900, 1200), esc(c)) for n, a, c in items) + '</div>')
+    # items: (name, alt, title) or (name, alt, title, description)
+    has_desc = any(len(it) > 3 for it in items)
+    figs = ''
+    for it in items:
+        cap = ('<strong>%s</strong><span>%s</span>' % (esc(it[2]), esc(it[3]))) if len(it) > 3 else esc(it[2])
+        figs += '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(it[0], it[1], 900, 1200), cap)
+    return '<div class="photo-strip%s reveal">' % (' has-desc' if has_desc else '') + figs + '</div>'
 # HOME
 home = prep('home')
 home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning and day-of coordination for multicultural, multi-event weddings.</p>', 1)
@@ -384,9 +389,12 @@ home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<img src="/assets/img-hero-md.webp" srcset="/assets/img-hero-md.webp 1400w, /assets/img-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
     '<div class="hero-shade" aria-hidden="true"></div>', 1)
 _strip = ('<div class="band band-white rule-top"><div class="wrap">' + photo_strip([
-    ('stage-white', 'Sweetheart table with gold oval chairs before a wall of white blossoms', 'Stage & florals'),
-    ('ballroom-chandeliers', 'Wood-paneled ballroom with crystal chandeliers and white round tables', 'The reception'),
-    ('place-setting', 'Gold-rimmed glass charger with gold flatware on white linen', 'The details')]) + '</div></div>')
+    ('stage-white', 'Sweetheart table with gold oval chairs before a wall of white blossoms', 'Design direction',
+     'We shape the look with you and oversee the décor team that brings it to life.'),
+    ('ballroom-chandeliers', 'Wood-paneled ballroom with crystal chandeliers and white round tables', 'Reception management',
+     'From the grand entrance to the send-off, we run the timeline with your venue and vendors.'),
+    ('details-gold', 'Place setting with a gold charger, blush napkin, place card and gold flatware', 'Focus on details',
+     'Seating, ritual timing and the finishing touches, checked before your guests arrive.')]) + '</div></div>')
 home = home.replace('<div class="band band-white rule-top"><div class="wrap">\n    <div class="why-head', _strip + '\n\n  <div class="band rule-top"><div class="wrap">\n    <div class="why-head', 1)
 home = home.replace('<a class="rating" href="#" aria-label="Read our Google reviews"><span class="stars" aria-hidden="true">★</span><span>See our Google reviews →</span></a>',
                     '<a class="rating" href="#reviews" aria-label="Rated %.1f out of 5 on Google. Read reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
@@ -409,9 +417,12 @@ svc = ('<section class="svc-hero">'
        '<div class="wrap svc-hero-inner">' + _svc_head.replace(' reveal', '') + '</div></section>\n') + svc
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
     '<div class="band"><div class="wrap">' + photo_strip([
-        ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'Stage design'),
-        ('ballroom-library', 'Library ballroom with chandelier, white tables and floral centerpieces', 'Receptions'),
-        ('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 'Tablescapes')]) + '</div></div>\n\n  <div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head', 1)
+        ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'The look',
+         'Concept, floor plan and the décor team, from Design + Coordination up.'),
+        ('ballroom-library', 'Library ballroom with chandelier, white tables and floral centerpieces', 'The run of show',
+         'One timeline for every event, shared with every vendor and run on the day.'),
+        ('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 'Finishing touches',
+         'Linens, chairs, backdrops and staging, delivered, set up and picked up.')]) + '</div></div>\n\n  <div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head', 1)
 svc = svc.replace('<h1>Four packages. Each includes the one before it.</h1>',
                   '<h1>Wedding planning packages. Each includes the one before it.</h1>')
 svc = svc.replace('<p class="lead">Starting prices for a single event. Multi-event weekends are packaged together on your call.</p>',
@@ -483,8 +494,9 @@ ab = (
   '</div>'
   '<div class="photo-strip ab3-strip reveal">'
     + team_fig('team-c', 'Mehreen Buksh with a Miraj Events coordinator, both in uniform with name badges', 'Mehreen with the team', 675, 900)
-    + team_fig('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 'On site, on headset')
-    + team_fig('team-b', 'Two Miraj Events coordinators in black uniforms with gold name badges', 'Our coordinators') +
+    + '<figure class="wide">' + pic('team-group', 'The Miraj Events team in black uniforms with gold name badges at a venue', 1800, 1200)
+    + '<figcaption>The Miraj team</figcaption></figure>'
+    + team_fig('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 'On site, on headset') +
   '</div>'
 '</div></div>'
 '<div class="band"><div class="wrap two-col" style="align-items:start">'

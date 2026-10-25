@@ -255,3 +255,19 @@ html[data-theme] .hero.has-photo .hero-shade{background:linear-gradient(180deg,r
 .ab3-strip figcaption{color:#D9BC7A}
 @media (min-width:701px) and (max-width:899px){.ab3-inner,.svc-hero-inner{padding-left:40px;padding-right:40px}}
 @media (max-width:700px){.photo-strip{scroll-padding-inline:16px}}
+
+/* Photo strips with a title + short description (Home, Services) */
+.photo-strip.has-desc figure{gap:14px}
+.photo-strip.has-desc figcaption{display:flex;flex-direction:column;gap:6px;text-transform:none;letter-spacing:0;font-size:15px;line-height:1.55;color:var(--fg-2)}
+.photo-strip.has-desc figcaption strong{font-family:var(--display);font-weight:400;font-size:clamp(22px,2.2vw,26px);line-height:1.15;color:var(--fg)}
+/* About team: full-team group photo, wide in the middle */
+@media (min-width:701px){
+  .ab3-strip{grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr)}
+  .ab3-strip figure{display:flex;flex-direction:column}
+  .ab3-strip img{flex:1 1 auto;min-height:0;aspect-ratio:auto}
+}
+@media (max-width:700px){
+  .ab3-strip{grid-template-columns:1fr 1fr;overflow:visible;margin-inline:0;padding-inline:0;scroll-snap-type:none}
+  .ab3-strip figure.wide{order:-1;grid-column:1/-1}
+  .ab3-strip figure.wide img{aspect-ratio:3/2}
+}
