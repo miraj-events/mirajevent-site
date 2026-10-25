@@ -35,6 +35,15 @@ src = src.replace('data-nav="contact">Inquire</a>', 'data-nav="contact">Contact 
 src = src.replace('<a href="#contact">Inquire</a>', '<a href="#contact">Contact Us</a>')
 src = src.replace('<p class="eyebrow">Inquire</p>', '<p class="eyebrow">Contact us</p>')
 src = src.replace('<li><strong>Inquire</strong>', '<li><strong>Contact us</strong>')
+# Nav order (Tariq, Oct 25): About before Services (desktop nav, mobile dropdown, footer)
+for _a, _b in [('<a href="#services" data-nav="services">Services</a>\n      <a href="#about" data-nav="about">About</a>',
+                '<a href="#about" data-nav="about">About</a>\n      <a href="#services" data-nav="services">Services</a>'),
+               ('<a href="#services">Services</a>\n    <a href="#about">About</a>',
+                '<a href="#about">About</a>\n    <a href="#services">Services</a>'),
+               ('<a href="#services">Services</a><a href="#about">About</a>',
+                '<a href="#about">About</a><a href="#services">Services</a>')]:
+    assert _a in src, _a
+    src = src.replace(_a, _b)
 reviews = json.load(open(os.path.join(DATA, 'reviews.json'), encoding='utf-8'))
 
 
@@ -324,7 +333,17 @@ def footer(page):
     return ('<footer class="rule-top">' + f + '</footer>\n' + sticky + '\n'
             '<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % VERSION)
 
+NODATE = '<label class="nodate"><input type="checkbox" data-nodate> No date yet</label>'
+def nodate(h):
+    """Date field: people without a date tick 'No date yet' (fills the field, so the inquiry still says so)."""
+    h = h.replace('<label for="c-date">Event date(s) or season *</label><input id="c-date" name="event_date" type="text" placeholder="e.g. June 2027" required>',
+                  '<label for="c-date">Event date or season *</label><input id="c-date" name="event_date" type="text" placeholder="e.g. June 2027" required>' + NODATE)
+    h = h.replace('<label for="h-date">Event date or season</label><input id="h-date" name="event_date" type="text" placeholder="e.g. June 2027" autocomplete="off">',
+                  '<label for="h-date">Event date or season</label><input id="h-date" name="event_date" type="text" placeholder="e.g. June 2027" autocomplete="off">' + NODATE)
+    return h
+
 def page(fname, title, desc, path, view, main_html, schema=(), noindex=False, extra_js=''):
+    main_html = nodate(main_html)
     out = head(title, desc, path, view, schema, noindex) + header() + '<main id="main">\n' + main_html + '\n</main>\n' + footer(view)
     if extra_js:
         out = out.replace('</body>', extra_js + '\n</body>')
@@ -402,7 +421,8 @@ home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
      'Miraj Events specializes in Detroit wedding and event planning, delivering polished, stress free celebrations from start to finish. Day-of coordination to full planning for multi-event weddings.',
-     '/', 'home', home, schema=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "Miraj Events", "url": SITE + "/"}])
+     '/', 'home', home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1),
+     schema=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "Miraj Events", "url": SITE + "/"}])
 
 # SERVICES
 svc = prep('services')
@@ -523,26 +543,34 @@ ct = prep('contact')
 # Contact layout v2 (Oct 24): form above the fold; compact package strip; reviews below
 _form = re.search(r'<form class="card form js-inquiry" id="contactForm".*?</form>', ct, re.S).group(0)
 _tiers = ct[ct.index('<div class="tiers">'):ct.index('<p class="small" style="text-align:center;margin-top:16px">')]
+# Contact layout v4 (Tariq, Oct 25): Google reviews strip stays first; generic heading for people without a date;
+# Call / Text / WhatsApp as simple buttons between the heading and the form; the current site's contact photo
+# beside the form (desktop) or behind the heading (phones); warm linen instead of white
+_ico = lambda d: '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="%s"/></svg>' % d
 ct = (
 '<section class="ct-rv"><div class="wrap">' + reviews_block('wide') + '</div></section>'
-'<section class="ct-top" id="contact-form"><div class="wrap ct-grid">'
-  '<div class="ct-copy">'
-    '<p class="eyebrow">Contact</p>'
-    '<h1>Let&#8217;s check <em>your</em> date.</h1>'
-    '<p class="lead">Two short steps. We reply within 24 hours with availability and next steps.</p>'
+'<section class="ct4" id="contact-form"><div class="wrap ct4-grid">'
+  '<div class="ct4-main">'
+    '<div class="ct4-head">'
+      '<p class="eyebrow">Contact us</p>'
+      '<h1>Let&#8217;s start planning <em>your</em> celebration.</h1>'
+      '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
+      '<div class="ct4-quick">'
+        '<a class="ct4-btn" href="tel:+15865040207">' + _ico('M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z') + 'Call</a>'
+        '<a class="ct4-btn" href="sms:+15865040207">' + _ico('M4 5h16v11H9l-5 4z') + 'Text</a>'
+        '<a class="ct4-btn" href="https://wa.me/15865040207">' + _ico('M4 20l1.5-4A8 8 0 1 1 8 18.5L4 20z') + 'WhatsApp</a>'
+      '</div>'
+    '</div>'
+    '<div class="ct-formwrap">'
+      '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
+      + _form +
+    '</div>'
   '</div>'
-  '<div class="ct-formwrap">'
-    '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
-    + _form +
-  '</div>'
-  '<div class="ct-more">'
+  '<aside class="ct4-side">'
+    '<figure class="ct4-photo"><img src="/assets/img-contact-side.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
     '<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li><li><span>3</span>Your customized package within 48 hours</li></ol>'
-    '<ul class="ct-direct">'
-      '<li><span class="eyebrow">Call or text</span><a href="tel:+15865040207">(586) 504-0207</a></li>'
-      '<li><span class="eyebrow">WhatsApp</span><a href="https://wa.me/15865040207">Message us</a></li>'
-      '<li><span class="eyebrow">Email</span><a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></li>'
-    '</ul>'
-  '</div>'
+    '<p class="ct4-email">Prefer email? <a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></p>'
+  '</aside>'
 '</div></section>'
 '<div class="band rule-top" id="packages-ct"><div class="wrap">'
   '<div class="ct-pk-head"><p class="eyebrow">Our packages</p><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'

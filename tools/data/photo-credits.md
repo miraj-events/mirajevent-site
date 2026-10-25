@@ -20,6 +20,7 @@ Used as mood/atmosphere imagery only, not presented as Miraj Events' own events.
 | Site file | Source |
 |---|---|
 | img-mehreen | Mehreen's portrait from the current mirajevent.com About page (business's own photo; confirm photographer permission/credit) |
-| img-team-a / team-c / team-group | Team photos from the business's own photo album (team-group = full-team photo; team-c mirrored so name badges read correctly). Before launch: confirm every pictured team member is OK appearing on the website. |
+| img-team-a / team-c / team-group | Team photos from the business's own photo album (team-group = cropped from the full-team photo; team-c mirrored so name badges read correctly). Before launch: confirm every pictured team member is OK appearing on the website. |
+| img-contact-side / contact-sm | The photo already used on the current mirajevent.com Contact page (a client event; same use as today) |
 
 Only real Miraj Events photos are used for people/team. Replace stock with professional photos of Miraj events as they become available (ask event photographers for web-use rights with credit).

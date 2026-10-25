@@ -50,6 +50,16 @@
     if(h.indexOf('tel:')===0){ gt('event','phone_click',{link_url:h,page_path:location.pathname}); }
     else if(h.indexOf('wa.me')>-1){ gt('event','whatsapp_click',{link_url:h,page_path:location.pathname}); }
     else if(h.indexOf('mailto:')===0){ gt('event','email_click',{link_url:h,page_path:location.pathname}); }
+    else if(h.indexOf('sms:')===0){ gt('event','text_click',{link_url:h,page_path:location.pathname}); }
+  });
+
+  /* ---------- "No date yet": fills the date field so the inquiry still records it ---------- */
+  $$('[data-nodate]').forEach(function(cb){
+    var f=cb.closest('.field'), inp=f&&$('input[name="event_date"]',f); if(!inp){ return; }
+    cb.addEventListener('change',function(){
+      if(cb.checked){ inp.setAttribute('data-prev',inp.value==='No date yet'?'':inp.value); inp.value='No date yet'; inp.readOnly=true; }
+      else { inp.value=inp.getAttribute('data-prev')||''; inp.readOnly=false; inp.focus(); }
+    });
   });
 
   /* ---------- reveal on scroll + count-up ---------- */
