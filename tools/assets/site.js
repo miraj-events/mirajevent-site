@@ -38,7 +38,10 @@
   /* ---------- header: mobile menu + active link ---------- */
   var menuBtn=$('#menuBtn'), mobnav=$('#mobnav');
   if(menuBtn&&mobnav){
-    menuBtn.addEventListener('click',function(){ var open=mobnav.hidden; mobnav.hidden=!open; menuBtn.setAttribute('aria-expanded',String(open)); });
+    var setMenu=function(open){ mobnav.hidden=!open; menuBtn.setAttribute('aria-expanded',String(open)); menuBtn.setAttribute('aria-label',open?'Close menu':'Menu'); document.documentElement.classList.toggle('menu-open',open); };
+    menuBtn.addEventListener('click',function(){ setMenu(mobnav.hidden); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!mobnav.hidden){ setMenu(false); menuBtn.focus(); } });
+    $$('a',mobnav).forEach(function(a){ a.addEventListener('click',function(){ setMenu(false); }); });
   }
   var view=document.body.getAttribute('data-view');
   $$('[data-nav]').forEach(function(a){ a.classList.toggle('active',a.getAttribute('data-nav')===view); });

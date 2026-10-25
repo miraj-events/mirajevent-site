@@ -845,3 +845,57 @@ html[data-theme] .hero.has-photo .hero-shade{background:linear-gradient(180deg,r
 .nodate input:checked::before{transform:scale(1)}
 input[readonly]{color:var(--muted)}
 @media (max-width:899px){.ct4-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.ct4-btn{flex-direction:column;justify-content:center;gap:6px;min-height:64px;padding:8px 4px;font-size:11px;letter-spacing:1.6px}}
+
+/* ===== Phone menu v2 (Oct 25) ===== */
+#menuBtn .ic-close{display:none}
+#menuBtn[aria-expanded="true"] .ic-close{display:block}
+#menuBtn[aria-expanded="true"] .ic-open{display:none}
+.mobnav{display:block;gap:0;padding:0;font-size:inherit;letter-spacing:normal;text-transform:none;border-bottom:0;border-top:1px solid rgba(168,135,60,.4);background:var(--bg);min-height:calc(100vh - 76px);min-height:calc(100svh - 76px)}
+.mobnav a{padding:0;border-top:0}
+.mobnav-in{display:flex;flex-direction:column;gap:30px;padding-block:6px 36px}
+.mn-list{list-style:none;margin:0;padding:0}
+.mn-list li{border-bottom:1px solid rgba(168,135,60,.28)}
+.mn-list a{display:grid;grid-template-columns:36px minmax(0,1fr) auto;column-gap:8px;align-items:center;padding:18px 2px 16px;color:var(--fg)}
+.mn-list .mn-n{grid-row:1 / 3;align-self:start;padding-top:9px;font-size:11px;letter-spacing:2px;color:var(--gold-deep)}
+.mn-list .mn-t{font-family:var(--display);font-size:32px;font-weight:400;line-height:1.05}
+.mn-list .mn-d{grid-column:2;margin-top:5px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.mn-list a::after{content:"\2192";grid-column:3;grid-row:1 / 3;color:var(--gold);font-size:18px;transition:transform .2s ease}
+.mn-list a:hover::after,.mn-list a:focus-visible::after{transform:translateX(4px)}
+.mn-list a.active .mn-t{font-style:italic;color:var(--gold-deep)}
+.mn-list a.active .mn-n{color:var(--gold)}
+.mn-foot{display:flex;flex-direction:column;gap:18px}
+.mn-quick{display:flex;flex-wrap:wrap;gap:10px 22px}
+.mn-quick a{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-2);padding-bottom:3px;border-bottom:1px solid rgba(168,135,60,.5)}
+.mn-mail{font-size:14px}
+.mn-mail a{color:var(--muted)}
+@keyframes mnIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  .mobnav:not([hidden]) .mn-list li,.mobnav:not([hidden]) .mn-foot{animation:mnIn .45s cubic-bezier(.2,.7,.2,1) both}
+  .mobnav:not([hidden]) .mn-list li:nth-child(2){animation-delay:.05s}
+  .mobnav:not([hidden]) .mn-list li:nth-child(3){animation-delay:.1s}
+  .mobnav:not([hidden]) .mn-list li:nth-child(4){animation-delay:.15s}
+  .mobnav:not([hidden]) .mn-foot{animation-delay:.2s}
+}
+html.menu-open .sticky-cta{display:none}
+@media (min-width:900px){.mobnav{display:none!important}}
+
+/* ===== Home package ladder v2 (Oct 25): segmented "what's included" meter ===== */
+.lad2{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.lad2 li{display:flex;flex-direction:column;gap:8px;min-width:0}
+.lad2-top{display:flex;align-items:center;gap:10px;min-height:22px}
+.lad2 .n{font-size:11px;letter-spacing:2.5px;color:var(--gold-deep)}
+.lad2 .tag{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;line-height:1.2;color:var(--ivory);background:var(--gold);padding:5px 8px}
+.lad2 h3{font-size:clamp(25px,2.2vw,28px);line-height:1.12}
+.lad2-meter{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:4px}
+.lad2-meter span{display:flex;align-items:center;justify-content:center;min-height:30px;padding:2px 4px;text-align:center;font-size:9.5px;letter-spacing:1.3px;line-height:1.15;text-transform:uppercase;border:1px dashed rgba(168,135,60,.5);color:rgba(107,101,91,.6)}
+.lad2-meter span.on{background:var(--gold);border:1px solid var(--gold);color:var(--ivory)}
+.lad2 .is-pop .lad2-meter span.on{background:var(--gold-deep);border-color:var(--gold-deep)}
+.lad2-adds{font-size:14.5px;line-height:1.5;color:var(--fg-2)}
+.lad2-from{font-family:var(--display);font-size:21px;color:var(--gold-deep);line-height:1.2}
+@media (max-width:859px){.lad2 li+li{border-top:1px solid var(--rule);padding-top:22px}}
+@media (min-width:860px){
+  .lad2{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+  .lad2-meter{order:-1;display:flex;flex-direction:column-reverse;gap:5px;margin:0 0 12px}
+  .lad2-meter span{min-height:40px;font-size:10px;letter-spacing:2px}
+}
+.pk-foot{border-top:0!important;margin-top:28px!important;padding-top:0!important}

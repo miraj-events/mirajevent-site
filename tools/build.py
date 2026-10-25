@@ -314,11 +314,33 @@ if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
 <a class="skip" href="#main">Skip to content</a>
 '''
 
+MENU_ITEMS = [('/', 'home', '01', 'Home', 'Welcome'),
+              ('/about', 'about', '02', 'About', 'Mehreen &amp; the team'),
+              ('/services', 'services', '03', 'Services', 'Packages &amp; pricing'),
+              ('/contact', 'contact', '04', 'Contact Us', 'Start planning')]
 def header():
     h = between(src, '<header class="site-header">', '</header>')
     h = relink(h, 'x')
     h = logo_use(h)
     h = h.replace('href="#home"', 'href="/"')
+    # Phone menu v2 (Tariq, Oct 25): serif items with gold numerals + descriptors, gold hairlines,
+    # a Check availability button and quick contact links; fills the screen below the header
+    mob = ('<nav id="mobnav" class="mobnav" hidden aria-label="Mobile"><div class="wrap mobnav-in">'
+           '<ul class="mn-list">' + ''.join(
+               '<li><a href="%s" data-nav="%s"><span class="mn-n">%s</span><span class="mn-t">%s</span><span class="mn-d">%s</span></a></li>' % it
+               for it in MENU_ITEMS) + '</ul>'
+           '<div class="mn-foot"><a class="btn btn-gold btn-block" href="/contact#contact-form">Check availability</a>'
+           '<div class="mn-quick"><a href="tel:%s">Call</a><a href="sms:%s">Text</a><a href="https://wa.me/15865040207">WhatsApp</a>'
+           '<a href="%s" target="_blank" rel="noopener">Instagram</a></div>'
+           '<p class="mn-mail"><a href="mailto:%s">%s</a></p></div>'
+           '</div></nav>' % (TEL, TEL, IG, EMAIL, EMAIL))
+    h, n = re.subn(r'<nav id="mobnav".*?</nav>', mob, h, flags=re.S)
+    assert n == 1
+    # menu button: elegant hamburger (short middle line) that turns into a close X when open
+    h, n = re.subn(r'(<button type="button" class="iconbtn" id="menuBtn"[^>]*>).*?(</button>)',
+                   r'\1<svg class="ic-open" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M9 12h12M3 17h18"/></svg>'
+                   r'<svg class="ic-close" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></svg>\2', h, flags=re.S)
+    assert n == 1
     return '<header class="site-header">' + h + '</header>\n'
 
 def footer(page):
@@ -392,6 +414,25 @@ def photo_strip(items):
     return '<div class="photo-strip%s reveal">' % (' has-desc' if has_desc else '') + figs + '</div>'
 # HOME
 home = prep('home')
+# Package ladder v2 (Tariq, Oct 25): segmented "what's included" meter instead of plain bars; spacing fixed;
+# starting prices shown (same as the Services page)
+LAYERS = ['The day', 'The look', 'Planning', 'All of it']
+LADDER = [('01', 'Day-of Coordination', 'The final month and the day, setup to send-off.', '$1,975'),
+          ('02', 'Design + Coordination', 'Adds the look: concept, floor plan and décor team.', '$4,750'),
+          ('03', 'Planning + Design', 'Adds planning from signing: vendors, budget, hotel block.', '$6,500'),
+          ('04', 'Full Planning', 'All of it. You make the choices; we carry the rest.', '$9,500')]
+def ladder2():
+    rows = ''
+    for i, (n, name, adds, price) in enumerate(LADDER):
+        cells = ''.join('<span%s>%s</span>' % (' class="on"' if j <= i else '', LAYERS[j]) for j in range(4))
+        tag = '<span class="tag">Most couples choose</span>' if n == '03' else ''
+        rows += ('<li%s><div class="lad2-top"><span class="n">%s</span>%s</div><h3>%s</h3>'
+                 '<div class="lad2-meter" aria-hidden="true">%s</div>'
+                 '<p class="lad2-adds">%s</p><p class="lad2-from">from %s</p></li>'
+                 % (' class="is-pop"' if n == '03' else '', n, tag, esc(name), cells, esc(adds), price))
+    return '<ol class="lad2 reveal">' + rows + '</ol>\n    '
+home, _n = re.subn(r'<div class="ladder reveal">.*?(?=<div class="pk-foot reveal">)', lambda m: ladder2(), home, count=1, flags=re.S)
+assert _n == 1
 home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning and day-of coordination for multicultural, multi-event weddings.</p>', 1)
 home = home.replace('<span class="hp-logo">The Knot</span><span class="hp-logo">WeddingWire</span><span class="hp-logo">Bloomberg</span><span class="hp-logo">Voyage Michigan</span>', press_html('hp-logo'))
 # Section order (Tariq, Oct 24): hero -> packages -> why Miraj -> weekend traditions -> proof/reviews -> inquire
