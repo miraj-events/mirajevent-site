@@ -422,13 +422,16 @@ QUICK = ('<div class="ct4-quick">'
          '</div>')
 STEPS = ('<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li>'
          '<li><span>3</span>Your customized package within 48 hours</li></ol>')
-def inq_upgrade(h):
+def inq_upgrade(h, slim=False):
     """Inquiry section v2 (Tariq, Oct 25): linen band, photo-backed heading on phones, Call/Text/WhatsApp buttons,
     what-happens-next steps, and an elevated white form card instead of a plain list + flat card."""
     h, n = re.subn(r'<div class="band band-white rule-top" id="inquire"><div class="wrap two-col" style="align-items:start">',
-                   '<div class="band inq2" id="inquire"><div class="wrap inq2-grid">', h, count=1)
+                   '<div class="band inq2%s" id="inquire"><div class="wrap inq2-grid">' % (' inq2-slim' if slim else ''), h, count=1)
     assert n == 1
     def left(m):
+        if slim:  # Home (Tariq, Oct 25): heading + one line only; no steps, no call/text/WhatsApp boxes
+            return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
+                    '<p class="lead">Date in mind or still deciding? We reply within 24 hours.</p></div>')
         return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
                 '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
                 + QUICK + STEPS + '</div>')
@@ -487,7 +490,7 @@ home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
      'Miraj Events specializes in Detroit wedding and event planning, delivering polished, stress free celebrations from start to finish. Day-of coordination to full planning for multi-event weddings.',
-     '/', 'home', inq_upgrade(home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),
+     '/', 'home', inq_upgrade(slim=True, h=home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),
      schema=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "Miraj Events", "url": SITE + "/"}])
 
 # SERVICES

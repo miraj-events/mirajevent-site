@@ -528,3 +528,22 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
 }
 @media (min-width:1100px){.ct4-flat{column-gap:80px}}
 .ct4-flat .ct4-photo img{aspect-ratio:1044/1000}
+
+/* ===== Home inquiry: slim (Oct 25) — heading + form only, tighter spacing, no photo block on phones ===== */
+.inq2-slim{padding-block:36px 40px}
+@media (min-width:900px){.inq2-slim{padding-block:48px 52px}.inq2-slim .inq2-grid{grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:56px;align-items:center}}
+.inq2-slim .inq2-head{gap:10px}
+.inq2-slim .inq2-head .h2{font-size:clamp(28px,3vw,38px)}
+.inq2-slim .inq2-head .lead{font-size:15px}
+.inq2-slim .card{padding:22px 22px 20px}
+@media (min-width:900px){.inq2-slim .card{padding:28px 32px 26px}}
+.inq2-slim .card .form{gap:14px}
+@media (max-width:899px){
+  .inq2-slim{padding-top:32px}
+  .inq2-slim .inq2-head{margin-inline:0;padding:0;background:none;color:var(--fg)}
+  .inq2-slim .inq2-head::before,.inq2-slim .inq2-head::after{display:none}
+  .inq2-slim .inq2-head .eyebrow{color:var(--gold-deep)}
+  .inq2-slim .inq2-head .h2{color:var(--fg)}
+  .inq2-slim .inq2-head .lead{color:var(--fg-2)}
+  .inq2-slim .inq2-grid{gap:18px}
+}
