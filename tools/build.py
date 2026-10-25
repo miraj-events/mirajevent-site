@@ -356,6 +356,7 @@ def press_html(cls):
 
 # HOME
 home = prep('home')
+home = home.replace('<p class="lead">Multicultural, multi-event weddings. One team.</p>', '<p class="lead">Wedding planning and day-of coordination for multicultural, multi-event weddings.</p>', 1)
 home = home.replace('<span class="hp-logo">The Knot</span><span class="hp-logo">WeddingWire</span><span class="hp-logo">Bloomberg</span><span class="hp-logo">Voyage Michigan</span>', press_html('hp-logo'))
 # Section order (Tariq, Oct 24): hero -> packages -> why Miraj -> weekend traditions -> proof/reviews -> inquire
 _wk_i = home.index('<div class="band" id="weekend">')
