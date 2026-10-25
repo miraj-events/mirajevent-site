@@ -494,20 +494,24 @@ page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroi
 ab = prep('about')
 ab = ab.replace('<span class="logo-slot">The Knot</span><span class="logo-slot">WeddingWire</span><span class="logo-slot">Bloomberg</span><span class="logo-slot">Voyage Michigan</span>', press_html('logo-slot'))
 ARTICLES = [
-    ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'April 2025', PRESS[0][1]),
+    ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'April 2025 · Feature', PRESS[0][1]),
     ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview', PRESS[1][1]),
     ('Peerspace', 'Top wedding planners in Detroit: Miraj Events at #2', 'Ranking', PRESS[2][1]),
     ('Shoutout Michigan', 'Meet Mehreen Buksh, founder and lead coordinator', 'Interview', 'https://shoutoutmichigan.com/meet-mehreen-buksh-founder-lead-coordinator/'),
     ('CanvasRebel', 'Meet Mehreen Buksh', 'Interview', 'https://canvasrebel.com/meet-mehreen-buksh/'),
 ]
-press_list = ('<div class="band ab3-linen" id="press"><div class="wrap two-col" style="align-items:start">'
-              '<div class="stack reveal"><p class="eyebrow">Press</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">In the news.</h2></div>'
-              '<ul class="press-list reveal">' + ''.join(
-                  '<li><a href="%s" target="_blank" rel="noopener"><span class="pl-outlet">%s</span><span class="pl-title">%s</span>'
-                  '<span class="pl-meta">%s · Read →</span></a></li>' % (esc(u), esc(o), esc(t), esc(m)) for o, t, m, u in ARTICLES)
-              + '</ul></div></div>')
-# About layout v3 (Tariq, Oct 25): photo hero (no white) with stats; founder on linen; real team photos on dark;
-# how-we-work on ivory; press on linen; dark CTA band
+# Press v2 (Tariq, Oct 25): featured Bloomberg card + four cards, instead of a plain list
+press_list = ('<div class="band ab3-linen ab3-press" id="press"><div class="wrap">'
+              '<div class="ab3-press-head reveal"><p class="eyebrow">Press</p><h2 class="h2">In the news.</h2>'
+              '<p class="lead">Featured in Bloomberg, ranked #2 among Detroit wedding planners by Peerspace, and interviewed by Michigan&#8217;s local press.</p></div>'
+              '<div class="press-grid reveal">' + ''.join(
+                  '<a class="press-card%s" href="%s" target="_blank" rel="noopener"><span class="pc-outlet">%s</span>'
+                  '<span class="pc-title">%s</span><span class="pc-meta">%s</span><span class="pc-read">Read%s &#8594;</span></a>'
+                  % (' feat' if i == 0 else '', esc(u), esc(o), esc(t), esc(m), (' on ' + esc(o)) if i == 0 else '')
+                  for i, (o, t, m, u) in enumerate(ARTICLES))
+              + '</div></div></div>')
+# About layout v4 (Tariq, Oct 25): photo hero with stats; Meet the founder (bio) on linen; team on dark;
+# design direction on ivory (replaces How we work); press cards on linen; dark CTA band
 MONO = '<svg viewBox="0 0 2386 1632" aria-hidden="true" focusable="false"><use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg>' % VERSION
 def team_fig(name, alt, cap, w=900, h=1200):
     return '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(name, alt, w, h), esc(cap))
@@ -537,17 +541,19 @@ ab = (
     '<figcaption><strong>Mehreen Buksh</strong><span>Founder &amp; lead planner</span></figcaption>'
   '</figure>'
   '<div class="ab3-story reveal">'
-    '<p class="eyebrow">Our story</p>'
-    '<h2 class="h2">Built for the multi-event wedding <em>weekend</em>.</h2>'
-    '<p>Our specialty is the multi-event wedding weekend: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
-    '<p>We take a limited number of weddings each season, so every event has a lead planner and one assistant per 100 guests.</p>'
+    '<p class="eyebrow">Meet the founder</p>'
+    '<h2 class="h2">More than a decade of <em>planning</em>.</h2>'
+    '<p>Mehreen Buksh has been planning events for more than ten years. She started young, organizing youth and community events (booking speakers, building timelines and managing budgets) and went on to lead community, public, private and corporate events before focusing on weddings.</p>'
+    '<p>Couples know her for a calm presence, a sharp eye for detail and a habit of solving problems before anyone notices them. She works with a trusted network of vendors across Michigan.</p>'
+    '<p>Today her specialty is the multi-event wedding weekend: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
   '</div>'
 '</div></div>'
 '<div class="band band-dark ab3-team" id="team"><div class="wrap">'
   '<div class="ab3-team-head reveal">'
     '<p class="eyebrow">The team</p>'
     '<h2 class="h2">A Miraj team on every event.</h2>'
-    '<p class="lead">A lead planner and one assistant per 100 guests, on site from setup to send-off.</p>'
+    '<p class="lead">We take a limited number of weddings each season, so every event has a lead planner and one assistant per 100 guests, on site from setup to send-off.</p>'
+    '<p class="ab3-team-sub">Vendors, venue and family stay on one timeline, and problems are solved before they reach you.</p>'
   '</div>'
   '<div class="photo-strip ab3-strip reveal">'
     + team_fig('team-c', 'Mehreen Buksh with a Miraj Events coordinator, both in uniform with name badges', 'Mehreen with the team', 675, 900)
@@ -556,12 +562,21 @@ ab = (
     + team_fig('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 'On site, on headset') +
   '</div>'
 '</div></div>'
-'<div class="band"><div class="wrap two-col" style="align-items:start">'
-  '<div class="stack reveal"><p class="eyebrow">How we work</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">Calm, prepared, and on your side.</h2></div>'
-  '<div class="ab-pillars reveal">'
-    '<div><h3>Calm under pressure</h3><p>Problems are solved before they reach you or your family.</p></div>'
-    '<div><h3>Every tradition respected</h3><p>Prayer times, seating, halal menus and ritual timing are built into the plan.</p></div>'
-    '<div><h3>Clear pricing</h3><p>A flat fee, quoted up front. Never a percentage of your budget.</p></div>'
+'<div class="band ab3-design" id="design"><div class="wrap ab3-dgrid">'
+  '<div class="ab3-dcopy reveal">'
+    '<p class="eyebrow">Design direction</p>'
+    '<h2 class="h2">Professional design <em>direction</em>.</h2>'
+    '<p class="lead">Not just coordination. From Design + Coordination up, we shape the look of your celebration with you and oversee the décor team that brings it to life.</p>'
+    '<ul class="ab3-dlist">'
+      '<li><strong>Concept &amp; palette</strong><span>Colors, centerpieces and the overall look.</span></li>'
+      '<li><strong>Floor plan &amp; stage</strong><span>How the room is laid out, and the focal points guests see.</span></li>'
+      '<li><strong>Décor team &amp; install</strong><span>We direct your décor vendors and oversee the setup.</span></li>'
+    '</ul>'
+    '<p class="small">Décor itself is billed by the vendor. <a class="textlink" href="/services">See Design + Coordination &#8594;</a></p>'
+  '</div>'
+  '<div class="ab3-dph reveal">'
+    + pic('head-table', 'Candlelit head table with draped linens and warm florals', 900, 1200, 'dph-a')
+    + pic('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 900, 1200, 'dph-b') +
   '</div>'
 '</div></div>'
 + press_list +

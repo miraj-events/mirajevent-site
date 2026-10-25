@@ -377,3 +377,53 @@ html.menu-open .sticky-cta{display:none}
 .mn-list .mn-t{font-size:25px;line-height:1.1}
 .mn-list a::after{grid-row:auto;font-size:16px}
 .mn-foot .btn{min-height:46px}
+
+/* ===== Package ladder colors v2 (Oct 25): less brown — charcoal "included" chips, soft outlines, champagne accents ===== */
+.lad2-meter span{border:1px solid #E2DACB;background:transparent;color:#B1A898}
+.lad2-meter span.on,.lad2 .is-pop .lad2-meter span.on{background:var(--fg);border-color:var(--fg);color:#EADCB8}
+.lad2 .tag{background:#EFE4CC;color:#6E5520}
+@media (max-width:859px){
+  .lad2 li.is-pop{background:#FFFFFF;margin-inline:-16px;padding:22px 16px;border-top:0;box-shadow:inset 3px 0 0 #C9A85E}
+  .lad2 li.is-pop+li{border-top:0}
+}
+@media (min-width:860px){
+  .lad2 li.is-pop{background:#FFFFFF;margin:-16px;padding:16px;box-shadow:0 0 0 1px #E8DFCC,0 14px 32px rgba(43,42,38,.06)}
+}
+
+/* ===== About v4 additions (Oct 25) ===== */
+.ab3-team-sub{color:var(--on-dark-2);max-width:40em;font-size:15px}
+.ab3-design{background:var(--bg)}
+.ab3-dgrid{display:grid;gap:36px;align-items:center}
+@media (min-width:860px){.ab3-dgrid{grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:72px}}
+.ab3-dcopy{display:flex;flex-direction:column;gap:16px}
+.ab3-dcopy .h2{font-size:clamp(30px,3.4vw,46px)}
+.ab3-dcopy .h2 em{font-style:italic;color:var(--gold-deep)}
+.ab3-dcopy .lead{max-width:34em}
+.ab3-dlist{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:0;border-top:1px solid var(--rule)}
+.ab3-dlist li{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:4px 18px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.ab3-dlist strong{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.2;color:var(--fg)}
+.ab3-dlist span{font-size:15px;color:var(--fg-2);align-self:center}
+@media (max-width:600px){.ab3-dlist li{grid-template-columns:1fr}}
+.ab3-dcopy .small a{margin-left:6px}
+.ab3-dph{position:relative;padding:0 0 18% 0}
+.ab3-dph img{display:block;object-fit:cover;aspect-ratio:3/4;height:auto}
+.ab3-dph .dph-a{width:78%}
+.ab3-dph .dph-b{position:absolute;right:0;bottom:0;width:46%;border:8px solid var(--bg);box-shadow:0 18px 40px rgba(43,42,38,.14)}
+.ab3-press-head{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;max-width:760px}
+.ab3-press-head .h2{font-size:clamp(30px,3.4vw,46px)}
+.press-grid{display:grid;gap:14px}
+@media (min-width:760px){.press-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.press-card.feat{grid-column:1 / -1}}
+@media (min-width:1080px){.press-grid{grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr))}.press-card.feat{grid-column:auto;grid-row:span 2}}
+.press-card{display:flex;flex-direction:column;gap:10px;padding:24px 24px 22px;background:#FFFFFF;border:1px solid #E6DFD0;color:var(--fg);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.press-card:hover{transform:translateY(-2px);border-color:#C9A85E;box-shadow:0 16px 36px rgba(43,42,38,.08)}
+.pc-outlet{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-deep)}
+.pc-title{font-family:var(--display);font-size:24px;line-height:1.2}
+.pc-meta{font-size:13px;color:var(--muted)}
+.pc-read{margin-top:auto;padding-top:8px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--fg)}
+.press-card.feat{background:var(--fg);border-color:var(--fg);color:#F8F5EE;padding:32px 30px 28px;justify-content:flex-start}
+.press-card.feat .pc-outlet{color:#D9BC7A}
+.press-card.feat .pc-title{font-size:clamp(28px,3vw,40px);line-height:1.12;color:#F8F5EE}
+.press-card.feat .pc-meta{color:#CFCAC0}
+.press-card.feat .pc-read{color:#D9BC7A}
+.press-card.feat:hover{border-color:#C9A85E}
+@media (max-width:759px){.press-grid{gap:10px}.press-card{padding:18px 18px 16px;gap:6px}.press-card .pc-title{font-size:21px}.press-card .pc-read{padding-top:4px}.press-card.feat{padding:24px 20px 20px}}
