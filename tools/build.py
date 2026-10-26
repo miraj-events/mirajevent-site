@@ -947,10 +947,23 @@ page('day-of-coordination.html', 'Day-of Wedding Coordinator in Detroit, MI | Mi
 
 # THANK YOU (Google Ads Form Fill conversion fires here, same send_to as the Squarespace site)
 th = prep('thanks')
-# Thank-you page v3 (Tariq, Oct 26 pm): the Miraj team front and centre, on phones too. A layered collage of
-# team photos assembles once on arrival (about 4.5 s, then holds still, so no pause control is needed under
-# WCAG 2.2.2); reduced-motion visitors and no-JS get the finished collage. "What happens next" + Call / Text /
-# WhatsApp stay. Conversion script below is unchanged.
+# Thank-you page v3 (Tariq, Oct 26 pm): a collage that assembles once on arrival (about 3.5 s, then holds still,
+# so no pause control is needed under WCAG 2.2.2); reduced-motion visitors and no-JS get the finished collage.
+# v3.1 (Tariq, Oct 26 pm): the centre is the gold ME monogram on graphite (outline draws in, fills with gold,
+# one glint, then the wordmark), with the two team photos laid over its corners. "What happens next" + Call /
+# Text / WhatsApp stay. Conversion script below is unchanged.
+ME_D = re.search(r'\sd="([^"]+)"', sprite_symbol).group(1)
+TT_BRAND = ('<div class="tt-main tt-brand" aria-hidden="true">'
+            '<svg class="tt-me" viewBox="44 45 2386 1632" focusable="false"><defs>'
+            '<linearGradient id="ttg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9D29A"/>'
+            '<stop offset=".5" stop-color="#C9A85E"/><stop offset="1" stop-color="#A8873C"/></linearGradient>'
+            '<linearGradient id="tts" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFF7E2" stop-opacity="0"/>'
+            '<stop offset=".5" stop-color="#FFF7E2" stop-opacity=".9"/><stop offset="1" stop-color="#FFF7E2" stop-opacity="0"/></linearGradient>'
+            '<path id="ttme" pathLength="1" d="' + ME_D + '"/>'
+            '<clipPath id="ttclip"><use href="#ttme"/></clipPath></defs>'
+            '<use class="tt-me-fill" href="#ttme"/><use class="tt-me-line" href="#ttme"/>'
+            '<g clip-path="url(#ttclip)"><rect class="tt-me-shine" x="-700" y="0" width="700" height="1800" fill="url(#tts)"/></g>'
+            '</svg><span class="tt-word">MIRAJ EVENTS</span></div>')
 TT_JS = ('<script>(function(){var s=document.getElementById("ttStage");if(!s){return;}s.classList.add("tt-pre");'
          'var done=false,go=function(){if(!done){done=true;s.classList.add("tt-go");}};'
          'var im=[].slice.call(s.querySelectorAll("img"));'
@@ -959,7 +972,7 @@ TT_JS = ('<script>(function(){var s=document.getElementById("ttStage");if(!s){re
 TY = ('<section class="ty"><div class="wrap ty-grid">'
       '<div class="ty-head"><p class="eyebrow">Thank you</p><h1 class="h1">We&#8217;ve got your inquiry.</h1></div>'
       '<figure class="ty-team"><div class="tt-stage" id="ttStage">'
-        '<div class="tt-main">' + pic('team-group', 'The Miraj Events team in black uniforms with gold name badges at a venue', 1500, 1000, eager=True) + '</div>'
+        + TT_BRAND +
         '<div class="tt-card tt-a">' + pic('team-c', 'Mehreen Buksh with a Miraj Events coordinator, both in uniform with name badges', 675, 900, eager=True) + '</div>'
         '<div class="tt-card tt-b">' + pic('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 900, 1200, eager=True) + '</div>'
       '</div><figcaption class="tt-cap"><span class="tt-k">Your Miraj team</span><span class="tt-line">On every event, from the first call to send-off.</span></figcaption></figure>'

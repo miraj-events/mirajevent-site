@@ -820,23 +820,37 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 .tt-card{background:#fff;padding:6px;box-shadow:0 14px 30px rgba(43,42,38,.22)}
 .tt-a{left:0;bottom:0;width:29%;transform:rotate(-3.5deg)}
 .tt-b{right:0;top:0;width:22%;transform:rotate(3deg)}
-.tt-main img{display:block;width:100%;height:100%;object-fit:cover}
 .tt-card img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
+/* centre panel (v3.1): gold ME monogram + wordmark on graphite */
+.tt-brand{background:radial-gradient(120% 90% at 50% 40%,#2E2F33 0%,#202124 70%);display:grid;place-content:center;justify-items:center;gap:6%;container-type:inline-size}
+.tt-me{display:block;width:38cqi;height:auto;overflow:visible}
+.tt-me-fill{fill:url(#ttg)}
+.tt-me-line{fill:none;stroke:#E6CC90;stroke-width:12;stroke-dasharray:1 1;opacity:0}
+.tt-me-shine{opacity:0}
+.tt-word{font-family:var(--display);font-weight:500;font-size:13px;font-size:clamp(10px,3.6cqi,15px);letter-spacing:.42em;padding-left:.42em;color:#D9BC7A;line-height:1}
 .tt-cap{display:grid;gap:4px;margin-top:16px;text-align:center}
 .tt-k{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-deep)}
 .tt-line{font-family:var(--display);font-style:italic;font-size:19px;line-height:1.3;color:var(--fg)}
 @media (prefers-reduced-motion:no-preference){
-  .tt-pre .tt-main,.tt-pre .tt-card,.tt-pre + .tt-cap{opacity:0}
+  .tt-pre .tt-main,.tt-pre .tt-card,.tt-pre .tt-me-fill,.tt-pre .tt-word,.tt-pre + .tt-cap{opacity:0}
   .tt-go .tt-main{animation:tt-main 1.1s cubic-bezier(.2,.7,.2,1) both}
   .tt-go .tt-main::after{animation:tt-frame .9s ease-out .55s both}
-  .tt-go .tt-main img{animation:tt-kb 3.4s ease-out 1s both}
+  .tt-go .tt-me{animation:tt-me-in 1.9s cubic-bezier(.2,.7,.2,1) .3s both}
+  .tt-go .tt-me-line{animation:tt-me-line 2.2s ease-in-out .3s both}
+  .tt-go .tt-me-fill{animation:tt-fade .9s ease-out 1.5s both}
+  .tt-go .tt-me-shine{animation:tt-shine 1.1s ease-in-out 2.3s both}
+  .tt-go .tt-word{animation:tt-word 1s ease-out 1.9s both}
   .tt-go .tt-a{animation:tt-a .95s cubic-bezier(.2,.7,.2,1) .45s both}
   .tt-go .tt-b{animation:tt-b .95s cubic-bezier(.2,.7,.2,1) .7s both}
-  .tt-go + .tt-cap{animation:tt-cap .8s ease-out 1.15s both}
+  .tt-go + .tt-cap{animation:tt-cap .8s ease-out 2.3s both}
 }
 @keyframes tt-main{from{opacity:0;transform:scale(1.05);clip-path:inset(7%)}to{opacity:1;transform:none;clip-path:inset(-60px)}}
 @keyframes tt-frame{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
-@keyframes tt-kb{from{transform:scale(1)}to{transform:scale(1.045)}}
+@keyframes tt-me-in{from{transform:scale(.93) translateY(4%)}to{transform:none}}
+@keyframes tt-me-line{0%{stroke-dashoffset:1;opacity:1}75%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes tt-fade{from{opacity:0}to{opacity:1}}
+@keyframes tt-shine{from{opacity:1;transform:translateX(0)}to{opacity:1;transform:translateX(3300px)}}
+@keyframes tt-word{from{opacity:0;letter-spacing:.7em}to{opacity:1;letter-spacing:.42em}}
 @keyframes tt-a{from{opacity:0;transform:translate(-14px,30px) rotate(-10deg)}to{opacity:1;transform:rotate(-3.5deg)}}
 @keyframes tt-b{from{opacity:0;transform:translate(16px,-24px) rotate(10deg)}to{opacity:1;transform:rotate(3deg)}}
 @keyframes tt-cap{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -848,6 +862,17 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
   .ty-head{grid-area:head;align-self:end}
   .ty-body{grid-area:body;align-self:start}
   .ty-team{grid-area:team;align-self:center;margin:0}
+}
+
+/* Contact packages on phones (Tariq, Oct 26 pm): slim two-line rows instead of tall blocks.
+   Left: number over name. Right: price over "Details". */
+@media (max-width:699px){
+  .tiers .tier{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;grid-auto-flow:column;
+    column-gap:16px;row-gap:3px;align-items:baseline;padding:13px 18px 14px}
+  .tiers .tier .eyebrow{font-size:10.5px;letter-spacing:.18em}
+  .tiers .tier-name{font-size:20px}
+  .tiers .tier-price{font-size:18px;text-align:right;white-space:nowrap}
+  .tiers .tier .more{margin-top:0;padding-top:0;font-size:10.5px;text-align:right;white-space:nowrap}
 }
 
 /* Contact: less space under the form on phones now that the steps moved to the thank-you page (Oct 26) */
