@@ -72,6 +72,19 @@
   status = 301
   force = true
 
+# old Squarespace URLs Google still crawls (Search Console 404 list, Oct 26)
+[[redirects]]
+  from = "/get-in-touch"
+  to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/shop/*"
+  to = "/"
+  status = 301
+  force = true
+
 # ---------- headers ----------
 [[headers]]
   for = "/*"

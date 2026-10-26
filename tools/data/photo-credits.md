@@ -27,6 +27,7 @@ Used as mood/atmosphere imagery only, not presented as Miraj Events' own events.
 | img-team-a / team-c / team-group | Team photos from the business's own photo album (team-group = cropped from the full-team photo; team-c mirrored so name badges read correctly). Before launch: confirm every pictured team member is OK appearing on the website. |
 | img-design-stage (Services "Design direction") | Floral stage from a Miraj Events wedding, from the business's own album; cropped to the stage so the couple's floor monogram is not shown; no guests pictured |
 | img-dz-stage / florals / ceremony / candles / tables / room / lounge / centerpiece (Design page "Our work") | Miraj Events' own album photos, cropped so no guests, couples or monograms show. Before launch: Mehreen confirms each one. |
+| img-dz-hall / candlestage / blossom / dinner / roses / gala (Design page "Our work", Oct 26) | Frames from Miraj Events' shared Google Photos album "Miraj Events social media content" (items 1095, 80, 346, 553, 361, 274 in album order on Oct 26, 2026), captured at screen resolution and cropped so no guests, couples, names or monograms show. Before launch: Mehreen confirms each one. |
 | img-contact-side / contact-sm | The photo already used on the current mirajevent.com Contact page (a client event; same use as today) |
 
 Only real Miraj Events photos are used for people/team. Replace stock with professional photos of Miraj events as they become available (ask event photographers for web-use rights with credit).
