@@ -496,7 +496,7 @@ form.js-inquiry[data-step="2"] .form-meta::after{width:100%}
 
 /* ===== Sticky CTA: slimmer on phones, steps aside near forms + footer (Oct 25) ===== */
 .sticky-cta{transition:transform .3s ease,opacity .3s ease}
-@media (max-width:899px){.sticky-cta{min-height:48px;padding-top:2px;padding-bottom:calc(2px + env(safe-area-inset-bottom,0px));font-size:11px}body{padding-bottom:calc(50px + env(safe-area-inset-bottom,0px))}}
+@media (max-width:899px){.sticky-cta{min-height:48px;padding-top:2px;padding-bottom:calc(2px + env(safe-area-inset-bottom,0px));font-size:11px}}
 html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:none}
 @media (min-width:900px){html.cta-off .sticky-cta{transform:translateY(20px)}}
 
@@ -556,6 +556,12 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
   .foot2 .foot-links{max-width:none;justify-content:flex-end;gap:12px 28px}
   .f2-bottom{flex-direction:row;justify-content:space-between;padding-top:20px}
   .f2-legal{order:-1}
+}
+/* Oct 26 (Tariq): no blank space under the footer on phones. The sticky button already hides while the footer is on screen,
+   so the page no longer reserves room for it; the footer keeps clear of the iPhone home bar instead. */
+@media (max-width:899px){
+  body{padding-bottom:0}
+  .foot2{padding-block:28px calc(20px + env(safe-area-inset-bottom,0px))}
 }
 
 /* ---------- Design page /design (Tariq, Oct 25): process, sample brief, event palettes, work, what's included ---------- */
