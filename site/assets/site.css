@@ -1104,3 +1104,11 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
   .f2-bottom{flex-direction:row;justify-content:space-between;padding-top:20px}
   .f2-legal{order:-1}
 }
+/* About: design direction as a slim text band (Oct 25) — no photos; links to the Design + Coordination package */
+.ab3-dslim-band{background:var(--bg)}
+.ab3-dslim{display:grid;gap:14px;align-items:center}
+@media (min-width:860px){.ab3-dslim{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px}}
+.ab3-dslim .h2{font-size:clamp(28px,3.2vw,42px)}
+.ab3-dslim .h2 em{font-style:italic;color:var(--gold-deep)}
+.ab3-dslim-txt{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.ab3-dslim-txt .textlink{color:var(--gold-deep)}

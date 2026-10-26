@@ -625,22 +625,10 @@ ab = (
     + team_fig('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 'On site, on headset') +
   '</div>'
 '</div></div>'
-'<div class="band ab3-design" id="design"><div class="wrap ab3-dgrid">'
-  '<div class="ab3-dcopy reveal">'
-    '<p class="eyebrow">Design direction</p>'
-    '<h2 class="h2">Professional design <em>direction</em>.</h2>'
-    '<p class="lead">Not just coordination. From Design + Coordination up, we shape the look of your celebration with you and oversee the décor team that brings it to life.</p>'
-    '<ul class="ab3-dlist">'
-      '<li><strong>Concept &amp; palette</strong><span>Colors, centerpieces and the overall look.</span></li>'
-      '<li><strong>Floor plan &amp; stage</strong><span>How the room is laid out, and the focal points guests see.</span></li>'
-      '<li><strong>Décor team &amp; install</strong><span>We direct your décor vendors and oversee the setup.</span></li>'
-    '</ul>'
-    '<p class="small">Décor itself is billed by the vendor. <a class="textlink" href="/services">See Design + Coordination &#8594;</a></p>'
-  '</div>'
-  '<div class="ab3-dph reveal">'
-    + pic('head-table', 'Candlelit head table with draped linens and warm florals', 900, 1200, 'dph-a')
-    + pic('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 900, 1200, 'dph-b') +
-  '</div>'
+'<div class="band ab3-dslim-band" id="design-direction"><div class="wrap ab3-dslim reveal">'
+  '<div><p class="eyebrow">Design direction</p><h2 class="h2">Professional design <em>direction</em>.</h2></div>'
+  '<div class="ab3-dslim-txt"><p class="lead">From Design + Coordination up, we shape the look of your celebration with you, from colors and centerpieces to the stage, and direct the décor team that brings it to life.</p>'
+    '<a class="textlink" href="/services#design">See Design + Coordination &#8594;</a></div>'
 '</div></div>'
 + press_list +
 '<div class="band band-dark ab-cta"><div class="wrap ab-cta-in">'
