@@ -92,14 +92,14 @@
   (function(){
     var wrap=$('.weekend'); if(!wrap){ return; }
     var box=$('.chips',wrap), chips=$$('.chip',wrap), lists=$$('.wk',wrap), i=0;
-    function show(w){ chips.forEach(function(x){ x.setAttribute('aria-selected',String(x.getAttribute('data-w')===w)); }); lists.forEach(function(l){ l.hidden=(l.getAttribute('data-w')!==w); }); }
+    function show(w){ chips.forEach(function(x){ x.setAttribute('aria-pressed',String(x.getAttribute('data-w')===w)); }); lists.forEach(function(l){ l.hidden=(l.getAttribute('data-w')!==w); }); }
     chips.forEach(function(c,idx){ c.addEventListener('click',function(){ box.classList.remove('auto'); i=idx; show(c.getAttribute('data-w')); }); });
     box.addEventListener('animationend',function(e){ if(e.animationName!=='chipfill'||!box.classList.contains('auto')){ return; } i=(i+1)%chips.length; show(chips[i].getAttribute('data-w')); });
     wrap.addEventListener('mouseenter',function(){ box.classList.add('paused'); });
     wrap.addEventListener('mouseleave',function(){ box.classList.remove('paused'); });
     wrap.addEventListener('focusin',function(){ box.classList.add('paused'); });
     wrap.addEventListener('focusout',function(){ box.classList.remove('paused'); });
-    if('IntersectionObserver' in window){ var o=new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ box.classList.add('auto'); o.disconnect(); } }); },{threshold:0.35}); o.observe(wrap); }
+    /* Accessibility (Oct 25): no auto-advance (WCAG 2.2.2); traditions change only when a chip is pressed */
   })();
 
   /* ---------- Google reviews carousel ---------- */
@@ -118,7 +118,7 @@
       slides[cur]._check();
     }
     function stop(){ if(timer){ clearInterval(timer); timer=null; } }
-    function start(){ stop(); if(reduce||paused||n<2){ return; } timer=setInterval(function(){ go(cur+1); },7000); }
+    function start(){ stop(); /* Accessibility (Oct 25): no auto-advance (WCAG 2.2.2); reviews move only on arrows, dots or swipe */ }
     $('.rv-prev',rv).addEventListener('click',function(){ go(cur-1); start(); });
     $('.rv-next',rv).addEventListener('click',function(){ go(cur+1); start(); });
     dots.forEach(function(d,k){ d.addEventListener('click',function(){ go(k); start(); }); });
@@ -140,7 +140,9 @@
     var tiers=$$('.tiers .tier[data-pk]'), details=$$('.pkd',modal), current=null, lastTier=null;
     var names={'day-of':'Day-of Coordination','design':'Design + Coordination','planning':'Planning + Design','full':'Full Planning'};
     function close(){ modal.hidden=true; document.body.style.overflow=''; current=null; tiers.forEach(function(t){ t.setAttribute('aria-expanded','false'); }); if(lastTier){ lastTier.focus({preventScroll:true}); } }
-    function open(pk,btn){ current=pk; lastTier=btn||null; modal.hidden=false; document.body.style.overflow='hidden'; details.forEach(function(d){ d.hidden=(d.getAttribute('data-pk')!==pk); }); tiers.forEach(function(t){ t.setAttribute('aria-expanded',String(t.getAttribute('data-pk')===pk)); }); var x=$('.modal-x',modal); if(x){ x.focus({preventScroll:true}); } gt('event','view_package',{package:names[pk]}); }
+    modal.removeAttribute('aria-labelledby');
+    modal.addEventListener('keydown',function(e){ if(e.key!=='Tab'){ return; } var f=$$('a[href],button:not([disabled]),input:not([type=hidden]),select,textarea,[tabindex]:not([tabindex="-1"])',modal).filter(function(x){ return x.offsetParent!==null; }); if(!f.length){ return; } var a=f[0], z=f[f.length-1]; if(e.shiftKey&&document.activeElement===a){ e.preventDefault(); z.focus(); } else if(!e.shiftKey&&document.activeElement===z){ e.preventDefault(); a.focus(); } });
+    function open(pk,btn){ current=pk; lastTier=btn||null; modal.setAttribute('aria-label',names[pk]+' package details'); modal.hidden=false; document.body.style.overflow='hidden'; details.forEach(function(d){ d.hidden=(d.getAttribute('data-pk')!==pk); }); tiers.forEach(function(t){ t.setAttribute('aria-expanded',String(t.getAttribute('data-pk')===pk)); }); var x=$('.modal-x',modal); if(x){ x.focus({preventScroll:true}); } gt('event','view_package',{package:names[pk]}); }
     tiers.forEach(function(t){ t.addEventListener('click',function(){ open(t.getAttribute('data-pk'),t); }); });
     $$('[data-close]',modal).forEach(function(b){ b.addEventListener('click',close); });
     modal.addEventListener('click',function(e){ if(e.target===modal){ close(); } });

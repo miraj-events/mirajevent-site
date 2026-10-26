@@ -66,6 +66,7 @@ body = {v: view(v) for v in ['home', 'services', 'about', 'contact', 'thanks']}
 # ---------------------------------------------------------------- CSS clean-up
 css = re.sub(r'/\* preview controls.*?(?=/\* reveal on scroll)', '', css, flags=re.S)
 css = css.replace('/* Layout: one file, five views (home, services, about, contact, thanks) switched by hash;', '/* Miraj Events site styles. Layout:')
+css = css.replace('[aria-selected="true"]', '[aria-pressed="true"]')  # chips are toggle buttons now (Oct 25)
 css += open(os.path.join(ASSETS_SRC, 'site-extra.css'), encoding='utf-8').read()
 
 
@@ -107,14 +108,14 @@ def reviews_block(variant=''):
     for i, rv in enumerate(r['reviews']):
         paras = ''.join('<p>%s</p>' % esc(p.strip()) for p in rv['text'].split('\n\n') if p.strip())
         slides.append(
-            '<article class="rv-slide%s" role="group" aria-roledescription="slide" aria-label="%d of %d"%s>'
+            '<div class="rv-slide%s" role="group" aria-roledescription="slide" aria-label="%d of %d"%s>'
             '<div class="rv-who"><span class="rv-av" aria-hidden="true">%s</span>'
             '<div class="rv-id"><strong>%s</strong><span>%s</span></div>'
             '<span class="rv-src">Google</span></div>'
-            '<div class="rv-st" aria-label="%d out of 5 stars">★★★★★</div>'
+            '<div class="rv-st" role="img" aria-label="%d out of 5 stars">★★★★★</div>'
             '<div class="rv-text" id="rvt-%s-%d">%s</div>'
             '<button type="button" class="rv-more" aria-expanded="false" aria-controls="rvt-%s-%d">Read more</button>'
-            '</article>' % (
+            '</div>' % (
                 ' is-active' if i == 0 else '', i + 1, n, '' if i == 0 else ' aria-hidden="true"',
                 esc(rv['name'][0]), esc(rv['name']), esc(rv['role']), rv['rating'],
                 variant or 'x', i, paras, variant or 'x', i))
@@ -232,7 +233,7 @@ def org_schema():
             "Detroit, MI", "Sterling Heights, MI", "Troy, MI", "Rochester Hills, MI", "Dearborn, MI", "Ann Arbor, MI",
             "Novi, MI", "Farmington Hills, MI", "Bloomfield Hills, MI", "Toledo, OH", "Chicago, IL"]],
         "founder": {"@type": "Person", "name": "Mehreen Buksh"},
-        "sameAs": [IG, FB],
+        "sameAs": [IG, FB] + [u for _, _, u in LISTINGS],
         "knowsAbout": ["Wedding planning", "Day-of wedding coordination", "Multi-event wedding weekends",
                        "South Asian weddings", "Arab and Chaldean weddings", "Interfaith weddings", "Event planning"],
     }
@@ -264,6 +265,15 @@ def ld(obj):
 
 
 # ---------------------------------------------------------------- page chrome
+# Speed (Oct 25): start the hero photo download with the CSS instead of after it (LCP)
+HERO = {'home': 'hero', 'services': 'svc', 'about': 'about', 'design': 'dz-hero'}
+def hero_preload(view):
+    k = HERO.get(view)
+    if not k:
+        return ''
+    return ('<link rel="preload" as="image" href="/assets/img-%s-sm.webp" media="(max-width:700px)" fetchpriority="high">\n'
+            '<link rel="preload" as="image" href="/assets/img-%s-md.webp" imagesrcset="/assets/img-%s-md.webp 1400w, /assets/img-%s-lg.webp 2400w" imagesizes="100vw" media="(min-width:701px)" fetchpriority="high">\n' % (k, k, k, k))
+
 def head(title, desc, path, view, schema=(), noindex=False):
     canonical = SITE + (path if path != '/' else '/')
     robots = '<meta name="robots" content="noindex, follow">' if noindex else '<meta name="robots" content="index, follow, max-image-preview:large">'
@@ -292,7 +302,7 @@ def head(title, desc, path, view, schema=(), noindex=False):
 <link rel="preload" href="/assets/font-cg-300-i.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/font-dm-300.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/font-dm-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css?v={VERSION}">
+{hero_preload(view)}<link rel="stylesheet" href="/assets/site.css?v={VERSION}">
 <!-- Google tag (GA4 {GA4} + Google Ads {ADS}) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA4}"></script>
 <script>
@@ -348,7 +358,7 @@ def footer(page):
     # Footer v2 (Tariq, Oct 25): two tidy rows — brand + links, then a hairline with legal + contact;
     # centered and stacked on phones, split left/right on desktop
     links = [('/about', 'About'), ('/services', 'Services'), ('/design', 'Design'), ('/contact', 'Contact Us'),
-             (IG, 'Instagram'), (FB, 'Facebook'), ('/privacy', 'Privacy')]
+             (IG, 'Instagram'), (FB, 'Facebook'), ('/privacy', 'Privacy'), ('/accessibility', 'Accessibility')]
     f = ('<div class="wrap foot2">'
          '<div class="f2-top">'
            '<a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram">'
@@ -361,7 +371,8 @@ def footer(page):
          '</div>'
          '</div>') % (VERSION, ''.join('<a href="%s">%s</a>' % (u, t) for u, t in links), EMAIL, EMAIL, TEL, PHONE,
                       datetime.date.today().year)
-    sticky = '<a class="sticky-cta" href="%s">Check availability</a>' % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form')
+    sticky = ('<aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="%s">Check availability</a></aside>'
+              % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form'))
     return ('<footer class="rule-top">' + f + '</footer>\n' + sticky + '\n'
             '<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % VERSION)
 
@@ -374,9 +385,29 @@ def nodate(h):
                   '<label for="h-date">Event date or season</label><input id="h-date" name="event_date" type="text" placeholder="e.g. June 2027" autocomplete="off">' + NODATE)
     return h
 
+CRUMBS = {'/services': 'Services', '/design': 'Design', '/day-of-coordination': 'Day-of Coordination', '/about': 'About',
+          '/contact': 'Contact', '/privacy': 'Privacy Policy', '/accessibility': 'Accessibility'}
+def breadcrumbs(path):
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
+        {"@type": "ListItem", "position": 2, "name": CRUMBS[path], "item": SITE + path}]}
+
+NEWTAB = ' (opens in a new tab)'
+def newtab(h):
+    """Accessibility (Oct 25): links that open a new tab say so to screen readers (WCAG G201)."""
+    def fix(m):
+        a = m.group(0)
+        if 'aria-label="' in m.group(1):
+            return re.sub(r'aria-label="([^"]*)"', lambda k: 'aria-label="%s%s"' % (k.group(1), NEWTAB), a, count=1)
+        return a[:-4] + '<span class="sr-only">%s</span></a>' % NEWTAB
+    return re.sub(r'<a\b([^>]*\btarget="_blank"[^>]*)>.*?</a>', fix, h, flags=re.S)
+
 def page(fname, title, desc, path, view, main_html, schema=(), noindex=False, extra_js=''):
     main_html = nodate(main_html)
+    if path not in ('/', '/404') and not noindex:
+        schema = list(schema) + [breadcrumbs(path)]
     out = head(title, desc, path, view, schema, noindex) + header() + '<main id="main">\n' + main_html + '\n</main>\n' + footer(view)
+    out = newtab(out)
     if extra_js:
         out = out.replace('</body>', extra_js + '\n</body>')
     os.makedirs(os.path.dirname(os.path.join(OUT, fname)), exist_ok=True)
@@ -498,6 +529,15 @@ home = home[:_wk_i] + _pk + _why + _wk + home[_pr_i:]
 home = home.replace('<p class="eyebrow">Wedding planner · Detroit · Toledo · Chicago</p>',
                     '<div class="hero-ey"><p class="eyebrow">Wedding planner</p><p class="hero-cities">Detroit · Toledo · Chicago</p></div>', 1)
 home = home.replace('<div class="hero">', '<div class="hero has-photo">', 1)
+# Accessibility (Oct 25): labelled group for the press strip; tradition chips = toggle buttons controlling the list below
+assert home.count('<div class="hero-press" aria-label="As featured in">') == 1
+home = home.replace('<div class="hero-press" aria-label="As featured in">', '<div class="hero-press" role="group" aria-label="As featured in">')
+assert home.count('<div class="chips" role="tablist" aria-label="Choose a tradition">') == 1
+home = home.replace('<div class="chips" role="tablist" aria-label="Choose a tradition">', '<div class="chips" role="group" aria-label="Choose a tradition">')
+home = re.sub(r'<button type="button" class="chip" role="tab" aria-selected="(true|false)" data-w="(\d)">',
+              r'<button type="button" class="chip" aria-pressed="\1" aria-controls="wk-\2" data-w="\2">', home)
+home = re.sub(r'<ol class="wk" data-w="(\d)"', r'<ol class="wk" id="wk-\1" data-w="\1"', home)
+assert 'role="tab"' not in home
 home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<picture class="hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-hero-sm.webp">'
     '<img src="/assets/img-hero-md.webp" srcset="/assets/img-hero-md.webp 1400w, /assets/img-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
@@ -511,11 +551,11 @@ _strip = ('<div class="band band-white rule-top"><div class="wrap">' + photo_str
      'Seating, ritual timing and the finishing touches, checked before your guests arrive.')]) + '</div></div>')
 home = home.replace('<div class="band band-white rule-top"><div class="wrap">\n    <div class="why-head', _strip + '\n\n  <div class="band rule-top"><div class="wrap">\n    <div class="why-head', 1)
 home = home.replace('<a class="rating" href="#" aria-label="Read our Google reviews"><span class="stars" aria-hidden="true">★</span><span>See our Google reviews →</span></a>',
-                    '<a class="rating" href="#reviews" aria-label="Rated %.1f out of 5 on Google. Read reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
+                    '<a class="rating" href="#reviews" aria-label="%.1f on Google. Read our reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
-     'Miraj Events specializes in Detroit wedding and event planning, delivering polished, stress free celebrations from start to finish. Day-of coordination to full planning for multi-event weddings.',
+     'Detroit wedding planner for multicultural, multi-event weddings. Day-of coordination to full planning across Metro Detroit, Toledo and Chicago.',
      '/', 'home', inq_upgrade(slim=True, h=home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),
      schema=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "Miraj Events", "url": SITE + "/"}])
 
@@ -564,28 +604,28 @@ _dq = 'and oversee the décor team that brings it to life. Décor itself is bill
 assert svc.count(_dq) == 1
 svc = svc.replace(_dq, 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor. <a href="/design">See how design direction works</a>.</p></details>')
 page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroit',
-     'Day-of coordination from $1,975, design + coordination, planning + design and full wedding planning in Metro Detroit, Toledo and Chicago. Multi-event wedding weekends packaged together.',
-     '/services', 'services', svc, schema=[services_schema(), faq_schema(svc)])
+     'Wedding planning packages in Metro Detroit: day-of coordination from $1,975, design + coordination, planning + design and full planning.',
+     '/services', 'services', svc, schema=[org_schema(), services_schema(), faq_schema(svc)])
 
 # ABOUT
 ab = prep('about')
 ab = ab.replace('<span class="logo-slot">The Knot</span><span class="logo-slot">WeddingWire</span><span class="logo-slot">Bloomberg</span><span class="logo-slot">Voyage Michigan</span>', press_html('logo-slot'))
 ARTICLES = [
-    ('Peerspace', 'Top wedding planners in Detroit', 'Ranked #2 · Ranking', PRESS[2][1]),
-    ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview · How Mehreen got started and what sets Miraj apart', PRESS[1][1]),
-    ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'April 2025 · Feature', PRESS[0][1]),
+    ('Peerspace', 'Top wedding planners in Detroit', 'Ranking', PRESS[2][1]),
+    ('Voyage Michigan', 'Meet Mehreen Buksh of Miraj Events', 'Interview', PRESS[1][1]),
+    ('Bloomberg', 'Stock market drop has couples cutting wedding costs', 'Feature · April 2025', PRESS[0][1]),
     ('Shoutout Michigan', 'Meet Mehreen Buksh, founder and lead coordinator', 'Interview', 'https://shoutoutmichigan.com/meet-mehreen-buksh-founder-lead-coordinator/'),
     ('CanvasRebel', 'Meet Mehreen Buksh', 'Interview', 'https://canvasrebel.com/meet-mehreen-buksh/'),
 ]
 # Press v2 (Tariq, Oct 25): Peerspace #2 and Bloomberg featured on top, three interviews below
 press_list = ('<div class="band ab3-linen ab3-press" id="press"><div class="wrap">'
               '<div class="ab3-press-head reveal"><p class="eyebrow">Press</p><h2 class="h2">In the news.</h2>'
-              '<p class="lead">Ranked #2 among Detroit wedding planners by Peerspace, featured in Bloomberg, and interviewed by Michigan&#8217;s local press.</p></div>'
+              '<p class="lead">Click any story to read it.</p></div>'
               '<div class="press-grid reveal">' + ''.join(
                   '<a class="press-card%s" href="%s" target="_blank" rel="noopener"><span class="pc-outlet">%s</span>%s'
-                  '<span class="pc-title">%s</span><span class="pc-meta">%s</span><span class="pc-read">Read%s &#8594;</span></a>'
+                  '<span class="pc-title">%s</span><span class="pc-meta">%s</span><span class="pc-read">Read article <span aria-hidden="true">&#8599;</span></span></a>'
                   % (' feat dark' if i == 0 else (' feat' if i == 1 else ''), esc(u), esc(o), '<span class="pc-big">#2</span>' if o == 'Peerspace' else '',
-                     esc(t), esc(m), (' on ' + esc(o)) if i < 2 else '')
+                     esc(t), esc(m))
                   for i, (o, t, m, u) in enumerate(ARTICLES))
               + '</div></div></div>')
 # About layout v4 (Tariq, Oct 25): photo hero with stats; Meet the founder (bio) on linen; team on dark;
@@ -648,8 +688,11 @@ ab = (
 '</div></div>'
 )
 page('about.html', 'About Miraj Events | Mehreen Buksh, Detroit Wedding Planner',
-     'Founded by Mehreen Buksh, Miraj Events plans and runs multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago. 50+ weddings in two years; largest event 900+ guests.',
-     '/about', 'about', ab, schema=[org_schema()])
+     'Meet Mehreen Buksh, founder of Miraj Events. Multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago; 50+ in two years.',
+     '/about', 'about', ab, schema=[org_schema(), {
+         "@context": "https://schema.org", "@type": "Person", "name": "Mehreen Buksh", "jobTitle": "Founder and lead planner",
+         "worksFor": {"@id": SITE + "/#business"}, "image": SITE + "/assets/img-mehreen.webp", "url": SITE + "/about",
+         "subjectOf": [{"@type": "CreativeWork", "name": t, "url": u, "publisher": {"@type": "Organization", "name": o}} for o, t, m, u in ARTICLES]}])
 
 # DESIGN (Tariq, Oct 25): standalone Design direction page, from the approved sample
 def dzimg(name, alt, w, h, small=None, sizes='', eager=False):
@@ -825,7 +868,7 @@ ct = (
 '</div></div>'
 )
 page('contact.html', 'Contact Miraj Events | Check Your Wedding Date',
-     'Tell us your date and traditions. Miraj Events replies within 24 hours. Call (586) 504-0207 or WhatsApp. Wedding planning and day-of coordination in Metro Detroit.',
+     'Check your wedding date with Miraj Events. We reply within 24 hours. Call, text or WhatsApp (586) 504-0207. Wedding planning in Metro Detroit.',
      '/contact', 'contact', ct, schema=[org_schema()])
 
 # DAY-OF landing page (keeps the indexed /day-of-coordination URL alive)
@@ -840,7 +883,7 @@ dayof_faq = [q for q in re.findall(r'<details[^>]*>.*?</details>', svc, re.S)
              if any(k in q for k in ['How do payments work', 'Do we have to use your vendors', 'Can you run our whole wedding weekend', 'Do you travel', 'postpone'])]
 dayof = dayof.replace('{{FAQ}}', '\n'.join(dayof_faq).replace('<details open>', '<details>'))
 page('day-of-coordination.html', 'Day-of Wedding Coordinator in Detroit, MI | Miraj Events',
-     'Day-of wedding coordination in Metro Detroit from $1,975. We take over the final month and run your wedding day from setup to send-off, so you can be a guest at your own wedding.',
+     'Day-of wedding coordinator in Metro Detroit from $1,975. We take over the final month and run your wedding day from setup to send-off.',
      '/day-of-coordination', 'dayof', dayof, schema=[org_schema(), {
          "@context": "https://schema.org", "@type": "Service", "name": "Day-of Wedding Coordination",
          "serviceType": "Day-of wedding coordinator", "provider": {"@id": SITE + "/#business"},
@@ -881,6 +924,37 @@ pv = open(os.path.join(ASSETS_SRC, 'privacy.html'), encoding='utf-8').read()
 page('privacy.html', 'Privacy Policy | Miraj Events', 'How Miraj Events, LLC collects and uses information submitted through mirajevent.com.',
      '/privacy', 'privacy', pv)
 
+# ACCESSIBILITY statement (Oct 25)
+acc = (
+'<section class="page-hero"><div class="wrap">'
+  '<p class="eyebrow">Accessibility</p>'
+  '<h1>Accessibility statement</h1>'
+  '<p class="lead">Last reviewed October 2026.</p>'
+'</div></section>'
+'<div class="band"><div class="wrap"><div class="prose">'
+  '<p>Miraj Events, LLC wants mirajevent.com to work well for everyone, including people with disabilities.</p>'
+  '<h2>Our standard</h2>'
+  '<p>We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at Level AA, the benchmark most widely used for website accessibility in the United States.</p>'
+  '<h2>What we have done</h2>'
+  '<ul>'
+    '<li>Clear page structure with headings, landmarks and a skip-to-content link.</li>'
+    '<li>Text alternatives for meaningful images.</li>'
+    '<li>Everything works with a keyboard, with a visible focus outline.</li>'
+    '<li>Text and buttons meet AA color-contrast ratios.</li>'
+    '<li>Form fields have visible labels and clear error messages.</li>'
+    '<li>No carousels or slideshows advance on their own, and animations switch off when your device asks for reduced motion.</li>'
+    '<li>Pages reflow on small screens and when zoomed to 200%.</li>'
+  '</ul>'
+  '<p>We check the site with automated tools (axe and Google Lighthouse) and by hand with a keyboard, and we review it again whenever we make changes.</p>'
+  '<h2>Need help?</h2>'
+  '<p>If anything on this site is hard to use, or you would like information in another format, contact us and we will help. Call or text <a href="tel:+15865040207">(586) 504-0207</a> or email <a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a>. We aim to reply within two business days.</p>'
+  '<h2>Third-party content</h2>'
+  '<p>Some links lead to sites we do not control, such as press articles, Google reviews and social media. Those sites are responsible for their own accessibility.</p>'
+'</div></div></div>'
+)
+page('accessibility.html', 'Accessibility | Miraj Events', 'Accessibility statement for mirajevent.com: our WCAG 2.1 AA standard, what we have done, and how to get help.',
+     '/accessibility', 'accessibility', acc)
+
 # 404
 nf = '''<section class="band"><div class="wrap"><div class="thanks">
 <p class="eyebrow">Page not found</p><h1 class="h1">This page has moved.</h1>
@@ -909,7 +983,7 @@ for f in os.listdir(os.path.join(ASSETS_SRC, 'static')):
 
 # sitemap + robots + llms
 today = datetime.date.today().isoformat()
-urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2')]
+urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2'), ('/accessibility', '0.2')]
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + ''.join('  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n' % (SITE, u if u != '/' else '/', today, p) for u, p in urls)
