@@ -764,15 +764,17 @@ DZ_MOODS = [('Ceremony', 'Soft florals and a calm, intimate setting.', [('#F6F1E
             ('Reception', 'Candlelight, crystal and a statement stage.', [('#E7D9BF', 'Champagne'), ('#A8873C', 'Gold'), ('#F6F1E7', 'Ivory'), ('#2C2E31', 'Charcoal')]),
             ('Mehndi &amp; sangeet', 'Bold color, floor seating and room to dance.', [('#E3A23B', 'Marigold'), ('#C23F78', 'Fuchsia'), ('#1F5C4B', 'Emerald'), ('#F6F1E7', 'Ivory')]),
             ('Gala', 'Clean lines, a branded stage, room for the program.', [('#1F2A44', 'Navy'), ('#C6A15A', 'Gold'), ('#FFFFFF', 'White'), ('#8A929C', 'Slate')])]
-# Oct 26 (Tariq): lounge seating and floral installation removed; new picks from the Miraj album (options board P1-P6).
-# Earlier set kept in tools/assets/static for a quick swap back: dz-stage, dz-ceremony, dz-candles, dz-tables, dz-room, dz-centerpiece.
-# Gallery runs 3 across when it holds 6.
-DZ_WORK = [('dz-hall', 'Reception in a grand arched hall with tall red and blush floral centerpieces, gold chairs and a large chandelier', 'Grand hall reception', 'Tall florals, gold chairs, candlelight'),
-           ('dz-candlestage', 'Stage with ivory drapery, clusters of gold taper candle stands, a velvet chair and garden roses', 'Statement stage', 'Gold tapers, drapery and garden roses'),
+# Oct 26 (Tariq): lounge seating and floral installation removed; earlier six kept plus options-board P3 (blossom) and P5 (roses).
+# Other album picks on file in tools/assets/static (not used): dz-hall, dz-candlestage, dz-dinner, dz-gala.
+# Gallery runs 4 across with 8 photos (3 across if it ever holds 6).
+DZ_WORK = [('dz-stage', 'White stage with a floral arch of ivory and blush roses, a curved loveseat and a crystal chandelier', 'Floral stage', 'White arches, ivory and blush roses'),
+           ('dz-roses', 'Long table lined with tall burgundy and blush rose arrangements, taper candles and gold chargers', 'Rose-lined table', 'Tall burgundy and blush roses'),
+           ('dz-candles', 'Clusters of pillar candles in tall glass among white flowers', 'Candlelight', 'Clustered pillars in glass'),
+           ('dz-ceremony', 'Gold and ivory chair framed by white florals against soft gray drape', 'Ceremony seating', 'Ivory and gold, framed in white blooms'),
            ('dz-blossom', 'Table under a canopy of white blossom branches with a lit crystal candelabra and white flowers', 'Blossom canopy', 'White blossoms over crystal and candlelight'),
-           ('dz-dinner', 'Wood-paneled dining hall with an ornate plaster ceiling and a long table of white roses and candles', 'Candlelit dinner', 'White roses and tapers in a paneled hall'),
-           ('dz-roses', 'Long table lined with tall burgundy and blush rose arrangements, taper candles and gold chargers', 'Rose-lined table', 'Burgundy, blush and taper candles'),
-           ('dz-gala', 'Gala ballroom in blue uplighting with black linens and lit branch centerpieces', 'Gala night', 'Uplighting and lit branch centerpieces')]
+           ('dz-tables', 'Round table with burgundy napkins, gold candleholders and a framed table number by tall windows', 'Tablescapes', 'Burgundy, gold and taper candles'),
+           ('dz-centerpiece', 'Tall garden-style centerpiece with lilies and trailing amaranthus on a long table', 'Centerpieces', 'Tall, garden-style arrangements'),
+           ('dz-room', 'Ballroom set with gold chairs, ivory linen and candlelit tables beneath a chandelier', 'Room setup', 'Gold chairs, ivory linen, crystal')]
 DZ_GAL_COLS = 3 if len(DZ_WORK) % 4 else 4
 _tb = ''.join('<use href="#dztb" x="%d" y="%d" width="42" height="42"/>' % (cx - 21, cy - 21)
               for cx in (36, 84, 276, 324) for cy in (106, 156, 206, 256, 306))
