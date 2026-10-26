@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /thank-you
-Disallow: /netlify-forms.html
 
 Sitemap: https://www.mirajevent.com/sitemap.xml

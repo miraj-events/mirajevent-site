@@ -1055,7 +1055,9 @@ open(os.path.join(OUT, 'sitemap.xml'), 'w').write(
     + ''.join('  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n' % (SITE, u if u != '/' else '/', today, p) for u, p in urls)
     + '</urlset>\n')
 open(os.path.join(OUT, 'robots.txt'), 'w').write(
-    'User-agent: *\nAllow: /\nDisallow: /thank-you\nDisallow: /netlify-forms.html\n\nSitemap: %s/sitemap.xml\n' % SITE)
+    # /thank-you and /netlify-forms.html stay crawlable on purpose: they carry noindex
+    # (meta + X-Robots-Tag), and Google can only honor noindex on pages it may crawl.
+    'User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n' % SITE)
 llms = open(os.path.join(ASSETS_SRC, 'llms.txt'), encoding='utf-8').read()
 open(os.path.join(OUT, 'llms.txt'), 'w').write(llms)
 print('built', sorted(os.listdir(OUT)))

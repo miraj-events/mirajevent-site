@@ -54,9 +54,10 @@
   status = 301
   force = true
 
+# /gallery ranked for event photos: send it to the page that now shows them
 [[redirects]]
   from = "/gallery"
-  to = "/"
+  to = "/design"
   status = 301
   force = true
 
@@ -76,6 +77,12 @@
 [[redirects]]
   from = "/get-in-touch"
   to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cart"
+  to = "/"
   status = 301
   force = true
 
