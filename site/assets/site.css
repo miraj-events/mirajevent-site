@@ -1198,25 +1198,15 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
 @media (min-width:900px){.site-header .wordmark{white-space:nowrap}}
 @media (max-width:1099px){.navlinks a[href^="tel:"]{display:none}}
 
-/* ===== Accessibility pass (Oct 25): WCAG 2.1 AA, plus 2.2 target size and focus-not-obscured ===== */
+/* ===== Accessibility pass (Oct 25): WCAG 2.1 AA structure, keyboard and forms. Brand colors kept as before the pass (Tariq, Oct 25). ===== */
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-/* gold fills carry near-black text (4.8:1); hover deepens to bronze with ivory text (6:1) */
-.btn-gold,.sticky-cta,.pk .tag,.rung .tag{color:#1B1A17}
-.btn-gold:hover,.sticky-cta:hover{background:#745A22;border-color:#745A22;color:var(--ivory)}
-.lst-mark:hover{color:#1B1A17}
-.lk-name,.foot2 .lk-name{color:#745A22}
-.f2-legal{color:#6B655B}
-.lad2-meter span{color:#6B655B}
-.lad2-meter span.on,.lad2 .is-pop .lad2-meter span.on{color:#EADCB8}
-.dz-why li::before{background:#745A22}
-.dz-plan .mk circle{fill:#745A22}
 /* review dots: 24px touch targets with a small visual dot */
 .rv-dots{gap:0}
 .rv-dot,.rv.ct .rv-dot{position:relative;width:24px;height:24px;border-radius:50%;background:transparent;transform:none}
-.rv-dot::before{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#B9B1A2;transition:transform .2s ease}
-.rv.ct .rv-dot::before{width:7px;height:7px;margin:-3.5px 0 0 -3.5px}
+.rv-dot::before{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#D9D3C7;transition:transform .2s ease}
+.rv.ct .rv-dot::before{width:6px;height:6px;margin:-3px 0 0 -3px}
 .rv-dot[aria-current="true"]{background:transparent;transform:none}
-.rv-dot[aria-current="true"]::before{background:#745A22;transform:scale(1.3)}
+.rv-dot[aria-current="true"]::before{background:var(--gold);transform:scale(1.25)}
 /* focus: deep gold on light backgrounds, light gold on dark ones (both ≥3:1); form fields get a 2px ring */
 :focus-visible{outline:2px solid #745A22;outline-offset:3px}
 .band-dark :focus-visible,.hero.has-photo :focus-visible,.svc-hero :focus-visible,.ab3-hero :focus-visible,.dz-hero :focus-visible,.press-card.dark:focus-visible,.ct4-head :focus-visible{outline-color:#D9BC7A}
@@ -1229,22 +1219,9 @@ html{scroll-padding-bottom:96px}
 .press-card .pc-meta{margin-bottom:10px}
 .press-card .pc-read{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding:10px 15px;border:1px solid currentColor;font-size:11.5px;letter-spacing:2px;line-height:1;text-transform:uppercase;color:#745A22;transition:background .25s ease,color .25s ease,border-color .25s ease}
 .press-card.feat.dark .pc-read{color:#D9BC7A}
-.press-card.feat:not(.dark) .pc-read{color:#745A22}
-.press-card:hover .pc-read,.press-card:focus-visible .pc-read{background:#745A22;border-color:#745A22;color:#F8F5EE}
+.press-card.feat:not(.dark) .pc-read{color:var(--gold-deep)}
+.press-card:hover .pc-read,.press-card:focus-visible .pc-read{background:var(--gold-deep);border-color:var(--gold-deep);color:#F8F5EE}
 .press-card.feat.dark:hover .pc-read,.press-card.feat.dark:focus-visible .pc-read{background:#D9BC7A;border-color:#D9BC7A;color:#1B1A17}
-/* deep gold for small text everywhere (5.5:1 on linen, 6:1 on ivory) */
-html[data-theme="lightink"]{--gold-deep:#745A22}
-/* text over photos (WCAG 1.4.3), v2 (Tariq, Oct 25: bring back the lighter photo backgrounds): the original shades,
-   plus a soft darkening only behind the text block; champagne accents. Worst-case contrast measured >= 5.2:1. */
-html[data-theme] .hero.has-photo .hero-shade{background:radial-gradient(ellipse 68% 74% at 50% 47%,rgba(20,21,23,.40) 0%,rgba(20,21,23,.27) 55%,rgba(20,21,23,0) 100%),linear-gradient(180deg,rgba(24,25,27,.50) 0%,rgba(24,25,27,.55) 50%,rgba(24,25,27,.72) 100%)}
-.svc-hero-shade{background:radial-gradient(ellipse 68% 74% at 50% 47%,rgba(20,21,23,.40) 0%,rgba(20,21,23,.27) 55%,rgba(20,21,23,0) 100%),linear-gradient(180deg,rgba(22,23,25,.45) 0%,rgba(22,23,25,.55) 60%,rgba(22,23,25,.7) 100%)}
-.dz-hero-shade{background:radial-gradient(ellipse 68% 74% at 50% 47%,rgba(20,21,23,.40) 0%,rgba(20,21,23,.27) 55%,rgba(20,21,23,0) 100%),linear-gradient(180deg,rgba(22,23,25,.50) 0%,rgba(22,23,25,.56) 55%,rgba(22,23,25,.74) 100%)}
-.ab3-shade{background:linear-gradient(90deg,rgba(22,23,25,.86) 0%,rgba(22,23,25,.74) 50%,rgba(22,23,25,.50) 100%)}
-@media (max-width:860px){.ab3-shade{background:linear-gradient(180deg,rgba(22,23,25,.70) 0%,rgba(22,23,25,.74) 100%)}}
-html[data-theme] .hero.has-photo .eyebrow,html[data-theme] .hero.has-photo h1 em,.svc-hero .svc-head .eyebrow,.ab3-copy .eyebrow,.ab3-copy h1 em,.dz-hero .eyebrow,.dz-hero h1 em{color:#E7D3A1}
-.ab3-stats dd{color:#F1EDE4}
-html[data-theme] .hero.has-photo .eyebrow,.svc-hero .svc-head .eyebrow,.ab3-copy .eyebrow,.dz-hero .eyebrow{color:#EFE0BA}
-html[data-theme] .hero.has-photo .hp-lbl{color:#E8E4DA}
 /* reflow at 320px (WCAG 1.4.10): long button labels may wrap on very narrow screens */
 @media (max-width:400px){.btn{white-space:normal;text-align:center;line-height:1.35;padding-top:12px;padding-bottom:12px}}
 
@@ -1257,9 +1234,6 @@ html.cta-off .sticky-cta,html.menu-open .sticky-cta{visibility:hidden;transition
 .ct4-head :focus-visible{outline-color:#745A22}
 @media (max-width:899px){.ct4-head :focus-visible{outline-color:#D9BC7A}}
 /* control boundaries ≥3:1 (inputs, selects, checkboxes, chips, review dots) */
-html[data-theme="lightink"]{--field-border:#8A8276}
-.rv-dot::before{background:#8A8276}
-.form-meta span+span{color:#6B655B}
 /* headings that keep their old look */
 h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 .addons-head h2{font-size:26px;line-height:1.1}
