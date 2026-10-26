@@ -341,13 +341,22 @@ def header():
     return '<header class="site-header">' + h + '</header>\n'
 
 def footer(page):
-    f = between(src, '<footer class="rule-top">', '</footer>')
-    f = relink(f, page)
-    f = logo_use(f)
-    f = f.replace('<span id="yr">2026</span>', '<span id="yr">%s</span>' % datetime.date.today().year)
-    f = f.replace(' title="Privacy policy page to be added at build"', '')
-    f = f.replace('<span>admin@mirajevent.com · (586) 504-0207</span>',
-                  '<span><a href="mailto:%s">%s</a> · <a href="tel:%s">%s</a></span>' % (EMAIL, EMAIL, TEL, PHONE))
+    # Footer v2 (Tariq, Oct 25): two tidy rows — brand + links, then a hairline with legal + contact;
+    # centered and stacked on phones, split left/right on desktop
+    links = [('/about', 'About'), ('/services', 'Services'), ('/contact', 'Contact Us'),
+             (IG, 'Instagram'), (FB, 'Facebook'), ('/privacy', 'Privacy')]
+    f = ('<div class="wrap foot2">'
+         '<div class="f2-top">'
+           '<a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram">'
+           '<use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg><span class="lk-name">MIRAJ EVENTS</span></a>'
+           '<nav class="foot-links" aria-label="Footer">%s</nav>'
+         '</div>'
+         '<div class="f2-bottom">'
+           '<span class="f2-contact"><a href="mailto:%s">%s</a><span class="f2-dot" aria-hidden="true">·</span><a href="tel:%s">%s</a></span>'
+           '<span class="f2-legal">© <span id="yr">%s</span> Miraj Events, LLC · Metro Detroit, Michigan</span>'
+         '</div>'
+         '</div>') % (VERSION, ''.join('<a href="%s">%s</a>' % (u, t) for u, t in links), EMAIL, EMAIL, TEL, PHONE,
+                      datetime.date.today().year)
     sticky = '<a class="sticky-cta" href="%s">Check availability</a>' % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form')
     return ('<footer class="rule-top">' + f + '</footer>\n' + sticky + '\n'
             '<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % VERSION)

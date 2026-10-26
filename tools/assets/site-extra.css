@@ -553,3 +553,24 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
 .pk-lead{font-size:16px;color:var(--fg-2);max-width:34em}
 /* Hero "As featured in" (Oct 25): label on its own line, outlets below */
 .hero-press .hp-lbl{flex-basis:100%;text-align:center}
+
+/* ===== Footer v2 (Oct 25): even spacing on phone and desktop ===== */
+.foot2{display:flex;flex-direction:column;gap:20px;padding-block:32px 26px;font-size:13px;color:var(--muted)}
+.f2-top{display:flex;flex-direction:column;align-items:center;gap:18px}
+.foot2 .lockup{flex-direction:row;align-items:center;gap:12px;margin:0}
+.foot2 .lk-logo{width:52px;height:auto}
+.foot2 .lk-name{font-size:15px;letter-spacing:6px}
+.foot2 .foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 22px;max-width:340px;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;font-weight:400}
+.foot2 .foot-links a{color:var(--fg-2)}
+.f2-bottom{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:18px;border-top:1px solid var(--rule);text-align:center}
+.f2-contact a{color:var(--fg-2)}
+.f2-dot{margin:0 8px;color:var(--faint)}
+.f2-legal{font-size:12px;color:var(--faint)}
+.foot2 a:hover{color:var(--gold-deep)}
+@media (min-width:900px){
+  .foot2{gap:22px;padding-block:40px 30px}
+  .f2-top{flex-direction:row;justify-content:space-between}
+  .foot2 .foot-links{max-width:none;justify-content:flex-end;gap:12px 28px}
+  .f2-bottom{flex-direction:row;justify-content:space-between;padding-top:20px}
+  .f2-legal{order:-1}
+}
