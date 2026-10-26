@@ -826,7 +826,7 @@ html[data-theme] .hero.has-photo .hero-shade{background:linear-gradient(180deg,r
 @media (max-width:899px){
   .ct4{padding-top:0}
   .ct4-photo{display:none}
-  .ct4-head{position:relative;margin-inline:-16px;padding:44px 32px 36px;color:#F8F5EE;background:#1E1F21 url(img-contact-sm.webp) center 40%/cover no-repeat;isolation:isolate}
+  .ct4-head{position:relative;margin-inline:-16px;padding:44px 32px 36px;color:#F8F5EE;background:#1E1F21 url(img-contact-sm.webp?v=ce07276725) center 40%/cover no-repeat;isolation:isolate}
   .ct4-head::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(22,23,25,.62) 0%,rgba(22,23,25,.72) 60%,rgba(22,23,25,.82) 100%)}
   .ct4-head::after{content:"";position:absolute;inset:12px;border:1px solid rgba(201,168,94,.45);pointer-events:none}
   .ct4-head .eyebrow{color:#D9BC7A}
@@ -947,14 +947,14 @@ html.menu-open .sticky-cta{display:none}
 .press-card.feat .pc-title{font-size:clamp(26px,2.6vw,34px)}
 
 /* Self-hosted fonts (Oct 25): faster first paint than Google Fonts, no third-party request. SIL Open Font License. */
-@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(font-cg-300.woff2) format('woff2')}
-@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(font-cg-400.woff2) format('woff2')}
-@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:500;font-display:swap;src:url(font-cg-500.woff2) format('woff2')}
-@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(font-cg-300-i.woff2) format('woff2')}
-@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(font-cg-400-i.woff2) format('woff2')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:300;font-display:swap;src:url(font-dm-300.woff2) format('woff2')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(font-dm-400.woff2) format('woff2')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url(font-dm-500.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(font-cg-300.woff2?v=0693b254f9) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(font-cg-400.woff2?v=a65125bc13) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:500;font-display:swap;src:url(font-cg-500.woff2?v=c20b57f6f4) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(font-cg-300-i.woff2?v=faa68c1a13) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(font-cg-400-i.woff2?v=810fe6ac9e) format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:300;font-display:swap;src:url(font-dm-300.woff2?v=7dd26180fa) format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(font-dm-400.woff2?v=7cf8a1c146) format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url(font-dm-500.woff2?v=4a162522c1) format('woff2')}
 /* Press v2.2 (Oct 25): only the #2 ranking is dark (neutral black, no blue cast); "Meet Mehreen" featured as a light card */
 .press-card.feat.dark{background:#262626;border-color:#262626}
 .press-card.feat:not(.dark){background:#FFFFFF;border-color:#E6DFD0;border-top:2px solid #C9A85E;color:var(--fg)}
@@ -974,7 +974,7 @@ html.menu-open .sticky-cta{display:none}
 .inq2 .card input,.inq2 .card select,.inq2 .card textarea,.ct4 .card input,.ct4 .card select,.ct4 .card textarea{background:#FBF9F4}
 @media (max-width:899px){
   .inq2{padding-top:0}
-  .inq2-head{position:relative;margin-inline:-16px;padding:44px 32px 36px;color:#F8F5EE;background:#1E1F21 url(img-contact-sm.webp) center 40%/cover no-repeat;isolation:isolate}
+  .inq2-head{position:relative;margin-inline:-16px;padding:44px 32px 36px;color:#F8F5EE;background:#1E1F21 url(img-contact-sm.webp?v=ce07276725) center 40%/cover no-repeat;isolation:isolate}
   .inq2-head::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(22,23,25,.62) 0%,rgba(22,23,25,.72) 60%,rgba(22,23,25,.84) 100%)}
   .inq2-head::after{content:"";position:absolute;inset:12px;border:1px solid rgba(201,168,94,.45);pointer-events:none}
   .inq2-head .eyebrow{color:#D9BC7A}

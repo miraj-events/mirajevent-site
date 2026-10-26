@@ -171,6 +171,8 @@
   function fill(form){ var a=attribution(); Object.keys(a).forEach(function(k){ var el=form.querySelector('input[type=hidden][name="'+k+'"]'); if(el){ el.value=a[k]; } }); }
   function encode(fd){ var p=[]; fd.forEach(function(v,k){ p.push(encodeURIComponent(k)+'='+encodeURIComponent(v)); }); return p.join('&'); }
   function post(fd){ return fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:encode(fd)}); }
+  /* subject line of the Netlify notification email, so the inbox shows who, what and when at a glance */
+  function subj(label,parts){ return (label+': '+parts.map(function(x){ return String(x||'').trim(); }).filter(Boolean).join(' · ')).slice(0,150); }
   function normPhone(p){ var d=(p||'').replace(/\D/g,''); if(d.length===10){ return '+1'+d; } if(d.length===11&&d[0]==='1'){ return '+'+d; } return d?('+'+d):''; }
   var MSG={name:'Please enter your name.',email:'Please enter your email address.',phone:'Please enter your phone number.',event_date:'Please enter a date or season, or tick \u201cNo date yet\u201d.'};
   function errMsg(el){ var v=el.validity; if(v.valueMissing&&MSG[el.name]){ return MSG[el.name]; } if(v.valueMissing){ return el.tagName==='SELECT'?'Please choose an option.':(el.type==='checkbox'?'Please check this box.':(el.type==='email'?'Please enter your email address.':(el.type==='tel'?'Please enter your phone number.':'Please fill in this field.'))); } if(el.type==='email'&&v.typeMismatch){ return 'Please enter a valid email address, like name@example.com.'; } return el.validationMessage||'Please check this field.'; }
@@ -196,6 +198,8 @@
         if(form.dataset.start){ fill(form); var fd=new FormData(); fd.append('form-name',form.dataset.start);
           ['email','phone','name','celebration','event_date'].forEach(function(k){ var el=$('[name="'+k+'"]',s1); if(el){ fd.append(k,el.value); } });
           var a=attribution(); Object.keys(a).forEach(function(k){ fd.append(k,a[k]); });
+          var hp=$('[name="bot-field"]',form); if(hp&&hp.value){ fd.append('bot-field',hp.value); } /* lets Netlify's honeypot flag bot partials too */
+          fd.append('subject',subj('Unfinished inquiry',[fd.get('name')||fd.get('phone')||fd.get('email'),fd.get('celebration'),fd.get('event_date')]));
           /* not "form_start": GA4 enhanced measurement already sends that name on first touch (the Squarespace baseline) */
           post(fd).catch(function(){}); gt('event','inquiry_step1',{form_name:'inquiry',page_path:location.pathname}); }
         showStep(2);
@@ -212,11 +216,14 @@
       var fd=new FormData(form);
       var ev=fd.getAll('events[]'); fd.delete('events[]'); if(ev.length){ fd.append('events_list',ev.join(', ')); }
       var val=leadValue(fd); fd.append('value',String(val));
+      fd.set('subject',fd.get('form-name')==='quick-inquiry'?subj('Quick inquiry',[fd.get('name'),fd.get('phone'),fd.get('event_date')])
+        :subj('New inquiry',[fd.get('name'),fd.get('celebration'),fd.get('event_date'),fd.get('package')]));
       Array.from(fd.keys()).forEach(function(k){ if(k!=='form-name' && !String(fd.get(k)||'').trim()){ fd.delete(k); } });
       busy(form,true);
       var id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-      store.set('miraj_lead',{id:id,value:val,pkg:fd.get('package')||'',form:fd.get('form-name'),email:(fd.get('email')||'').trim().toLowerCase(),phone:normPhone(fd.get('phone'))},true);
-      post(fd).then(function(r){ if(!r.ok){ throw new Error(r.status); } location.href='/thank-you'; }).catch(function(){ fail(form); });
+      var lead={id:id,value:val,pkg:fd.get('package')||'',form:fd.get('form-name'),email:(fd.get('email')||'').trim().toLowerCase(),phone:normPhone(fd.get('phone'))};
+      /* the thank-you page counts a conversion only for a lead Netlify accepted: save it after a 2xx, never before */
+      post(fd).then(function(r){ if(!r.ok){ throw new Error(r.status); } store.set('miraj_lead',lead,true); location.href='/thank-you'; }).catch(function(){ fail(form); });
     });
   });
 
@@ -225,8 +232,9 @@
     form.addEventListener('input',clearErr);
     form.addEventListener('submit',function(e){
       e.preventDefault(); if(form.dataset.busy==='1'||!validate(form)){ return; } fill(form);
-      var fd=new FormData(form); busy(form,true);
-      post(fd).then(function(r){ if(!r.ok){ throw 0; } form.innerHTML='<p class="small gf-done" role="status" tabindex="-1">Thank you. The services guide is on its way to your inbox.</p>'; var dn=$('.gf-done',form); if(dn){ dn.focus(); } gt('event','guide_request',{page_path:location.pathname}); }).catch(function(){ fail(form); });
+      var fd=new FormData(form); fd.set('subject',subj('Services guide request',[fd.get('email')])); busy(form,true);
+      /* the guide is sent by a person replying to the notification email (Netlify has no auto-reply), so promise "within hours" */
+      post(fd).then(function(r){ if(!r.ok){ throw 0; } form.innerHTML='<p class="small gf-done" role="status" tabindex="-1">Thank you. We’ll email you the services guide within hours.</p>'; var dn=$('.gf-done',form); if(dn){ dn.focus(); } gt('event','guide_request',{page_path:location.pathname}); }).catch(function(){ fail(form); });
     });
   });
 })();

@@ -63,6 +63,13 @@
   status = 301
   force = true
 
+# bare /weddingplanner and /shop listed too: Netlify's docs don't say whether "/x/*" also matches "/x"
+[[redirects]]
+  from = "/weddingplanner"
+  to = "/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/weddingplanner/*"
   to = "/"
@@ -84,6 +91,12 @@
 
 [[redirects]]
   from = "/cart"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/shop"
   to = "/"
   status = 301
   force = true
@@ -143,5 +156,11 @@
 
 [[headers]]
   for = "/netlify-forms.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+# Pretty URLs serve that file at /netlify-forms, so cover the served path too
+[[headers]]
+  for = "/netlify-forms"
   [headers.values]
     X-Robots-Tag = "noindex"

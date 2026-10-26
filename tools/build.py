@@ -203,14 +203,16 @@ def wire_forms(h, page):
 
 def forms_definition():
     """Static skeletons so Netlify registers every form + field at deploy (forms are submitted by JS)."""
-    common = ''.join('<input type="hidden" name="%s">' % f for f in HIDDEN_ATTR)
+    # every field site.js posts must be listed here, or Netlify drops it. "subject" = the notification email's subject line
+    # (site.js fills it with the lead's name, event and date); a field named "email" sets the notification's Reply-To.
+    common = ''.join('<input type="hidden" name="%s">' % f for f in HIDDEN_ATTR) + '<input type="hidden" name="subject">'
     inquiry_fields = ['name', 'partner', 'email', 'phone', 'celebration', 'event_date', 'venue', 'guests', 'budget',
                       'package', 'heard', 'message', 'events_list', 'value']
     def f(name, fields):
         return ('<form name="%s" data-netlify="true" netlify-honeypot="bot-field" hidden>'
                 '<input name="bot-field">%s%s</form>\n' % (name, ''.join('<input name="%s">' % x for x in fields), common))
     return (f('inquiry', inquiry_fields) + f('inquiry-start', ['email', 'phone', 'name', 'celebration', 'event_date'])
-            + f('quick-inquiry', ['name', 'phone', 'event_date']) + f('guide-request', ['email']))
+            + f('quick-inquiry', ['name', 'phone', 'event_date', 'value']) + f('guide-request', ['email']))
 
 
 # ---------------------------------------------------------------- schema
@@ -276,6 +278,9 @@ def hero_preload(view):
 
 def head(title, desc, path, view, schema=(), noindex=False):
     canonical = SITE + (path if path != '/' else '/')
+    # the 404 page is served at any missing URL: no canonical / og:url pointing at /404
+    canon_tag = '' if path == '/404' else '<link rel="canonical" href="%s">\n' % canonical
+    og_url = '' if path == '/404' else '<meta property="og:url" content="%s">\n' % canonical
     robots = '<meta name="robots" content="noindex, follow">' if noindex else '<meta name="robots" content="index, follow, max-image-preview:large">'
     return f'''<!doctype html>
 <html lang="en" data-theme="lightink" data-copy="min">
@@ -284,15 +289,13 @@ def head(title, desc, path, view, schema=(), noindex=False):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
-<link rel="canonical" href="{canonical}">
-{robots}
+{canon_tag}{robots}
 <meta name="theme-color" content="#2C2E31">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Miraj Events">
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(desc)}">
-<meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{SITE}/assets/og-image.png">
+{og_url}<meta property="og:image" content="{SITE}/assets/og-image.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -303,11 +306,12 @@ def head(title, desc, path, view, schema=(), noindex=False):
 <link rel="preload" href="/assets/font-dm-300.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/font-dm-400.woff2" as="font" type="font/woff2" crossorigin>
 {hero_preload(view)}<link rel="stylesheet" href="/assets/site.css?v={VERSION}">
+<noscript><style>.fstep[hidden]{{display:flex!important;flex-direction:column;gap:18px}}[data-next],[data-back]{{display:none!important}}</style></noscript>
 <!-- Google tag (GA4 {GA4} + Google Ads {ADS}) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA4}"></script>
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}
-window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
+window.MIRAJ_LIVE=/(^|\\.)mirajevent\\.com$/.test(location.hostname);
 gtag('js',new Date());
 if(window.MIRAJ_LIVE){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
 else{{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
@@ -406,7 +410,8 @@ def a11y_markup(h):
     """Accessibility (Oct 25, independent review): headings, form labels/requirements, dialog + tier semantics,
     Back buttons, decorative numbers and arrows hidden from screen readers."""
     # section titles that act as headings
-    h = h.replace('<p class="eyebrow" style="margin-bottom:18px">Questions couples ask</p>', '<h2 class="eyebrow" style="margin-bottom:18px">Questions couples ask</h2>')
+    # id="faqs": the old Squarespace footer linked /servicesoverview#faqs; that 301s to /services and the browser keeps #faqs
+    h = h.replace('<p class="eyebrow" style="margin-bottom:18px">Questions couples ask</p>', '<h2 id="faqs" class="eyebrow" style="margin-bottom:18px">Questions couples ask</h2>')
     h = h.replace('<p class="eyebrow" style="margin-bottom:18px">Day-of questions</p>', '<h2 class="eyebrow" style="margin-bottom:18px">Day-of questions</h2>')
     h = h.replace('<div class="addons-head"><p class="eyebrow">Add-ons</p><h3>Finishing touches for the room.</h3>', '<div class="addons-head"><p class="eyebrow">Add-ons</p><h2>Finishing touches for the room.</h2>')
     h = re.sub(r'(<div class="pkd-head">.*?)<h3>(.*?)</h3>', r'\1<h2>\2</h2>', h, flags=re.S)
@@ -1083,4 +1088,34 @@ open(os.path.join(OUT, 'robots.txt'), 'w').write(
     'User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n' % SITE)
 llms = open(os.path.join(ASSETS_SRC, 'llms.txt'), encoding='utf-8').read()
 open(os.path.join(OUT, 'llms.txt'), 'w').write(llms)
+
+# ---------------------------------------------------------------- cache-busting by content
+# netlify.toml serves /assets/* with a one-year "immutable" Cache-Control, so a returning visitor's browser never
+# re-checks those files. Every reference therefore carries ?v=<hash of that file's bytes>: replace a photo, font,
+# stylesheet or script (even under the same file name) and its URL changes; untouched files keep their cache.
+def _fhash(p):
+    return hashlib.sha1(open(p, 'rb').read()).hexdigest()[:10]
+_AD = os.path.join(OUT, 'assets')
+_hashes = {n: _fhash(os.path.join(_AD, n)) for n in os.listdir(_AD) if n != 'site.css'}
+def _bust(text, rel_ok=False):
+    # /assets/NAME[?v=old] anywhere (HTML attributes, srcset, inline script, JSON-LD, og:image) ...
+    text = re.sub(r'/assets/([A-Za-z0-9_.-]+)(?:\?v=[0-9a-f]+)?',
+                  lambda m: '/assets/%s?v=%s' % (m.group(1), _hashes[m.group(1)]) if m.group(1) in _hashes else m.group(0), text)
+    if rel_ok:  # ... and url(NAME) inside site.css (fonts, images next to the stylesheet)
+        text = re.sub(r'url\((["\']?)([A-Za-z0-9_.-]+\.(?:woff2|webp|png|jpe?g|svg))(?:\?v=[0-9a-f]+)?\1\)',
+                      lambda m: 'url(%s%s?v=%s%s)' % (m.group(1), m.group(2), _hashes[m.group(2)], m.group(1)) if m.group(2) in _hashes else m.group(0), text)
+    return text
+_css_p = os.path.join(_AD, 'site.css')
+_css_out = _bust(open(_css_p, encoding='utf-8').read(), rel_ok=True)   # read fully before reopening for write
+assert len(_css_out) > 10000, 'site.css came out empty'
+open(_css_p, 'w', encoding='utf-8').write(_css_out)
+_hashes['site.css'] = _fhash(_css_p)
+_missing = set()
+for _n in os.listdir(OUT):
+    if _n.endswith('.html'):
+        _p = os.path.join(OUT, _n)
+        _t = _bust(open(_p, encoding='utf-8').read())
+        _missing |= {m for m in re.findall(r'/assets/([A-Za-z0-9_.-]+)', _t) if m not in _hashes}
+        open(_p, 'w', encoding='utf-8').write(_t)
+assert not _missing, 'pages reference missing assets: %s' % sorted(_missing)
 print('built', sorted(os.listdir(OUT)))
