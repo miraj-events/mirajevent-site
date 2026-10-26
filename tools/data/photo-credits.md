@@ -12,6 +12,7 @@ Used as mood/atmosphere imagery only, not presented as Miraj Events' own events.
 | img-ballroom-chandeliers | https://images.unsplash.com/photo-1780593116478-c46838f86523 |
 | img-ballroom-library | https://images.unsplash.com/photo-1761120789207-c08a10afb864 |
 | img-details-gold (Home "Focus on details"; place-card text removed) | https://images.unsplash.com/photo-1708601421220-ed13ac3bcf3b |
+| img-design-drape (Services "Design direction"; same source as the About banner, different crop) | https://images.unsplash.com/photo-1780304264486-c46ce6344963 |
 | img-white-florals | https://images.unsplash.com/photo-1660511057210-f7fba78d2741 |
 | img-head-table | https://images.unsplash.com/photo-1751257567128-a90534b263e6 |
 
@@ -20,7 +21,6 @@ Used as mood/atmosphere imagery only, not presented as Miraj Events' own events.
 |---|---|
 | img-mehreen | Mehreen's portrait from the current mirajevent.com About page (business's own photo; confirm photographer permission/credit) |
 | img-team-a / team-c / team-group | Team photos from the business's own photo album (team-group = cropped from the full-team photo; team-c mirrored so name badges read correctly). Before launch: confirm every pictured team member is OK appearing on the website. |
-| img-design-mehndi (Services "Design direction") | Mehndi stage from a Miraj Events event, from the business's own album (no guests pictured) |
 | img-contact-side / contact-sm | The photo already used on the current mirajevent.com Contact page (a client event; same use as today) |
 
 Only real Miraj Events photos are used for people/team. Replace stock with professional photos of Miraj events as they become available (ask event photographers for web-use rights with credit).
