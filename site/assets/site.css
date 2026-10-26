@@ -1234,12 +1234,16 @@ html{scroll-padding-bottom:96px}
 .press-card.feat.dark:hover .pc-read,.press-card.feat.dark:focus-visible .pc-read{background:#D9BC7A;border-color:#D9BC7A;color:#1B1A17}
 /* deep gold for small text everywhere (5.5:1 on linen, 6:1 on ivory) */
 html[data-theme="lightink"]{--gold-deep:#745A22}
-/* text over photos (WCAG 1.4.3): ~70% shade behind all hero text + champagne gold for small/italic accents */
-html[data-theme] .hero.has-photo .hero-shade,.svc-hero-shade,.dz-hero-shade{background:linear-gradient(180deg,rgba(20,21,23,.70) 0%,rgba(20,21,23,.72) 50%,rgba(20,21,23,.80) 100%)}
-.ab3-shade{background:linear-gradient(90deg,rgba(20,21,23,.86) 0%,rgba(20,21,23,.76) 55%,rgba(20,21,23,.70) 100%)}
-@media (max-width:860px){.ab3-shade{background:linear-gradient(180deg,rgba(20,21,23,.74) 0%,rgba(20,21,23,.78) 100%)}}
+/* text over photos (WCAG 1.4.3), v2 (Tariq, Oct 25: bring back the lighter photo backgrounds): the original shades,
+   plus a soft darkening only behind the text block; champagne accents. Worst-case contrast measured >= 5.2:1. */
+html[data-theme] .hero.has-photo .hero-shade{background:radial-gradient(ellipse 68% 74% at 50% 47%,rgba(20,21,23,.40) 0%,rgba(20,21,23,.27) 55%,rgba(20,21,23,0) 100%),linear-gradient(180deg,rgba(24,25,27,.50) 0%,rgba(24,25,27,.55) 50%,rgba(24,25,27,.72) 100%)}
+.svc-hero-shade{background:radial-gradient(ellipse 68% 74% at 50% 47%,rgba(20,21,23,.40) 0%,rgba(20,21,23,.27) 55%,rgba(20,21,23,0) 100%),linear-gradient(180deg,rgba(22,23,25,.45) 0%,rgba(22,23,25,.55) 60%,rgba(22,23,25,.7) 100%)}
+.dz-hero-shade{background:radial-gradient(ellipse 68% 74% at 50% 47%,rgba(20,21,23,.40) 0%,rgba(20,21,23,.27) 55%,rgba(20,21,23,0) 100%),linear-gradient(180deg,rgba(22,23,25,.50) 0%,rgba(22,23,25,.56) 55%,rgba(22,23,25,.74) 100%)}
+.ab3-shade{background:linear-gradient(90deg,rgba(22,23,25,.86) 0%,rgba(22,23,25,.74) 50%,rgba(22,23,25,.50) 100%)}
+@media (max-width:860px){.ab3-shade{background:linear-gradient(180deg,rgba(22,23,25,.70) 0%,rgba(22,23,25,.74) 100%)}}
 html[data-theme] .hero.has-photo .eyebrow,html[data-theme] .hero.has-photo h1 em,.svc-hero .svc-head .eyebrow,.ab3-copy .eyebrow,.ab3-copy h1 em,.dz-hero .eyebrow,.dz-hero h1 em{color:#E7D3A1}
 .ab3-stats dd{color:#F1EDE4}
+html[data-theme] .hero.has-photo .eyebrow,.svc-hero .svc-head .eyebrow,.ab3-copy .eyebrow,.dz-hero .eyebrow{color:#EFE0BA}
 html[data-theme] .hero.has-photo .hp-lbl{color:#E8E4DA}
 /* reflow at 320px (WCAG 1.4.10): long button labels may wrap on very narrow screens */
 @media (max-width:400px){.btn{white-space:normal;text-align:center;line-height:1.35;padding-top:12px;padding-bottom:12px}}
