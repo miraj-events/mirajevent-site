@@ -196,7 +196,8 @@
         if(form.dataset.start){ fill(form); var fd=new FormData(); fd.append('form-name',form.dataset.start);
           ['email','phone','name','celebration','event_date'].forEach(function(k){ var el=$('[name="'+k+'"]',s1); if(el){ fd.append(k,el.value); } });
           var a=attribution(); Object.keys(a).forEach(function(k){ fd.append(k,a[k]); });
-          post(fd).catch(function(){}); gt('event','form_start',{form_name:'inquiry',page_path:location.pathname}); }
+          /* not "form_start": GA4 enhanced measurement already sends that name on first touch (the Squarespace baseline) */
+          post(fd).catch(function(){}); gt('event','inquiry_step1',{form_name:'inquiry',page_path:location.pathname}); }
         showStep(2);
         form.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
         var first=firstField($('[data-fstep="2"]',form)); if(first){ setTimeout(function(){ first.focus({preventScroll:true}); },350); }
