@@ -355,25 +355,24 @@ def header():
     return '<header class="site-header">' + h + '</header>\n'
 
 def footer(page):
-    # Footer v2 (Tariq, Oct 25): two tidy rows — brand + links, then a hairline with legal + contact;
-    # centered and stacked on phones, split left/right on desktop
-    links = [('/about', 'About'), ('/services', 'Services'), ('/design', 'Design'), ('/contact', 'Contact Us'),
-             (IG, 'Instagram'), (FB, 'Facebook'), ('/privacy', 'Privacy'), ('/accessibility', 'Accessibility')]
-    f = ('<div class="wrap foot2">'
-         '<div class="f2-top">'
+    # Footer v3 (Tariq, Oct 26): graphite band with the gold monogram, a one-line sign-off, compact sentence-case links,
+    # phone and email; left-aligned and tight on phones, three columns on desktop
+    nav = ''.join('<a href="%s">%s</a>' % (u, t) for u, t in [('/about', 'About'), ('/services', 'Services'), ('/design', 'Design'), ('/contact', 'Contact')])
+    soc = ''.join('<a href="%s" target="_blank" rel="noopener">%s</a>' % (u, t) for u, t in [(IG, 'Instagram'), (FB, 'Facebook')])
+    f = ('<div class="wrap f3">'
+         '<div class="f3-brand">'
            '<a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram">'
            '<use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg><span class="lk-name">MIRAJ EVENTS</span></a>'
-           '<nav class="foot-links" aria-label="Footer">%s</nav>'
+           '<p class="f3-tag">Be a guest at your own celebration.</p>'
          '</div>'
-         '<div class="f2-bottom">'
-           '<span class="f2-contact"><a href="mailto:%s">%s</a><span class="f2-dot" aria-hidden="true">·</span><a href="tel:%s">%s</a></span>'
-           '<span class="f2-legal">© <span id="yr">%s</span> Miraj Events, LLC · Metro Detroit, Michigan</span>'
-         '</div>'
-         '</div>') % (VERSION, ''.join('<a href="%s">%s</a>' % (u, t) for u, t in links), EMAIL, EMAIL, TEL, PHONE,
-                      datetime.date.today().year)
+         '<nav class="f3-nav" aria-label="Footer"><div class="f3-row">%s</div><div class="f3-row f3-soc">%s</div></nav>'
+         '<div class="f3-reach"><a href="tel:%s">%s</a><a href="mailto:%s">%s</a></div>'
+         '<div class="f3-legal"><span>© <span id="yr">%s</span> Miraj Events, LLC<span class="f3-loc"> · Metro Detroit, Michigan</span></span>'
+           '<span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div>'
+         '</div>') % (VERSION, nav, soc, TEL, PHONE, EMAIL, EMAIL, datetime.date.today().year)
     sticky = ('<aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="%s">Check availability</a></aside>'
               % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form'))
-    return ('<footer class="rule-top">' + f + '</footer>\n' + sticky + '\n'
+    return ('<footer class="f3-wrap">' + f + '</footer>\n' + sticky + '\n'
             '<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % VERSION)
 
 NODATE = '<label class="nodate"><input type="checkbox" data-nodate> No date yet</label>'
@@ -501,8 +500,13 @@ QUICK = ('<div class="ct4-quick">'
          '<a class="ct4-btn" href="sms:+15865040207">' + _ico('M4 5h16v11H9l-5 4z') + 'Text</a>'
          '<a class="ct4-btn" href="https://wa.me/15865040207">' + _ico('M4 20l1.5-4A8 8 0 1 1 8 18.5L4 20z') + 'WhatsApp</a>'
          '</div>')
-STEPS = ('<ol class="ct-steps"><li><span>1</span>We reply within 24 hours</li><li><span>2</span>A 30-minute call about your events</li>'
-         '<li><span>3</span>Your customized package within 48 hours</li></ol>')
+# What happens next (Tariq, Oct 26): no 1-3 numerals; small gold icons joined by a hairline
+_nx = lambda d: '<span class="nx-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">%s</svg></span>' % d
+STEPS = ('<div class="nx"><p class="nx-k">What happens next</p><ol class="nx-list">'
+         '<li>' + _nx('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/>') + '<span>We reply within 24 hours</span></li>'
+         '<li>' + _nx('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>') + '<span>A 30-minute call about your events</span></li>'
+         '<li>' + _nx('<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>') + '<span>Your customized package within 48 hours</span></li>'
+         '</ol></div>')
 def inq_upgrade(h, slim=False):
     """Inquiry section v2 (Tariq, Oct 25): linen band, photo-backed heading on phones, Call/Text/WhatsApp buttons,
     what-happens-next steps, and an elevated white form card instead of a plain list + flat card."""
