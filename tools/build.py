@@ -318,12 +318,16 @@ if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
 MENU_ITEMS = [('/', 'home', '01', 'Home', 'Welcome'),
               ('/about', 'about', '02', 'About', 'Mehreen &amp; the team'),
               ('/services', 'services', '03', 'Services', 'Packages &amp; pricing'),
-              ('/contact', 'contact', '04', 'Contact Us', 'Start planning')]
+              ('/design', 'design', '04', 'Design', 'Mood boards &amp; floor plans'),
+              ('/contact', 'contact', '05', 'Contact Us', 'Start planning')]
 def header():
     h = between(src, '<header class="site-header">', '</header>')
     h = relink(h, 'x')
     h = logo_use(h)
     h = h.replace('href="#home"', 'href="/"')
+    # Design page (Tariq, Oct 25): in the main nav after Services
+    h, n = re.subn(r'(<a href="/services" data-nav="services">Services</a>)', r'\1\n      <a href="/design" data-nav="design">Design</a>', h, count=1)
+    assert n == 1
     # Phone menu v2 (Tariq, Oct 25): compact serif items with gold numerals and gold hairlines + one slim CTA
     mob = ('<nav id="mobnav" class="mobnav" hidden aria-label="Mobile"><div class="wrap mobnav-in">'
            '<ul class="mn-list">' + ''.join(
@@ -343,7 +347,7 @@ def header():
 def footer(page):
     # Footer v2 (Tariq, Oct 25): two tidy rows — brand + links, then a hairline with legal + contact;
     # centered and stacked on phones, split left/right on desktop
-    links = [('/about', 'About'), ('/services', 'Services'), ('/contact', 'Contact Us'),
+    links = [('/about', 'About'), ('/services', 'Services'), ('/design', 'Design'), ('/contact', 'Contact Us'),
              (IG, 'Instagram'), (FB, 'Facebook'), ('/privacy', 'Privacy')]
     f = ('<div class="wrap foot2">'
          '<div class="f2-top">'
@@ -420,8 +424,13 @@ def photo_strip(items):
     has_desc = any(len(it) > 3 for it in items)
     figs = ''
     for it in items:
-        cap = ('<strong>%s</strong><span>%s</span>' % (esc(it[2]), esc(it[3]))) if len(it) > 3 else esc(it[2])
-        figs += '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(it[0], it[1], 900, 1200), cap)
+        href = it[4] if len(it) > 4 else None
+        title = ('<a href="%s">%s</a>' % (href, esc(it[2]))) if href else esc(it[2])
+        cap = ('<strong>%s</strong><span>%s</span>' % (title, esc(it[3]))) if len(it) > 3 else title
+        img = pic(it[0], it[1], 900, 1200)
+        if href:
+            img = '<a class="ps-link" href="%s" tabindex="-1" aria-hidden="true">%s</a>' % (href, img)
+        figs += '<figure>%s<figcaption>%s</figcaption></figure>' % (img, cap)
     return '<div class="photo-strip%s reveal">' % (' has-desc' if has_desc else '') + figs + '</div>'
 _ico = lambda d: '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="%s"/></svg>' % d
 QUICK = ('<div class="ct4-quick">'
@@ -495,7 +504,7 @@ home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<div class="hero-shade" aria-hidden="true"></div>', 1)
 _strip = ('<div class="band band-white rule-top"><div class="wrap">' + photo_strip([
     ('stage-white', 'Sweetheart table with gold oval chairs before a wall of white blossoms', 'Design direction',
-     'We shape the look with you and oversee the décor team that brings it to life.'),
+     'We shape the look with you and oversee the décor team that brings it to life.', '/design'),
     ('ballroom-chandeliers', 'Wood-paneled ballroom with crystal chandeliers and white round tables', 'Reception management',
      'From the grand entrance to the send-off, we run the timeline with your venue and vendors.'),
     ('details-gold', 'Place setting with a gold charger, blush napkin, place card and gold flatware', 'Focus on details',
@@ -524,7 +533,7 @@ svc = ('<section class="svc-hero">'
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
     '<div class="band"><div class="wrap">' + photo_strip([
         ('design-stage', 'White stage with a floral arch of ivory and blush roses, a curved loveseat and a crystal chandelier', 'Design direction',
-         'Concept, floor plan and the décor team, from Design + Coordination up.'),
+         'Concept, floor plan and the décor team, from Design + Coordination up.', '/design'),
         ('ballroom-library', 'Library ballroom with chandelier, white tables and floral centerpieces', 'The run of show',
          'One timeline for every event, shared with every vendor and run on the day.'),
         ('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 'Finishing touches',
@@ -548,6 +557,12 @@ _keep = ['Can you run our whole wedding weekend?', "We've already booked our ven
 _new_faq = '\n'.join(_merged if k is None else _faq_items[k] for k in _keep)
 _all = list(re.finditer(r'<details[^>]*><summary>.*?</details>', svc, re.S))
 svc = svc[:_all[0].start()] + _new_faq + svc[_all[-1].end():]
+_dc = 'The look: concept, floor plan, décor team and the install. Décor is billed by the vendor.</p></div>'
+assert svc.count(_dc) == 1
+svc = svc.replace(_dc, _dc + '\n        <a class="textlink pk-link" href="/design">See design direction &#8594;</a>')
+_dq = 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor.</p></details>'
+assert svc.count(_dq) == 1
+svc = svc.replace(_dq, 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor. <a href="/design">See how design direction works</a>.</p></details>')
 page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroit',
      'Day-of coordination from $1,975, design + coordination, planning + design and full wedding planning in Metro Detroit, Toledo and Chicago. Multi-event wedding weekends packaged together.',
      '/services', 'services', svc, schema=[services_schema(), faq_schema(svc)])
@@ -628,7 +643,7 @@ ab = (
 '<div class="band ab3-dslim-band" id="design-direction"><div class="wrap ab3-dslim reveal">'
   '<div><p class="eyebrow">Design direction</p><h2 class="h2">Professional design <em>direction</em>.</h2></div>'
   '<div class="ab3-dslim-txt"><p class="lead">From Design + Coordination up, we shape the look of your celebration with you, from colors and centerpieces to the stage, and direct the décor team that brings it to life.</p>'
-    '<a class="textlink" href="/services#design">See Design + Coordination &#8594;</a></div>'
+    '<a class="textlink" href="/design">See design direction &#8594;</a></div>'
 '</div></div>'
 + press_list +
 '<div class="band band-dark ab-cta"><div class="wrap ab-cta-in">'
@@ -640,6 +655,146 @@ ab = (
 page('about.html', 'About Miraj Events | Mehreen Buksh, Detroit Wedding Planner',
      'Founded by Mehreen Buksh, Miraj Events plans and runs multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago. 50+ weddings in two years; largest event 900+ guests.',
      '/about', 'about', ab, schema=[org_schema()])
+
+# DESIGN (Tariq, Oct 25): standalone Design direction page, from the approved sample
+def dzimg(name, alt, w, h, small=None, sizes='', eager=False):
+    ss = (' srcset="/assets/img-%s-%d.webp %dw, /assets/img-%s.webp %dw" sizes="%s"' % (name, small, small, name, w, sizes)) if small else ''
+    return ('<img src="/assets/img-%s.webp"%s alt="%s" width="%d" height="%d"%s decoding="async">'
+            % (name, ss, esc(alt), w, h, '' if eager else ' loading="lazy"'))
+DZ_STEPS = [('01', 'Discover', 'Your story, venue, guest count and the feel you want.'),
+            ('02', 'Concept', 'A mood board and palette to react to and refine.'),
+            ('03', 'Plan', 'Floor plan, stage and tables, drawn to your room.'),
+            ('04', 'Install', 'We brief the décor team and oversee setup.')]
+DZ_MOOD = [('dz-mood-1', 'Candlelit table with white florals and gold votives'),
+           ('dz-mood-2', 'Ivory benches beneath a soft blush drape'),
+           ('dz-mood-3', 'Crystal chandeliers over a wood-paneled ballroom'),
+           ('dz-mood-4', 'Gold beaded charger with a blank place card and greenery')]
+DZ_PALETTE = [('#F6F1E7', 'Ivory'), ('#E7D9BF', 'Champagne'), ('#E6CFC4', 'Blush'), ('#A8873C', 'Antique gold'), ('#A3AE95', 'Sage')]
+DZ_NOTES = [('Feel', 'Warm, candlelit and quietly grand.'), ('Stage', 'Soft ivory drape and a full floral arch.'),
+            ('Tables', 'Gold chargers, ivory linen, taper candles.'), ('Florals', 'White garden roses and greenery, kept low.'),
+            ('Lighting', 'Warm uplighting; candlelight on every table.')]
+DZ_WHY = [('Stage faces the entrance,', 'so it&#8217;s the first thing guests see.'),
+          ('Dance floor in the middle,', 'with every table close to the action.'),
+          ('Bar and desserts at the back', 'keep the stage clear for photos.'),
+          ('One clear aisle', 'from the door to the dance floor.')]
+DZ_MOODS = [('Ceremony', 'Soft florals and a calm, intimate setting.', [('#F6F1E7', 'Ivory'), ('#E6CFC4', 'Blush'), ('#A3AE95', 'Sage'), ('#C6A15A', 'Gold')]),
+            ('Reception', 'Candlelight, crystal and a statement stage.', [('#E7D9BF', 'Champagne'), ('#A8873C', 'Gold'), ('#F6F1E7', 'Ivory'), ('#2C2E31', 'Charcoal')]),
+            ('Mehndi &amp; sangeet', 'Bold color, floor seating and room to dance.', [('#E3A23B', 'Marigold'), ('#C23F78', 'Fuchsia'), ('#1F5C4B', 'Emerald'), ('#F6F1E7', 'Ivory')]),
+            ('Gala', 'Clean lines, a branded stage, room for the program.', [('#1F2A44', 'Navy'), ('#C6A15A', 'Gold'), ('#FFFFFF', 'White'), ('#8A929C', 'Slate')])]
+DZ_WORK = [('dz-stage', 'White stage with a floral arch of ivory and blush roses, a curved loveseat and a crystal chandelier', 'Floral stage', 'White arches, ivory and blush roses'),
+           ('dz-florals', 'Cascading ivory and blush roses around white arches beside an ivory chair', 'Floral installation', 'Garden roses, full and cascading'),
+           ('dz-ceremony', 'Gold and ivory chair framed by white florals against soft gray drape', 'Ceremony seating', 'Ivory and gold, framed in white blooms'),
+           ('dz-candles', 'Clusters of pillar candles in tall glass among white flowers', 'Candlelight', 'Clustered pillars in glass'),
+           ('dz-tables', 'Round table with burgundy napkins, gold candleholders and a framed table number by tall windows', 'Tablescapes', 'Burgundy, gold and taper candles'),
+           ('dz-room', 'Ballroom set with gold chairs, ivory linen and candlelit tables beneath a chandelier', 'Room setup', 'Gold chairs, ivory linen, crystal'),
+           ('dz-lounge', 'Velvet lounge sofa on a rug beneath a tall arched window with floral stands', 'Lounge seating', 'Velvet and a grand arched window'),
+           ('dz-centerpiece', 'Tall garden-style centerpiece with lilies and trailing amaranthus on a long table', 'Centerpieces', 'Tall, garden-style arrangements')]
+_tb = ''.join('<use href="#dztb" x="%d" y="%d" width="42" height="42"/>' % (cx - 21, cy - 21)
+              for cx in (36, 84, 276, 324) for cy in (106, 156, 206, 256, 306))
+DZ_PLAN = (
+ '<svg class="dz-plan" viewBox="0 0 360 480" role="img" aria-labelledby="dzPlanT">'
+ '<title id="dzPlanT">Sample reception floor plan: the stage faces the entrance, the dance floor is in the center with twenty round tables on both sides, and the bar, dessert table, photo booth and welcome table sit at the back.</title>'
+ '<defs><pattern id="dzdf" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#E2D6BF" stroke-width=".7"/></pattern>'
+ '<symbol id="dztb" viewBox="-21 -21 42 42"><g fill="#FCFAF6" stroke="#BCA77C" stroke-width=".9">'
+ '<circle cx="0" cy="-17" r="3.3"/><circle cx="12" cy="-12" r="3.3"/><circle cx="17" cy="0" r="3.3"/><circle cx="12" cy="12" r="3.3"/>'
+ '<circle cx="0" cy="17" r="3.3"/><circle cx="-12" cy="12" r="3.3"/><circle cx="-17" cy="0" r="3.3"/><circle cx="-12" cy="-12" r="3.3"/></g>'
+ '<circle r="11.5" fill="#F3ECDD" stroke="#A8873C" stroke-width="1"/></symbol></defs>'
+ '<rect x="8" y="8" width="344" height="462" fill="#FBF8F2"/>'
+ '<path d="M150 470H8V8H352V470H210" fill="none" stroke="#2C2E31" stroke-width="1.6"/><path d="M150 463v14M210 463v14" stroke="#2C2E31" stroke-width="1.6"/>'
+ '<rect x="96" y="20" width="168" height="46" fill="#EFE4CF" stroke="#A8873C"/>'
+ '<circle cx="110" cy="33" r="6.5" fill="#A3AE95"/><circle cx="119" cy="42" r="4.5" fill="#E6CFC4"/>'
+ '<circle cx="250" cy="33" r="6.5" fill="#A3AE95"/><circle cx="241" cy="42" r="4.5" fill="#E6CFC4"/>'
+ '<rect x="156" y="46" width="48" height="12" rx="3" fill="#FCFAF6" stroke="#A8873C"/><text x="180" y="37" class="lb">STAGE</text>'
+ '<rect x="286" y="24" width="50" height="24" fill="#FCFAF6" stroke="#8C877E"/><text x="311" y="39.5" class="lb">DJ</text>'
+ '<rect x="118" y="88" width="124" height="110" fill="#F4EEE2"/><rect x="118" y="88" width="124" height="110" fill="url(#dzdf)" stroke="#BCA77C"/>'
+ '<circle cx="180" cy="137" r="18" fill="#FCFAF6" stroke="#A8873C"/><text x="180" y="141.5" class="mono">A&amp;J</text>'
+ '<text x="180" y="184" class="lb">DANCE FLOOR</text>' + _tb +
+ '<path d="M180 452V213" stroke="#A8873C" stroke-width="1.2" stroke-dasharray="3 4"/><path d="M175.5 214.5L180 206.5L184.5 214.5" fill="none" stroke="#A8873C" stroke-width="1.2"/>'
+ '<rect x="20" y="360" width="104" height="22" fill="#FCFAF6" stroke="#8C877E"/><text x="72" y="374.5" class="lb">BAR</text>'
+ '<rect x="236" y="360" width="104" height="22" fill="#FCFAF6" stroke="#8C877E"/><text x="288" y="374.5" class="lb">DESSERT</text>'
+ '<rect x="20" y="412" width="88" height="32" fill="#FCFAF6" stroke="#8C877E"/><text x="64" y="431.5" class="lb">PHOTO BOOTH</text>'
+ '<rect x="252" y="412" width="88" height="32" fill="#FCFAF6" stroke="#8C877E"/><text x="296" y="431.5" class="lb">WELCOME</text>'
+ '<text x="180" y="461" class="lb">ENTRANCE</text>'
+ '<g class="mk"><circle cx="96" cy="20" r="8"/><text x="96" y="23.4">1</text></g><g class="mk"><circle cx="242" cy="88" r="8"/><text x="242" y="91.4">2</text></g>'
+ '<g class="mk"><circle cx="124" cy="360" r="8"/><text x="124" y="363.4">3</text></g><g class="mk"><circle cx="180" cy="300" r="8"/><text x="180" y="303.4">4</text></g>'
+ '</svg>')
+dz = (
+'<section class="dz-hero">'
+  '<picture class="dz-hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-dz-hero-sm.webp">'
+  '<img src="/assets/img-dz-hero-md.webp" srcset="/assets/img-dz-hero-md.webp 1400w, /assets/img-dz-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
+  '<div class="dz-hero-shade" aria-hidden="true"></div>'
+  '<div class="wrap dz-hero-inner"><div class="dz-hero-copy">'
+    '<p class="eyebrow">Design direction</p>'
+    '<h1>The look of your celebration, <em>designed</em> with you.</h1>'
+    '<p class="lead">Concept, palette, floor plan and the d&eacute;cor team that brings it all to life.</p>'
+    '<div class="actions"><a class="btn btn-gold" href="/contact#contact-form">Check your date</a><a class="btn btn-ivory" href="#work">See our work</a></div>'
+  '</div></div>'
+'</section>'
+'<div class="band dz-band" id="how"><div class="wrap">'
+  '<div class="dz-head reveal"><p class="eyebrow">How it works</p><h2 class="h2">From a feeling to a <em>finished room</em>.</h2></div>'
+  '<ol class="dz-steps reveal">' + ''.join('<li><span class="n">%s</span><h3>%s</h3><p>%s</p></li>' % (n, t, esc(d)) for n, t, d in DZ_STEPS) + '</ol>'
+'</div></div>'
+'<div class="band dz-band dz-linen" id="brief"><div class="wrap">'
+  '<div class="dz-head dz-center reveal"><p class="eyebrow">Sample design brief</p><h2 class="h2">What design direction looks like <em>on paper</em>.</h2></div>'
+  '<article class="dz-brief reveal" aria-label="Sample design brief">'
+    '<header class="dz-brief-head"><div><span class="dz-k">Design brief</span><p class="dz-brief-title">Reception &middot; Ivory &amp; antique gold</p></div><span class="dz-pill">Sample</span></header>'
+    '<div class="dz-row">'
+      '<div class="dz-cell"><span class="dz-k">Mood board</span><div class="dz-board">'
+        + ''.join(dzimg(n, a, 640, 640) for n, a in DZ_MOOD) +
+      '</div><p class="dz-note">Inspiration images</p></div>'
+      '<div class="dz-cell"><span class="dz-k">Palette</span><ul class="dz-palette">'
+        + ''.join('<li><i style="--c:%s"></i><b>%s</b><small>%s</small></li>' % (c, n, c) for c, n in DZ_PALETTE) +
+      '</ul><span class="dz-k">Direction</span><dl class="dz-notes">'
+        + ''.join('<div><dt>%s</dt><dd>%s</dd></div>' % (k, esc(v)) for k, v in DZ_NOTES) +
+      '</dl></div>'
+    '</div>'
+    '<div class="dz-row">'
+      '<div class="dz-cell"><span class="dz-k">Floor plan</span>' + DZ_PLAN + '</div>'
+      '<div class="dz-cell dz-why-cell"><span class="dz-k">Why this layout</span><ol class="dz-why">'
+        + ''.join('<li><span><strong>%s</strong> %s</span></li>' % (a, b) for a, b in DZ_WHY) +
+      '</ol></div>'
+    '</div>'
+  '</article>'
+'</div></div>'
+'<div class="band dz-band" id="palettes"><div class="wrap">'
+  '<div class="dz-head reveal"><p class="eyebrow">Event palettes</p><h2 class="h2">A different mood for <em>each event</em>.</h2></div>'
+  '<div class="dz-moods reveal">' + ''.join(
+      '<article class="dz-mood"><div class="bar" aria-hidden="true">%s</div><div class="tx"><h3>%s</h3><p>%s</p><small>%s</small></div></article>'
+      % (''.join('<i style="--c:%s"></i>' % c for c, _ in cols), name, esc(line), ' &middot; '.join(n for _, n in cols))
+      for name, line, cols in DZ_MOODS) + '</div>'
+'</div></div>'
+'<div class="band dz-band dz-linen" id="work"><div class="wrap">'
+  '<div class="dz-head dz-center reveal"><p class="eyebrow">Our work</p><h2 class="h2">Rooms we&#8217;ve <em>designed</em>.</h2></div>'
+  '<ul class="dz-gallery reveal">' + ''.join(
+      '<li><figure><div class="ph">%s</div><figcaption><strong>%s</strong><span>%s</span></figcaption></figure></li>'
+      % (dzimg(n, a, 800, 1000, 500, '(max-width:900px) 46vw, 280px'), esc(t), esc(d)) for n, a, t, d in DZ_WORK) + '</ul>'
+  '<p class="dz-gal-note">All photos from Miraj events.</p>'
+'</div></div>'
+'<div class="band dz-band" id="included"><div class="wrap">'
+  '<div class="dz-inc">'
+    '<div class="reveal"><p class="eyebrow">What&#8217;s included</p><h2 class="h2">Included from <em>Design&nbsp;+&nbsp;Coordination</em> and up.</h2>'
+      '<p class="dz-small">D&eacute;cor itself is billed by the vendor.</p>'
+      '<a class="textlink" href="/services#design">See packages &amp; pricing &#8594;</a></div>'
+    '<ul class="dz-inc-list reveal"><li>Concept &amp; mood board</li><li>Color palette</li><li>Floor plan &amp; stage layout</li>'
+      '<li>D&eacute;cor team, briefed and directed</li><li>Install, overseen by us</li></ul>'
+  '</div>'
+  '<div class="dz-addons reveal"><span class="dz-k">Add-ons</span>'
+    + ''.join('<span class="dz-chip">%s</span>' % c for c in ['Candy pop-up', 'Photobooth', 'Staging &amp; runways', 'Linens &amp; chairs', 'Backdrops']) +
+    '<small>Add to any package. Delivery, setup and pickup included.</small></div>'
+'</div></div>'
+'<div class="band band-dark ab-cta dz-cta"><div class="wrap ab-cta-in">'
+  '<div><h2 class="h2" style="font-size:clamp(28px,3.4vw,44px)">Let&#8217;s design <em>yours</em>.</h2>'
+  '<p class="lead">Tell us the feel you want. We&#8217;ll take it from there.</p></div>'
+  '<div class="actions"><a class="btn btn-gold" href="/contact#contact-form">Check your date</a><a class="btn btn-ivory" href="tel:+15865040207">Call (586) 504-0207</a></div>'
+'</div></div>'
+)
+page('design.html', 'Wedding Design Direction in Detroit | Miraj Events',
+     'Wedding design direction in Metro Detroit: concept, mood board, color palette, floor plan and a décor team we brief and direct. From Design + Coordination up.',
+     '/design', 'design', dz, schema=[org_schema(), {
+         "@context": "https://schema.org", "@type": "Service", "name": "Wedding design direction",
+         "serviceType": "Wedding design and décor direction", "provider": {"@id": SITE + "/#business"},
+         "areaServed": "Metro Detroit, Toledo and Chicago", "url": SITE + "/design",
+         "description": "Concept, mood board, color palette, floor plan and décor team direction, included from the Design + Coordination package up."}])
 
 # CONTACT
 ct = prep('contact')
@@ -759,7 +914,7 @@ for f in os.listdir(os.path.join(ASSETS_SRC, 'static')):
 
 # sitemap + robots + llms
 today = datetime.date.today().isoformat()
-urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2')]
+urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2')]
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + ''.join('  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n' % (SITE, u if u != '/' else '/', today, p) for u, p in urls)
