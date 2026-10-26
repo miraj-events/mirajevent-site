@@ -947,17 +947,27 @@ page('day-of-coordination.html', 'Day-of Wedding Coordinator in Detroit, MI | Mi
 
 # THANK YOU (Google Ads Form Fill conversion fires here, same send_to as the Squarespace site)
 th = prep('thanks')
-# Thank-you page v2 (Tariq, Oct 26): "What happens next" lives here now (moved off Contact and Day-of),
-# plus Call / Text / WhatsApp for people who can't wait; décor photo on desktop. Conversion script below is unchanged.
+# Thank-you page v3 (Tariq, Oct 26 pm): the Miraj team front and centre, on phones too. A layered collage of
+# team photos assembles once on arrival (about 4.5 s, then holds still, so no pause control is needed under
+# WCAG 2.2.2); reduced-motion visitors and no-JS get the finished collage. "What happens next" + Call / Text /
+# WhatsApp stay. Conversion script below is unchanged.
+TT_JS = ('<script>(function(){var s=document.getElementById("ttStage");if(!s){return;}s.classList.add("tt-pre");'
+         'var done=false,go=function(){if(!done){done=true;s.classList.add("tt-go");}};'
+         'var im=[].slice.call(s.querySelectorAll("img"));'
+         'Promise.all(im.map(function(i){return i.decode?i.decode().catch(function(){}):0;})).then(go);'
+         'setTimeout(go,1600);})();</script>')
 TY = ('<section class="ty"><div class="wrap ty-grid">'
-      '<div class="ty-main">'
-        '<p class="eyebrow">Thank you</p>'
-        '<h1 class="h1">We&#8217;ve got your inquiry.</h1>'
-        + STEPS +
+      '<div class="ty-head"><p class="eyebrow">Thank you</p><h1 class="h1">We&#8217;ve got your inquiry.</h1></div>'
+      '<figure class="ty-team"><div class="tt-stage" id="ttStage">'
+        '<div class="tt-main">' + pic('team-group', 'The Miraj Events team in black uniforms with gold name badges at a venue', 1500, 1000, eager=True) + '</div>'
+        '<div class="tt-card tt-a">' + pic('team-c', 'Mehreen Buksh with a Miraj Events coordinator, both in uniform with name badges', 675, 900, eager=True) + '</div>'
+        '<div class="tt-card tt-b">' + pic('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 900, 1200, eager=True) + '</div>'
+      '</div><figcaption class="tt-cap"><span class="tt-k">Your Miraj team</span><span class="tt-line">On every event, from the first call to send-off.</span></figcaption></figure>'
+      + TT_JS +
+      '<div class="ty-body">' + STEPS +
         '<div class="ty-now"><p class="nx-k">Can&#8217;t wait?</p>' + QUICK + '</div>'
         '<p class="ty-small"><a href="mailto:%s">%s</a><span aria-hidden="true"> · </span><a href="/design">See our design work</a></p>'
       '</div>'
-      '<figure class="ty-photo">' + pic('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 900, 1200) + '</figure>'
       '</div></section>') % (EMAIL, EMAIL)
 th, n = re.subn(r'<div class="wrap"><div class="thanks">.*?</div></div>', lambda m: TY, th, count=1, flags=re.S)
 assert n == 1
