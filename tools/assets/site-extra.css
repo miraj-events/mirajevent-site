@@ -734,3 +734,9 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 .band-dark .req-note{color:#CFCAC0}
 .band-dark .field-err{color:#F4B9B2}
 .band-dark [aria-invalid="true"]{border-color:#F4B9B2!important}
+/* package ladder: 2 x 2 on tablets and half-width windows instead of full-width rows (Tariq, Oct 25) */
+@media (min-width:600px) and (max-width:859px){
+  .lad2{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 28px}
+  .lad2 li+li{border-top:0;padding-top:0}
+  .lad2 li.is-pop{margin:-14px;padding:14px;box-shadow:0 0 0 1px #E8DFCC,0 14px 32px rgba(43,42,38,.06)}
+}
