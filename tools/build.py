@@ -900,10 +900,10 @@ ct = (
     '<h1>Let&#8217;s start planning <em>your</em> celebration.</h1>'
     '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
     + QUICK +
+    '<a class="ct4-pk" href="#packages-ct">See package descriptions below <span aria-hidden="true">&darr;</span></a>'  # Tariq, Oct 26: moved up from above the form
   '</div>'
   + reviews_block('ct').replace('class="rv ct"', 'class="rv ct rv-m"', 1) +
   '<div class="ct-formwrap">'
-    '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
     + _form +
   '</div>'
   + reviews_block('ct').replace('class="rv ct"', 'class="rv ct rv-d"', 1).replace('rvt-ct-', 'rvt-ctd-') +

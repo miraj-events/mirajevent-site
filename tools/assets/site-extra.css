@@ -747,3 +747,8 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
   .lad2 li+li{border-top:0;padding-top:0}
   .lad2 li.is-pop{margin:-14px;padding:14px;box-shadow:0 0 0 1px #E8DFCC,0 14px 32px rgba(43,42,38,.06)}
 }
+
+/* Contact hero: link down to the package descriptions (Tariq, Oct 26) */
+.ct4-pk{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:28px;font-size:14px;letter-spacing:.02em;color:var(--gold-deep);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.ct4-pk:hover{color:var(--fg)}
+@media (max-width:899px){.ct4-pk{color:#D9BC7A}.ct4-pk:hover{color:#F8F5EE}}
