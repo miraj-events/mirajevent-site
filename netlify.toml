@@ -18,15 +18,17 @@
   status = 301
   force = true
 
+# no #anchor on these two: an ad URL has landed on /full-service-planning, and an anchor in the
+# target risks Netlify putting the forwarded ?utm/gclid string after the # where trackers can't read it
 [[redirects]]
   from = "/partial-service-planning"
-  to = "/services#planning"
+  to = "/services"
   status = 301
   force = true
 
 [[redirects]]
   from = "/full-service-planning"
-  to = "/services#full"
+  to = "/services"
   status = 301
   force = true
 
@@ -89,6 +91,33 @@
 [[redirects]]
   from = "/shop/*"
   to = "/"
+  status = 301
+  force = true
+
+# hidden Squarespace pages that Google Ads still sends clicks to (Ads review, Oct 26):
+# /bookings = the "Book A Consultation" sitelinks Google created; the others are older sitelink targets
+[[redirects]]
+  from = "/bookings"
+  to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/why-should-you-hire-a-wedding-planner-1"
+  to = "/services"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/about-1"
+  to = "/about"
+  status = 301
+  force = true
+
+# old spelling still linked from the Squarespace Home and Contact pages
+[[redirects]]
+  from = "/servicesoverview"
+  to = "/services"
   status = 301
   force = true
 
