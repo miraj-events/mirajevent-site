@@ -1407,3 +1407,21 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 
 /* Contact: less space under the form on phones now that the steps moved to the thank-you page (Oct 26) */
 @media (max-width:899px){.ct4{padding-bottom:32px}}
+
+/* Footer alignment (Oct 26, Tariq: "too far left / jumbled"):
+   phones = one centred column; computers = brand left, links truly centred, contact right */
+@media (max-width:899px){
+  .f3{justify-items:center;text-align:center;gap:16px}
+  .f3-brand{justify-items:center}
+  .f3-nav{justify-items:center;gap:6px}
+  .f3-row,.f3-reach{justify-content:center;gap:4px 22px}
+  .f3-reach{flex-direction:column;align-items:center;gap:2px}
+  .f3-legal{width:100%;flex-direction:column;justify-content:center;gap:6px}
+  .f3-small{justify-content:center}
+}
+@media (min-width:900px){
+  .f3{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+  .f3-nav{justify-items:center}
+  .f3-row{justify-content:center}
+  .f3-reach{justify-self:end}
+}
