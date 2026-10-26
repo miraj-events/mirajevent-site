@@ -1290,7 +1290,7 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 .nx-list li>span:last-child{padding-top:7px}
 .nx-list li:not(:last-child)::after{content:"";position:absolute;left:17px;top:35px;bottom:-14px;width:1px;background:rgba(168,135,60,.4)}
 .nx-ic{flex:none;display:grid;place-items:center;width:35px;height:35px;border-radius:50%;border:1px solid rgba(168,135,60,.55);background:#FCFAF6;color:var(--gold-deep)}
-.ct4-next .ct4-email{margin:0;padding-top:14px;border-top:1px solid var(--rule)}
+.ct4-next .ct4-email{margin:0}
 @media (max-width:899px){
   .inq2-head .nx-k{color:#D9BC7A}
   .inq2-head .nx-list li{color:#E8E4DA}
@@ -1331,3 +1331,24 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
   .f3 .lk-name{font-size:15px;letter-spacing:6px}
   .f3-tag{font-size:20px}
 }
+
+/* ===== Thank-you page v2 (Tariq, Oct 26): next steps live here ===== */
+.ty{background:#F1ECE2;padding-block:36px 52px}
+.ty-grid{display:grid;gap:28px;align-items:center}
+.ty-main{display:flex;flex-direction:column;gap:20px;max-width:560px;min-width:0}
+.ty .h1{margin:0;font-size:clamp(38px,5vw,58px)}
+.ty-now{display:grid;gap:10px}
+.ty-small{margin:0;font-size:14px;color:var(--fg-2)}
+.ty-small a{color:var(--gold-deep);text-decoration:underline;text-underline-offset:3px}
+.ty-photo{margin:0;display:none}
+.ty-photo img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;display:block}
+@media (max-width:899px){.ty .ct4-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .ty .ct4-btn{border-color:var(--fg);color:var(--fg)}.ty .ct4-btn:hover{background:var(--fg);color:var(--ivory)}}
+@media (min-width:900px){
+  .ty{padding-block:64px 80px}
+  .ty-grid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);column-gap:72px}
+  .ty-photo{display:block}
+}
+
+/* Contact: less space under the form on phones now that the steps moved to the thank-you page (Oct 26) */
+@media (max-width:899px){.ct4{padding-bottom:32px}}

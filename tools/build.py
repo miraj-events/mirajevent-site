@@ -503,7 +503,7 @@ QUICK = ('<div class="ct4-quick">'
 # What happens next (Tariq, Oct 26): no 1-3 numerals; small gold icons joined by a hairline
 _nx = lambda d: '<span class="nx-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">%s</svg></span>' % d
 STEPS = ('<div class="nx"><p class="nx-k">What happens next</p><ol class="nx-list">'
-         '<li>' + _nx('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/>') + '<span>We reply within 24 hours</span></li>'
+         '<li>' + _nx('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/>') + '<span>We reply within hours</span></li>'
          '<li>' + _nx('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>') + '<span>A 30-minute call about your events</span></li>'
          '<li>' + _nx('<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>') + '<span>Your customized package within 48 hours</span></li>'
          '</ol></div>')
@@ -518,8 +518,8 @@ def inq_upgrade(h, slim=False):
             return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
                     '<p class="lead">Date in mind or still deciding? Either way, we&#8217;d love to hear from you.</p></div>')
         return ('<div class="inq2-head reveal"><p class="eyebrow">Contact us</p>' + m.group(1) +
-                '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
-                + QUICK + STEPS + '</div>')
+                '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within hours.</p>'
+                + QUICK + '</div>')  # next steps moved to the thank-you page (Oct 26)
     h, n = re.subn(r'<div class="stack reveal">\s*<p class="eyebrow">Contact us</p>\s*(<h2 class="h2">.*?</h2>)\s*<ul class="contact-list">.*?</ul>\s*</div>',
                    left, h, count=1, flags=re.S)
     assert n == 1
@@ -902,7 +902,7 @@ ct = (
   '<div class="ct4-head">'
     '<p class="eyebrow">Contact us</p>'
     '<h1>Let&#8217;s start planning <em>your</em> celebration.</h1>'
-    '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
+    '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within hours.</p>'
     + QUICK +
     '<a class="ct4-pk" href="#packages-ct">See package descriptions below <span aria-hidden="true">&darr;</span></a>'  # Tariq, Oct 26: moved up from above the form
   '</div>'
@@ -912,7 +912,7 @@ ct = (
   '</div>'
   + reviews_block('ct').replace('class="rv ct"', 'class="rv ct rv-d"', 1).replace('rvt-ct-', 'rvt-ctd-') +
   '<figure class="ct4-photo"><img src="/assets/img-contact-side.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
-  '<div class="ct4-next">' + STEPS +
+  '<div class="ct4-next">'  # next steps moved to the thank-you page (Oct 26)
     '<p class="ct4-email">Prefer email? <a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></p>'
   '</div>'
 '</div></section>'
@@ -922,7 +922,7 @@ ct = (
 '</div></div>'
 )
 page('contact.html', 'Contact Miraj Events | Check Your Wedding Date',
-     'Check your wedding date with Miraj Events. We reply within 24 hours. Call, text or WhatsApp (586) 504-0207. Wedding planning in Metro Detroit.',
+     'Check your wedding date with Miraj Events. We reply within hours. Call, text or WhatsApp (586) 504-0207. Wedding planning in Metro Detroit.',
      '/contact', 'contact', ct, schema=[org_schema()])
 
 # DAY-OF landing page (keeps the indexed /day-of-coordination URL alive)
@@ -947,9 +947,20 @@ page('day-of-coordination.html', 'Day-of Wedding Coordinator in Detroit, MI | Mi
 
 # THANK YOU (Google Ads Form Fill conversion fires here, same send_to as the Squarespace site)
 th = prep('thanks')
-th = th.replace('<a class="btn" href="/services">How it works</a>', '<a class="btn" href="/services">How it works</a>')
-th = th.replace('<p class="small">admin@mirajevent.com · (586) 504-0207 · Instagram @miraj.events</p>',
-                '<p class="small"><a href="mailto:%s">%s</a> · <a href="tel:%s">%s</a> · <a href="%s">Instagram @miraj.events</a></p>' % (EMAIL, EMAIL, TEL, PHONE, IG))
+# Thank-you page v2 (Tariq, Oct 26): "What happens next" lives here now (moved off Contact and Day-of),
+# plus Call / Text / WhatsApp for people who can't wait; décor photo on desktop. Conversion script below is unchanged.
+TY = ('<section class="ty"><div class="wrap ty-grid">'
+      '<div class="ty-main">'
+        '<p class="eyebrow">Thank you</p>'
+        '<h1 class="h1">We&#8217;ve got your inquiry.</h1>'
+        + STEPS +
+        '<div class="ty-now"><p class="nx-k">Can&#8217;t wait?</p>' + QUICK + '</div>'
+        '<p class="ty-small"><a href="mailto:%s">%s</a><span aria-hidden="true"> · </span><a href="/design">See our design work</a></p>'
+      '</div>'
+      '<figure class="ty-photo">' + pic('white-florals', 'White floral centerpiece with taper candles and crystal glassware', 900, 1200) + '</figure>'
+      '</div></section>') % (EMAIL, EMAIL)
+th, n = re.subn(r'<div class="wrap"><div class="thanks">.*?</div></div>', lambda m: TY, th, count=1, flags=re.S)
+assert n == 1
 conv_js = '''<script>
 /* Google Ads "Form Fill" conversion (unchanged send_to from the Squarespace site) + GA4 generate_lead.
    Fires once per submission. Value = proxy by package chosen; enhanced conversions use the email/phone just submitted. */
@@ -970,7 +981,7 @@ conv_js = '''<script>
   try{ sessionStorage.removeItem('miraj_lead'); }catch(e){}
 })();
 </script>''' % ADS_FORM_LABEL
-page('thank-you.html', 'Thank You | Miraj Events', 'Thank you for your inquiry. Miraj Events will be in touch within 24 hours.',
+page('thank-you.html', 'Thank You | Miraj Events', 'Thank you for your inquiry. Miraj Events will be in touch within hours.',
      '/thank-you', 'thanks', th, noindex=True, extra_js=conv_js)
 
 # PRIVACY
