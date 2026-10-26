@@ -126,7 +126,7 @@ def reviews_block(variant=''):
         '<a class="rv-head" href="%s" target="_blank" rel="noopener">'
         '<span class="rv-score">%.1f</span><span class="rv-meta"><span class="rv-stars" aria-hidden="true">★★★★★</span>'
         '<span class="rv-g">Google reviews</span></span></a>'
-        '<div class="rv-track" aria-live="polite">%s</div>'
+        '<div class="rv-track">%s</div><p class="sr-only rv-status" aria-live="polite" aria-atomic="true"></p>'
         '<div class="rv-nav"><button type="button" class="rv-arrow rv-prev" aria-label="Previous review">‹</button>'
         '<div class="rv-dots">%s</div>'
         '<button type="button" class="rv-arrow rv-next" aria-label="Next review">›</button></div>'
@@ -402,12 +402,44 @@ def newtab(h):
         return a[:-4] + '<span class="sr-only">%s</span></a>' % NEWTAB
     return re.sub(r'<a\b([^>]*\btarget="_blank"[^>]*)>.*?</a>', fix, h, flags=re.S)
 
+
+def a11y_markup(h):
+    """Accessibility (Oct 25, independent review): headings, form labels/requirements, dialog + tier semantics,
+    Back buttons, decorative numbers and arrows hidden from screen readers."""
+    # section titles that act as headings
+    h = h.replace('<p class="eyebrow" style="margin-bottom:18px">Questions couples ask</p>', '<h2 class="eyebrow" style="margin-bottom:18px">Questions couples ask</h2>')
+    h = h.replace('<p class="eyebrow" style="margin-bottom:18px">Day-of questions</p>', '<h2 class="eyebrow" style="margin-bottom:18px">Day-of questions</h2>')
+    h = h.replace('<div class="addons-head"><p class="eyebrow">Add-ons</p><h3>Finishing touches for the room.</h3>', '<div class="addons-head"><p class="eyebrow">Add-ons</p><h2>Finishing touches for the room.</h2>')
+    h = re.sub(r'(<div class="pkd-head">.*?)<h3>(.*?)</h3>', r'\1<h2>\2</h2>', h, flags=re.S)
+    # package tiers open a dialog; the dialog has a real name
+    h = h.replace(' aria-expanded="false" aria-controls="pk-modal"', ' aria-haspopup="dialog" aria-controls="pk-modal"')
+    h = h.replace('aria-labelledby="pk-modal-title"', 'aria-label="Package details"')
+    # every field shown with * is required, and the * is explained
+    for fid in re.findall(r'<label for="([\w-]+)">[^<]*\*</label>', h):
+        h = re.sub(r'(<(?:select|input|textarea) id="%s"(?![^>]*\brequired\b))' % re.escape(fid), r'\1 required', h)
+    h = re.sub(r'(<form\b[^>]*\bclass="[^"]*js-inquiry[^"]*"[^>]*>(?:(?!</form>).)*?<div class="form-meta">.*?</div>)',
+               lambda m: m.group(1) + ('<p class="req-note">Fields marked * are required</p>' if '*</label>' in h[m.end():m.end()+6000] else ''), h, flags=re.S)
+    # Back is a button that returns focus to step 1 (contact); home + day-of forms get one too
+    h = re.sub(r'<a class="textlink" href="#contact-form" data-back>(?:←|&larr;|&#8592;) Back</a>',
+               '<button type="button" class="textlink linkbtn" data-back><span aria-hidden="true">&#8592; </span>Back</button>', h)
+    h = re.sub(r'(<p class="small">By sending, you agree we may contact you about your inquiry by phone, text or email\.</p>)(\s*</div>\s*</form>)',
+               r'\1<p class="small form-back"><button type="button" class="textlink linkbtn" data-back><span aria-hidden="true">&#8592; </span>Back</button></p>\2', h)
+    # decorative numbers inside numbered lists/cards and arrow glyphs inside links/buttons
+    h = h.replace('<span class="n">', '<span class="n" aria-hidden="true">').replace('<span class="mn-n">', '<span class="mn-n" aria-hidden="true">')
+    h = re.sub(r'(<ol class="ct-steps">.*?</ol>)', lambda m: re.sub(r'<li><span>(\d)</span>', r'<li><span aria-hidden="true">\1</span>', m.group(1)), h, flags=re.S)
+    def arrows(m):
+        inner = re.sub(r'\s*(?:&nbsp;)?(→|&#8594;|&rarr;|↓|&darr;|&#8595;)', lambda k: '<span aria-hidden="true">&nbsp;%s</span>' % k.group(1), m.group(2))
+        return m.group(1) + inner + m.group(3)
+    h = re.sub(r'(<(?:a|button)\b[^>]*>)((?:(?!</?(?:a|button)\b).)*?)(</(?:a|button)>)', arrows, h, flags=re.S)
+    return h
+
 def page(fname, title, desc, path, view, main_html, schema=(), noindex=False, extra_js=''):
     main_html = nodate(main_html)
     if path not in ('/', '/404') and not noindex:
         schema = list(schema) + [breadcrumbs(path)]
     out = head(title, desc, path, view, schema, noindex) + header() + '<main id="main">\n' + main_html + '\n</main>\n' + footer(view)
     out = newtab(out)
+    out = a11y_markup(out)
     if extra_js:
         out = out.replace('</body>', extra_js + '\n</body>')
     os.makedirs(os.path.dirname(os.path.join(OUT, fname)), exist_ok=True)
@@ -597,6 +629,19 @@ _keep = ['Can you run our whole wedding weekend?', "We've already booked our ven
 _new_faq = '\n'.join(_merged if k is None else _faq_items[k] for k in _keep)
 _all = list(re.finditer(r'<details[^>]*><summary>.*?</details>', svc, re.S))
 svc = svc[:_all[0].start()] + _new_faq + svc[_all[-1].end():]
+# Accessibility (Oct 25): visible labels on the two Services mini-forms (3.3.2)
+_gf = '<input type="email" id="guide-email" name="email" required aria-label="Email address" placeholder="Email for the full services guide" autocomplete="email">'
+assert svc.count(_gf) == 1
+svc = svc.replace(_gf, '<label for="guide-email" class="gf-label">Email for the full services guide</label><input type="email" id="guide-email" name="email" required placeholder="name@example.com" autocomplete="email">')
+for _old, _new in [('<input type="text" id="s-name" name="name" required aria-label="Name" placeholder="Name" autocomplete="name">',
+                    '<div class="field"><label for="s-name">Name *</label><input type="text" id="s-name" name="name" required autocomplete="name"></div>'),
+                   ('<input type="tel" id="s-phone" name="phone" required aria-label="Phone or WhatsApp" placeholder="Phone / WhatsApp" autocomplete="tel">',
+                    '<div class="field"><label for="s-phone">Phone / WhatsApp *</label><input type="tel" id="s-phone" name="phone" required autocomplete="tel"></div>'),
+                   ('<input type="text" id="s-date" name="event_date" aria-label="Event date or season" placeholder="Event date or season">',
+                    '<div class="field"><label for="s-date">Event date or season</label><input type="text" id="s-date" name="event_date" placeholder="e.g. June 2027"></div>')]:
+    assert svc.count(_old) == 1, _old
+    svc = svc.replace(_old, _new)
+svc = svc.replace('<div class="field"><label for="s-name">', '<p class="req-note">Fields marked * are required</p><div class="field"><label for="s-name">', 1)
 _dc = 'The look: concept, floor plan, décor team and the install. Décor is billed by the vendor.</p></div>'
 assert svc.count(_dc) == 1
 svc = svc.replace(_dc, _dc + '\n        <a class="textlink pk-link" href="/design">See design direction &#8594;</a>')
@@ -852,18 +897,19 @@ ct = (
     '<p class="lead">Have a date in mind or still deciding? Tell us a little about your plans and we&#8217;ll reply within 24 hours.</p>'
     + QUICK +
   '</div>'
-  + reviews_block('ct') +
+  + reviews_block('ct').replace('class="rv ct"', 'class="rv ct rv-m"', 1) +
   '<div class="ct-formwrap">'
     '<p class="ct-note">Package descriptions and starting prices are <a href="#packages-ct">below&nbsp;&darr;</a></p>'
     + _form +
   '</div>'
+  + reviews_block('ct').replace('class="rv ct"', 'class="rv ct rv-d"', 1).replace('rvt-ct-', 'rvt-ctd-') +
   '<figure class="ct4-photo"><img src="/assets/img-contact-side.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
   '<div class="ct4-next">' + STEPS +
     '<p class="ct4-email">Prefer email? <a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></p>'
   '</div>'
 '</div></section>'
 '<div class="band rule-top" id="packages-ct"><div class="wrap">'
-  '<div class="ct-pk-head"><p class="eyebrow">Our packages</p><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'
+  '<div class="ct-pk-head"><h2 class="eyebrow">Our packages</h2><p class="small">Starting prices for a single event. Tap one for details; "Choose" adds it to your inquiry.</p></div>'
   + _tiers +
 '</div></div>'
 )

@@ -659,7 +659,7 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
 /* links into the Design page from the photo strips and the Design + Coordination card */
 .photo-strip .ps-link{display:block}
 .photo-strip figcaption strong a{color:inherit;text-decoration:none}
-.photo-strip figcaption strong a::after{content:" \2192";font-family:var(--body);font-size:.6em;color:var(--gold);vertical-align:.2em}
+.photo-strip figcaption strong a::after{content:" \2192" / "";font-family:var(--body);font-size:.6em;color:var(--gold);vertical-align:.2em}
 .pk .pk-link{align-self:flex-start;margin-top:4px}
 .dz-hero .btn-ivory{background:transparent;border-color:rgba(248,245,238,.75);color:#F8F5EE}
 .dz-hero .btn-ivory:hover{background:#F8F5EE;color:var(--fg)}
@@ -713,3 +713,46 @@ html[data-theme] .hero.has-photo .eyebrow,html[data-theme] .hero.has-photo h1 em
 html[data-theme] .hero.has-photo .hp-lbl{color:#E8E4DA}
 /* reflow at 320px (WCAG 1.4.10): long button labels may wrap on very narrow screens */
 @media (max-width:400px){.btn{white-space:normal;text-align:center;line-height:1.35;padding-top:12px;padding-bottom:12px}}
+
+/* ===== Accessibility, round 2 (Oct 25): fixes from the independent review ===== */
+/* hidden sticky button is not focusable (visibility follows the fade) */
+.sticky-cta{transition:background .25s ease,color .25s ease,transform .3s ease,opacity .3s ease,visibility 0s linear 0s}
+html.cta-off .sticky-cta,html.menu-open .sticky-cta{visibility:hidden;transition:background .25s ease,color .25s ease,transform .3s ease,opacity .3s ease,visibility 0s linear .3s}
+/* focus ring: deep gold on the white review cards and the desktop contact heading (both light) */
+.proof .rv :focus-visible,.rv.dayof :focus-visible{outline-color:#745A22}
+.ct4-head :focus-visible{outline-color:#745A22}
+@media (max-width:899px){.ct4-head :focus-visible{outline-color:#D9BC7A}}
+/* control boundaries ≥3:1 (inputs, selects, checkboxes, chips, review dots) */
+html[data-theme="lightink"]{--field-border:#8A8276}
+.rv-dot::before{background:#8A8276}
+.form-meta span+span{color:#6B655B}
+/* headings that keep their old look */
+h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
+.addons-head h2{font-size:26px;line-height:1.1}
+.pkd h2{font-size:26px;font-weight:400;line-height:1.1;margin-top:4px}
+/* forms: required note, inline errors, Back button, labelled mini-forms */
+.req-note{margin:2px 0 0;font-size:12.5px;color:#6B655B}
+.field-err{display:block;margin-top:2px;font-size:13px;line-height:1.4;color:#8A2B2B}
+[aria-invalid="true"]{border-color:#8A2B2B!important}
+.linkbtn{background:none;border:0;padding:0;margin:0;font:inherit;cursor:pointer}
+.form-back{text-align:center}
+.guide-form{flex-wrap:wrap}
+.guide-form .gf-label{flex-basis:100%;margin:0 0 6px}
+.guide-form input{flex:1 1 200px;min-width:0}
+.guide-form .field-err{flex-basis:100%}
+.grid3 .req-note{grid-column:1 / -1}
+/* contact: phone copy of the reviews above the form, desktop copy after it (tab order follows the layout) */
+.ct4-flat>.rv-d{display:none}
+@media (min-width:900px){.ct4-flat>.rv-m{display:none}.ct4-flat>.rv-d{display:flex}}
+/* current page in the desktop nav is underlined, not only colored */
+.navlinks a.active{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px}
+/* Windows High Contrast / forced colors */
+@media (forced-colors:active){
+  input[type="checkbox"]{appearance:auto;-webkit-appearance:checkbox}
+  .rv-dot::before{forced-color-adjust:none;background:CanvasText}
+  .rv-dot[aria-current="true"]::before{background:Highlight}
+  .btn,.sticky-cta,.chip,.tier,.press-card{border:1px solid CanvasText}
+}
+.band-dark .req-note{color:#CFCAC0}
+.band-dark .field-err{color:#F4B9B2}
+.band-dark [aria-invalid="true"]{border-color:#F4B9B2!important}
