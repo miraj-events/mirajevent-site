@@ -392,23 +392,6 @@ html.menu-open .sticky-cta{display:none}
 
 /* ===== About v4 additions (Oct 25) ===== */
 .ab3-team-sub{color:var(--on-dark-2);max-width:40em;font-size:15px}
-.ab3-design{background:var(--bg)}
-.ab3-dgrid{display:grid;gap:36px;align-items:center}
-@media (min-width:860px){.ab3-dgrid{grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:72px}}
-.ab3-dcopy{display:flex;flex-direction:column;gap:16px}
-.ab3-dcopy .h2{font-size:clamp(30px,3.4vw,46px)}
-.ab3-dcopy .h2 em{font-style:italic;color:var(--gold-deep)}
-.ab3-dcopy .lead{max-width:34em}
-.ab3-dlist{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:0;border-top:1px solid var(--rule)}
-.ab3-dlist li{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:4px 18px;padding:14px 0;border-bottom:1px solid var(--rule)}
-.ab3-dlist strong{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.2;color:var(--fg)}
-.ab3-dlist span{font-size:15px;color:var(--fg-2);align-self:center}
-@media (max-width:600px){.ab3-dlist li{grid-template-columns:1fr}}
-.ab3-dcopy .small a{margin-left:6px}
-.ab3-dph{position:relative;padding:0 0 18% 0}
-.ab3-dph img{display:block;object-fit:cover;aspect-ratio:3/4;height:auto}
-.ab3-dph .dph-a{width:78%}
-.ab3-dph .dph-b{position:absolute;right:0;bottom:0;width:46%;border:8px solid var(--bg);box-shadow:0 18px 40px rgba(43,42,38,.14)}
 .ab3-press-head{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;max-width:760px}
 .ab3-press-head .h2{font-size:clamp(30px,3.4vw,46px)}
 .press-grid{display:grid;gap:14px}
@@ -574,14 +557,6 @@ html.cta-off .sticky-cta{transform:translateY(120%);opacity:0;pointer-events:non
   .f2-bottom{flex-direction:row;justify-content:space-between;padding-top:20px}
   .f2-legal{order:-1}
 }
-/* About: design direction as a slim text band (Oct 25) — no photos; links to the Design + Coordination package */
-.ab3-dslim-band{background:var(--bg)}
-.ab3-dslim{display:grid;gap:14px;align-items:center}
-@media (min-width:860px){.ab3-dslim{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px}}
-.ab3-dslim .h2{font-size:clamp(28px,3.2vw,42px)}
-.ab3-dslim .h2 em{font-style:italic;color:var(--gold-deep)}
-.ab3-dslim-txt{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-.ab3-dslim-txt .textlink{color:var(--gold-deep)}
 
 /* ---------- Design page /design (Tariq, Oct 25): process, sample brief, event palettes, work, what's included ---------- */
 .dz-hero{position:relative;overflow:hidden;background:#1E1F21;color:#F8F5EE;min-height:clamp(540px,76vh,740px);display:flex;align-items:center;text-align:center}

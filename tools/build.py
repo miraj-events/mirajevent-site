@@ -589,7 +589,7 @@ press_list = ('<div class="band ab3-linen ab3-press" id="press"><div class="wrap
                   for i, (o, t, m, u) in enumerate(ARTICLES))
               + '</div></div></div>')
 # About layout v4 (Tariq, Oct 25): photo hero with stats; Meet the founder (bio) on linen; team on dark;
-# design direction on ivory (replaces How we work); press cards on linen; dark CTA band
+# press cards on linen; dark CTA band. Design direction removed from About (Tariq, Oct 25): it has its own page, /design
 MONO = '<svg viewBox="0 0 2386 1632" aria-hidden="true" focusable="false"><use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg>' % VERSION
 def team_fig(name, alt, cap, w=900, h=1200):
     return '<figure>%s<figcaption>%s</figcaption></figure>' % (pic(name, alt, w, h), esc(cap))
@@ -639,11 +639,6 @@ ab = (
     + '<figcaption>The Miraj team</figcaption></figure>'
     + team_fig('team-a', 'Two Miraj Events team members on site in a vaulted venue hall, one on headset', 'On site, on headset') +
   '</div>'
-'</div></div>'
-'<div class="band ab3-dslim-band" id="design-direction"><div class="wrap ab3-dslim reveal">'
-  '<div><p class="eyebrow">Design direction</p><h2 class="h2">Professional design <em>direction</em>.</h2></div>'
-  '<div class="ab3-dslim-txt"><p class="lead">From Design + Coordination up, we shape the look of your celebration with you, from colors and centerpieces to the stage, and direct the décor team that brings it to life.</p>'
-    '<a class="textlink" href="/design">See design direction &#8594;</a></div>'
 '</div></div>'
 + press_list +
 '<div class="band band-dark ab-cta"><div class="wrap ab-cta-in">'
