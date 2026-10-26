@@ -523,7 +523,7 @@ svc = ('<section class="svc-hero">'
        '<div class="wrap svc-hero-inner">' + _svc_head.replace(' reveal', '') + '</div></section>\n') + svc
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
     '<div class="band"><div class="wrap">' + photo_strip([
-        ('stage-roses', 'White draped stage with a gold-framed settee and rose garlands', 'Design direction',
+        ('design-mehndi', 'Mehndi stage with an emerald velvet backdrop, a carved ivory chair and a column of bright florals', 'Design direction',
          'Concept, floor plan and the décor team, from Design + Coordination up.'),
         ('ballroom-library', 'Library ballroom with chandelier, white tables and floral centerpieces', 'The run of show',
          'One timeline for every event, shared with every vendor and run on the day.'),
