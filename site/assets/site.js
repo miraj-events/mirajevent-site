@@ -199,7 +199,7 @@
           ['email','phone','name','celebration','event_date'].forEach(function(k){ var el=$('[name="'+k+'"]',s1); if(el){ fd.append(k,el.value); } });
           var a=attribution(); Object.keys(a).forEach(function(k){ fd.append(k,a[k]); });
           var hp=$('[name="bot-field"]',form); if(hp&&hp.value){ fd.append('bot-field',hp.value); } /* lets Netlify's honeypot flag bot partials too */
-          fd.append('subject',subj('Unfinished inquiry',[fd.get('name')||fd.get('phone')||fd.get('email'),fd.get('celebration'),fd.get('event_date')]));
+          fd.append('subject',subj('Unfinished inquiry – please follow up',[fd.get('name')||fd.get('phone')||fd.get('email'),fd.get('celebration'),fd.get('event_date')]));
           /* not "form_start": GA4 enhanced measurement already sends that name on first touch (the Squarespace baseline) */
           post(fd).catch(function(){}); gt('event','inquiry_step1',{form_name:'inquiry',page_path:location.pathname}); }
         showStep(2);
@@ -233,8 +233,8 @@
     form.addEventListener('submit',function(e){
       e.preventDefault(); if(form.dataset.busy==='1'||!validate(form)){ return; } fill(form);
       var fd=new FormData(form); fd.set('subject',subj('Services guide request',[fd.get('email')])); busy(form,true);
-      /* the guide is sent by a person replying to the notification email (Netlify has no auto-reply), so promise "within hours" */
-      post(fd).then(function(r){ if(!r.ok){ throw 0; } form.innerHTML='<p class="small gf-done" role="status" tabindex="-1">Thank you. We’ll email you the services guide within hours.</p>'; var dn=$('.gf-done',form); if(dn){ dn.focus(); } gt('event','guide_request',{page_path:location.pathname}); }).catch(function(){ fail(form); });
+      /* the guide is sent by a person replying to the notification email (Netlify has no auto-reply), so no timing promise (Tariq, Oct 26) */
+      post(fd).then(function(r){ if(!r.ok){ throw 0; } form.innerHTML='<p class="small gf-done" role="status" tabindex="-1">Thank you. We’ll email you the services guide.</p>'; var dn=$('.gf-done',form); if(dn){ dn.focus(); } gt('event','guide_request',{page_path:location.pathname}); }).catch(function(){ fail(form); });
     });
   });
 })();

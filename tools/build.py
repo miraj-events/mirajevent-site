@@ -469,8 +469,8 @@ REV_URL = esc(reviews['reviews_url'])
 PRESS = [('Bloomberg', 'https://www.bloomberg.com/news/articles/2025-04-16/stock-market-drop-has-couples-cutting-wedding-costs'),
          ('Voyage Michigan', 'https://voyagemichigan.com/interview/meet-mehreen-buksh-of-miraj-events'),
          ('Peerspace · #2 in Detroit', 'https://www.peerspace.com/resources/wedding-planners-in-detroit/')]
-LISTINGS = [('The Knot', 'K', 'https://www.theknot.com/marketplace/miraj-events-llc-sterling-heights-mi-2089876'),
-            ('WeddingWire', 'W', 'https://www.weddingwire.com/biz/miraj-events-llc/e0bb1fcf9e27fb41.html')]
+# WeddingWire dropped (Tariq, Oct 26): the linked Rochester listing shows "No reviews yet"
+LISTINGS = [('The Knot', 'K', 'https://www.theknot.com/marketplace/miraj-events-llc-sterling-heights-mi-2089876')]
 def press_html(cls):
     links = ''.join('<a class="%s" href="%s" target="_blank" rel="noopener">%s</a>' % (cls, esc(u), esc(n)) for n, u in PRESS)
     marks = ''.join('<a class="lst-mark" href="%s" target="_blank" rel="noopener" aria-label="Miraj Events on %s" title="Miraj Events on %s">'
