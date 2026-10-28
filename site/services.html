@@ -32,13 +32,18 @@
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
+/* Owner/staff devices (Oct 28): open any page with ?internal=1 once and this device stops counting in GA4, Google Ads,
+   OpenAI and Meta (forms and emails still work; inquiries are labelled as tests). ?internal=0 undoes it. */
+window.MIRAJ_INTERNAL=(function(){try{var v=new URLSearchParams(location.search).get('internal');
+if(v==='1'){localStorage.setItem('miraj_internal','1');}else if(v==='0'){localStorage.removeItem('miraj_internal');}
+return localStorage.getItem('miraj_internal')==='1';}catch(e){return false;}})();
 gtag('js',new Date());
-if(window.MIRAJ_LIVE){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
-else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}
+if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
+else{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
 <!-- OpenAI Ads measurement pixel (DQ1HpbhhjYa76ncDFrtMaF); live domain only -->
 <script>
-(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
+(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.MIRAJ_INTERNAL||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
 var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
 })(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
 if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
@@ -127,7 +132,7 @@ if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
   <div class="band band-white rule-top rule-bottom"><div class="wrap">
     <div class="hiw-head reveal">
       <div class="stack" style="gap:8px"><p class="eyebrow">How it works</p><h2 class="h2" style="font-size:clamp(28px,3.2vw,40px)">From first call to send-off.</h2></div>
-      <form class="guide-form js-guide" aria-label="Request the services guide" method="POST" action="/thank-you" data-form="guide-request" novalidate><input type="hidden" name="form-name" value="guide-request"><p class="hp" aria-hidden="true"><label>Leave blank <input name="bot-field" tabindex="-1" autocomplete="off"></label></p><input type="hidden" name="source"><input type="hidden" name="click_id"><input type="hidden" name="landing_page"><input type="hidden" name="form_page">
+      <form class="guide-form js-guide" aria-label="Request the services guide" method="POST" action="/thank-you" data-form="guide-request" novalidate><input type="hidden" name="form-name" value="guide-request"><p class="hp" aria-hidden="true"><label>Leave blank <input name="bot-field" tabindex="-1" autocomplete="off"></label></p><input type="hidden" name="source"><input type="hidden" name="click_id"><input type="hidden" name="landing_page"><input type="hidden" name="form_page"><input type="hidden" name="lead_id">
         <label for="guide-email" class="gf-label">Email for the full services guide</label><input type="email" id="guide-email" name="email" required placeholder="name@example.com" autocomplete="email">
         <button class="btn" type="submit">Send</button>
       </form>
@@ -159,7 +164,7 @@ if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
 
   <div class="band band-dark short-form" style="padding-block:48px"><div class="wrap two-col" style="align-items:center">
     <div class="stack" style="gap:10px"><h2 class="h2" style="font-size:clamp(28px,3vw,40px)">Not ready for the full form?</h2><p class="lead">Leave your details. We'll reach out.</p></div>
-    <form class="grid3 js-inquiry" aria-label="Short inquiry" method="POST" action="/thank-you" data-form="quick-inquiry" novalidate><input type="hidden" name="form-name" value="quick-inquiry"><p class="hp" aria-hidden="true"><label>Leave blank <input name="bot-field" tabindex="-1" autocomplete="off"></label></p><input type="hidden" name="source"><input type="hidden" name="click_id"><input type="hidden" name="landing_page"><input type="hidden" name="form_page">
+    <form class="grid3 js-inquiry" aria-label="Short inquiry" method="POST" action="/thank-you" data-form="quick-inquiry" novalidate><input type="hidden" name="form-name" value="quick-inquiry"><p class="hp" aria-hidden="true"><label>Leave blank <input name="bot-field" tabindex="-1" autocomplete="off"></label></p><input type="hidden" name="source"><input type="hidden" name="click_id"><input type="hidden" name="landing_page"><input type="hidden" name="form_page"><input type="hidden" name="lead_id">
       <p class="req-note">Fields marked * are required</p><div class="field"><label for="s-name">Name *</label><input type="text" id="s-name" name="name" required autocomplete="name"></div>
       <div class="field"><label for="s-phone">Phone / WhatsApp *</label><input type="tel" id="s-phone" name="phone" required autocomplete="tel"></div>
       <div class="field"><label for="s-date">Event date or season</label><input type="text" id="s-date" name="event_date" placeholder="e.g. June 2027"></div>
@@ -171,6 +176,6 @@ if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
 </main>
 <footer class="f3-wrap"><div class="wrap f3"><div class="f3-brand"><a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram"><use href="/assets/sprite.svg?v=fad75640a3#me-mark" width="2386" height="1632"/></svg><span class="lk-name">MIRAJ EVENTS</span></a><p class="f3-tag">Be a guest at your own celebration.</p></div><nav class="f3-nav" aria-label="Footer"><div class="f3-row"><a href="/about">About</a><a href="/services">Services</a><a href="/design">Design</a><a href="/contact">Contact</a></div><div class="f3-row f3-soc"><a href="https://www.instagram.com/miraj.events/" target="_blank" rel="noopener">Instagram<span class="sr-only"> (opens in a new tab)</span></a><a href="https://www.facebook.com/p/Miraj-Events-61559780220825/" target="_blank" rel="noopener">Facebook<span class="sr-only"> (opens in a new tab)</span></a></div></nav><div class="f3-reach"><a href="tel:+15865040207">(586) 504-0207</a><a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></div><div class="f3-legal"><span>© <span id="yr">2026</span> Miraj Events, LLC<span class="f3-loc"> · Metro Detroit, Michigan</span></span><span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div></div></footer>
 <aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="/contact#contact-form">Check availability</a></aside>
-<script src="/assets/site.js?v=63f0daf1f0" defer></script>
+<script src="/assets/site.js?v=f5bc42fedc" defer></script>
 </body>
 </html>

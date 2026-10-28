@@ -65,6 +65,7 @@
     }
     else if(ft.ai_referrer){ src=aiName(ft.ai_referrer); }
     else { src=refName(ft.first_referrer)||'Direct'; }
+    if(window.MIRAJ_INTERNAL){ src='Internal device (test) · '+src; }
     return {source:src.slice(0,150),click_id:ids.join(' ').slice(0,400),landing_page:cleanPath(ck.lp||ft.landing_page||''),form_page:location.pathname};
   }
 
@@ -86,6 +87,13 @@
     var io=new IntersectionObserver(function(es){ es.forEach(function(e){ var i=seen.indexOf(e.target); if(e.isIntersecting&&i<0){ seen.push(e.target); } else if(!e.isIntersecting&&i>-1){ seen.splice(i,1); } }); document.documentElement.classList.toggle('cta-off',seen.length>0); },{threshold:0});
     $$('#inquire,#contact-form,footer').forEach(function(el){ io.observe(el); });
   }
+
+  /* ---------- internal device: confirm ?internal=1 / ?internal=0 once (no other UI) ---------- */
+  (function(){ var v=new URLSearchParams(location.search).get('internal'); if(v!=='1'&&v!=='0'){ return; }
+    var t=document.createElement('div'); t.setAttribute('role','status');
+    t.textContent=v==='1'?'This device is now marked internal: your visits and test inquiries won\u2019t count in analytics or ads. To undo, open any page with ?internal=0.':'This device is no longer marked internal.';
+    t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;max-width:min(560px,calc(100% - 32px));background:#2C2E31;color:#F8F5EE;font:14px/1.45 system-ui,sans-serif;padding:12px 16px;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.25)';
+    document.body.appendChild(t); setTimeout(function(){ if(t.parentNode){ t.parentNode.removeChild(t); } },9000); })();
 
   /* ---------- click tracking: phone / WhatsApp / email ---------- */
   document.addEventListener('click',function(e){
@@ -199,7 +207,12 @@
     var b=fd.get('budget')||''; if(/10,000\+/.test(b)){ return 9500; } if(/5,000/.test(b)&&/10,000/.test(b)){ return 6500; } if(/2,500–\$5,000/.test(b)){ return 4750; }
     return 1975;
   }
-  function fill(form){ var a=attribution(); Object.keys(a).forEach(function(k){ var el=form.querySelector('input[type=hidden][name="'+k+'"]'); if(el){ el.value=a[k]; } }); }
+  /* Lead ID (Oct 28): one reference per form, e.g. ME-261028-K3F9 (date + 4 characters). It is posted with the form
+     (so it is in the email and in Netlify) and is the same ID sent with the Google Ads, OpenAI and Meta conversions. */
+  function newLeadId(){ var d=new Date(), r=''; while(r.length<4){ r+=Math.random().toString(36).slice(2).replace(/[^a-z0-9]/g,''); }
+    return 'ME-'+String(d.getFullYear()).slice(2)+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+r.slice(0,4).toUpperCase(); }
+  function leadIdFor(form){ if(!form.dataset.leadId){ form.dataset.leadId=newLeadId(); } return form.dataset.leadId; }
+  function fill(form){ var a=attribution(); a.lead_id=leadIdFor(form); Object.keys(a).forEach(function(k){ var el=form.querySelector('input[type=hidden][name="'+k+'"]'); if(el){ el.value=a[k]; } }); }
   function encode(fd){ var p=[]; fd.forEach(function(v,k){ p.push(encodeURIComponent(k)+'='+encodeURIComponent(v)); }); return p.join('&'); }
   function post(fd){ return fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:encode(fd)}); }
   /* fire-and-forget POST that survives the page closing (used for the step-1 "Unfinished" save) */
@@ -237,7 +250,7 @@
       sentPartial=true; if(partialTimer){ clearTimeout(partialTimer); partialTimer=null; }
       var s1=steps[0], fd=new FormData(); fd.append('form-name',form.dataset.start);
       ['name','email','phone','celebration','event_date'].forEach(function(k){ var el=$('[name="'+k+'"]',s1); if(el&&String(el.value||'').trim()){ fd.append(k,el.value); } });
-      var a=attribution(); Object.keys(a).forEach(function(k){ if(a[k]){ fd.append(k,a[k]); } });
+      var a=attribution(); a.lead_id=leadIdFor(form); Object.keys(a).forEach(function(k){ if(a[k]){ fd.append(k,a[k]); } });
       var hp=$('[name="bot-field"]',form); if(hp&&hp.value){ fd.append('bot-field',hp.value); } /* lets Netlify's honeypot flag bot partials too */
       fd.append('subject',subj('Unfinished inquiry – please follow up',[fd.get('name')||fd.get('phone')||fd.get('email'),fd.get('celebration'),fd.get('event_date')]));
       beacon(fd);
@@ -272,7 +285,7 @@
         :subj('New inquiry',[fd.get('name'),fd.get('celebration'),fd.get('event_date'),fd.get('package')]));
       Array.from(fd.keys()).forEach(function(k){ if(k!=='form-name' && !String(fd.get(k)||'').trim()){ fd.delete(k); } });
       busy(form,true); finishing=true;
-      var id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+      var id=leadIdFor(form);
       var lead={id:id,value:val,pkg:fd.get('package')||'',form:fd.get('form-name'),email:(fd.get('email')||'').trim().toLowerCase(),phone:normPhone(fd.get('phone'))};
       /* the thank-you page counts a conversion only for a lead Netlify accepted: save it after a 2xx, never before */
       post(fd).then(function(r){ if(!r.ok){ throw new Error(r.status); } finished=true; if(partialTimer){ clearTimeout(partialTimer); partialTimer=null; }

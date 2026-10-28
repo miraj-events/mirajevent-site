@@ -33,14 +33,16 @@ python3 tools/build.py
 - Meta Pixel (`META_PIXEL` in `tools/build.py`; empty = off) loads on every page on the live domain only.
   - `PageView` fires on every page. `Lead` fires on `/thank-you` once per submission, with the same transaction ID as the Google conversion (`eventID`).
   - On `/thank-you` the inquiry's email and phone are passed for advanced matching; the pixel hashes them in the browser. This is disclosed on `/privacy`.
-- Every form submission carries hidden fields: `gclid`/`gbraid`/`wbraid`, UTMs, first landing page, first referrer, AI-assistant referrer, and the page submitted from.
+- Every form submission carries hidden fields `source` (one readable line: Google Ads · tag, ChatGPT ad, Google search (organic), Google Business Profile, ig / social, Direct…), `click_id` (gclid/gbraid/wbraid/oppref), `landing_page`, `form_page` and `lead_id` (built in `site.js` `attribution()`; 90-day window).
+- Every inquiry has a **Lead ID** (`lead_id`, e.g. `ME-261028-K3F9`). It is in the notification email and Netlify, and it is the same ID sent as the Google Ads `transaction_id`, the OpenAI `event_id` and the Meta `eventID`. The step-1 "Unfinished" email and the finished inquiry from the same form share it.
+- **Internal devices:** open any page with `?internal=1` once on an owner/staff device. That device then loads no GA4, Google Ads, OpenAI or Meta tags and fires no conversions. Its inquiries still email, with Source starting "Internal device (test)". `?internal=0` undoes it (stored in localStorage, per browser).
 
 ## Forms (Netlify Forms)
 
 | Form | Purpose |
 |---|---|
 | `inquiry` | Full inquiry (home + contact + day-of) |
-| `inquiry-start` | Step 1 saved when a visitor clicks Continue, so partial leads are kept |
+| `inquiry-start` | Step 1, sent only if the visitor doesn't finish (tab hidden/closed, or 15 min after Continue), so partial leads are kept |
 | `quick-inquiry` | Short "reach out to me" forms |
 | `guide-request` | Services-guide email request (not counted as a conversion) |
 

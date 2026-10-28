@@ -36,7 +36,7 @@ VERSION = _h.hexdigest()[:10]
 # fbq('init') for advanced matching; the pixel hashes them in the browser (disclosed on /privacy).
 META_HEAD = '' if not META_PIXEL else '''<!-- Meta Pixel (%s); live domain only -->
 <script>
-if(window.MIRAJ_LIVE){
+if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 var am={};try{var l=/^\\/thank-you/.test(location.pathname)?JSON.parse(sessionStorage.getItem('miraj_lead')||'null'):null;if(l){if(l.email){am.em=l.email;}if(l.phone){am.ph=String(l.phone).replace(/\\D/g,'');}}}catch(e){}
 fbq('init','%s',am);fbq('track','PageView');
@@ -153,7 +153,10 @@ def reviews_block(variant=''):
 # ---------------------------------------------------------------- forms
 # Oct 28 (Tariq): one readable "Source" line + the exact click id instead of 13 raw tracking fields, so the inquiry
 # email reads cleanly (Netlify lists every declared field, blanks included, in declaration order). site.js attribution().
-HIDDEN_ATTR = ['source', 'click_id', 'landing_page', 'form_page']
+# Oct 28 (Tariq): + lead_id, the inquiry's own reference (e.g. ME-261028-K3F9). It is the same ID sent to Google Ads
+# (transaction_id), OpenAI (event_id) and Meta (eventID), so any conversion can be traced to one email, and the
+# step-1 'Unfinished' email and the finished inquiry from the same form carry the same ID.
+HIDDEN_ATTR = ['source', 'click_id', 'landing_page', 'form_page', 'lead_id']
 
 def hidden_fields(form_name):
     h = '<input type="hidden" name="form-name" value="%s">' % form_name
@@ -330,13 +333,18 @@ def head(title, desc, path, view, schema=(), noindex=False):
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}
 window.MIRAJ_LIVE=/(^|\\.)mirajevent\\.com$/.test(location.hostname);
+/* Owner/staff devices (Oct 28): open any page with ?internal=1 once and this device stops counting in GA4, Google Ads,
+   OpenAI and Meta (forms and emails still work; inquiries are labelled as tests). ?internal=0 undoes it. */
+window.MIRAJ_INTERNAL=(function(){{try{{var v=new URLSearchParams(location.search).get('internal');
+if(v==='1'){{localStorage.setItem('miraj_internal','1');}}else if(v==='0'){{localStorage.removeItem('miraj_internal');}}
+return localStorage.getItem('miraj_internal')==='1';}}catch(e){{return false;}}}})();
 gtag('js',new Date());
-if(window.MIRAJ_LIVE){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
-else{{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
+if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
+else{{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
 </script>
 <!-- OpenAI Ads measurement pixel ({OAI_PIXEL}); live domain only -->
 <script>
-(function(w,d,s,u){{if(!w.MIRAJ_LIVE||w.oaiq){{return;}}var q=function(){{q.q.push(arguments);}};q.q=[];w.oaiq=q;
+(function(w,d,s,u){{if(!w.MIRAJ_LIVE||w.MIRAJ_INTERNAL||w.oaiq){{return;}}var q=function(){{q.q.push(arguments);}};q.q=[];w.oaiq=q;
 var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
 }})(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
 if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
@@ -1014,7 +1022,7 @@ conv_js = '''<script>
   var lead=null; try{ lead=JSON.parse(sessionStorage.getItem('miraj_lead')||'null'); }catch(e){}
   var fromSite=document.referrer && document.referrer.indexOf(location.hostname)>-1;
   var nav=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};
-  if(!window.MIRAJ_LIVE){ console.info('Miraj: conversion skipped on staging', lead); return; }
+  if(!window.MIRAJ_LIVE||window.MIRAJ_INTERNAL){ console.info('Miraj: conversion skipped (staging host or internal device)', lead); return; }
   if(!lead && (!fromSite || nav.type==='reload' || nav.type==='back_forward')){ return; }
   lead=lead||{};
   var tid=lead.id||('ty-'+Date.now());

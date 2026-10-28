@@ -30,13 +30,18 @@
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
+/* Owner/staff devices (Oct 28): open any page with ?internal=1 once and this device stops counting in GA4, Google Ads,
+   OpenAI and Meta (forms and emails still work; inquiries are labelled as tests). ?internal=0 undoes it. */
+window.MIRAJ_INTERNAL=(function(){try{var v=new URLSearchParams(location.search).get('internal');
+if(v==='1'){localStorage.setItem('miraj_internal','1');}else if(v==='0'){localStorage.removeItem('miraj_internal');}
+return localStorage.getItem('miraj_internal')==='1';}catch(e){return false;}})();
 gtag('js',new Date());
-if(window.MIRAJ_LIVE){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
-else{console.info('Miraj: staging/preview host, Google Analytics + Ads not sending.');}
+if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
+else{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
 <!-- OpenAI Ads measurement pixel (DQ1HpbhhjYa76ncDFrtMaF); live domain only -->
 <script>
-(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
+(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.MIRAJ_INTERNAL||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
 var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
 })(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
 if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
@@ -103,6 +108,6 @@ if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
 </main>
 <footer class="f3-wrap"><div class="wrap f3"><div class="f3-brand"><a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram"><use href="/assets/sprite.svg?v=fad75640a3#me-mark" width="2386" height="1632"/></svg><span class="lk-name">MIRAJ EVENTS</span></a><p class="f3-tag">Be a guest at your own celebration.</p></div><nav class="f3-nav" aria-label="Footer"><div class="f3-row"><a href="/about">About</a><a href="/services">Services</a><a href="/design">Design</a><a href="/contact">Contact</a></div><div class="f3-row f3-soc"><a href="https://www.instagram.com/miraj.events/" target="_blank" rel="noopener">Instagram<span class="sr-only"> (opens in a new tab)</span></a><a href="https://www.facebook.com/p/Miraj-Events-61559780220825/" target="_blank" rel="noopener">Facebook<span class="sr-only"> (opens in a new tab)</span></a></div></nav><div class="f3-reach"><a href="tel:+15865040207">(586) 504-0207</a><a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></div><div class="f3-legal"><span>© <span id="yr">2026</span> Miraj Events, LLC<span class="f3-loc"> · Metro Detroit, Michigan</span></span><span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div></div></footer>
 <aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="/contact#contact-form">Check availability</a></aside>
-<script src="/assets/site.js?v=63f0daf1f0" defer></script>
+<script src="/assets/site.js?v=f5bc42fedc" defer></script>
 </body>
 </html>
