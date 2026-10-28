@@ -30,6 +30,9 @@ python3 tools/build.py
   - It fires once per submission, with a value set by the package chosen and a transaction ID.
   - Enhanced conversions data (email/phone) is sent with it.
 - GA4 events: `generate_lead`, `form_start`, `phone_click`, `whatsapp_click`, `email_click`, `view_package`, `guide_request`, `ai_referral`.
+- Meta Pixel (`META_PIXEL` in `tools/build.py`; empty = off) loads on every page on the live domain only.
+  - `PageView` fires on every page. `Lead` fires on `/thank-you` once per submission, with the same transaction ID as the Google conversion (`eventID`).
+  - On `/thank-you` the inquiry's email and phone are passed for advanced matching; the pixel hashes them in the browser. This is disclosed on `/privacy`.
 - Every form submission carries hidden fields: `gclid`/`gbraid`/`wbraid`, UTMs, first landing page, first referrer, AI-assistant referrer, and the page submitted from.
 
 ## Forms (Netlify Forms)

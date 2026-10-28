@@ -17,6 +17,8 @@ GA4 = 'G-PVV95TW26B'
 ADS = 'AW-16694224609'
 ADS_FORM_LABEL = 'AW-16694224609/zLObCLKztNAZEOHNtpg-'
 OAI_PIXEL = 'DQ1HpbhhjYa76ncDFrtMaF'
+# Meta Pixel = the dataset ID from Meta Events Manager, under Miraj's own business portfolio. '' turns the pixel off.
+META_PIXEL = ''
 PHONE = '(586) 504-0207'
 TEL = '+15865040207'
 EMAIL = 'admin@mirajevent.com'
@@ -28,6 +30,19 @@ _h = hashlib.sha1()
 for _f in ['tools/source/preview-v47.html', 'tools/assets/site-extra.css', 'tools/assets/site.js']:
     _h.update(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), _f), 'rb').read())
 VERSION = _h.hexdigest()[:10]
+
+# Meta Pixel (Oct 28): PageView on every page; the Lead event fires on /thank-you (conv_js below).
+# Live domain only, like the Google and OpenAI tags. On /thank-you the inquiry's email and phone go into
+# fbq('init') for advanced matching; the pixel hashes them in the browser (disclosed on /privacy).
+META_HEAD = '' if not META_PIXEL else '''<!-- Meta Pixel (%s); live domain only -->
+<script>
+if(window.MIRAJ_LIVE){
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+var am={};try{var l=/^\\/thank-you/.test(location.pathname)?JSON.parse(sessionStorage.getItem('miraj_lead')||'null'):null;if(l){if(l.email){am.em=l.email;}if(l.phone){am.ph=String(l.phone).replace(/\\D/g,'');}}}catch(e){}
+fbq('init','%s',am);fbq('track','PageView');
+}
+</script>
+''' % (META_PIXEL, META_PIXEL)
 
 src = open(SRC, encoding='utf-8').read()
 # Nav label (Tariq, Oct 25): "Inquire" -> "Contact Us" everywhere it is a link/label
@@ -326,7 +341,7 @@ var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)
 }})(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
 if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
 </script>
-{''.join(ld(s) for s in schema)}
+{META_HEAD}{''.join(ld(s) for s in schema)}
 </head>
 <body data-view="{view}">
 <a class="skip" href="#main">Skip to content</a>
@@ -1008,6 +1023,7 @@ conv_js = '''<script>
   if(ud.email||ud.phone_number){ gtag('set','user_data',ud); }
   gtag('event','conversion',{'send_to':'%s','value':lead.value||1,'currency':'USD','transaction_id':tid});
   if(window.oaiq){ oaiq('measure','lead_created',{type:'customer_action'},{event_id:tid}); }
+  if(window.fbq){ fbq('track','Lead',{value:lead.value||1,currency:'USD',content_name:lead.form||'inquiry'},{eventID:tid}); }
   gtag('event','generate_lead',{'value':lead.value||1,'currency':'USD','form_name':lead.form||'inquiry','package':lead.pkg||''});
   try{ sessionStorage.removeItem('miraj_lead'); }catch(e){}
 })();
