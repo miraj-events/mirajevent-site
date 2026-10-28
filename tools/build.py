@@ -18,7 +18,7 @@ ADS = 'AW-16694224609'
 ADS_FORM_LABEL = 'AW-16694224609/zLObCLKztNAZEOHNtpg-'
 OAI_PIXEL = 'DQ1HpbhhjYa76ncDFrtMaF'
 # Meta Pixel = the dataset ID from Meta Events Manager, under Miraj's own business portfolio. '' turns the pixel off.
-META_PIXEL = ''
+META_PIXEL = '1606455301023906'  # dataset "Miraj Events", owned by the Miraj Events business portfolio (verified Oct 28)
 PHONE = '(586) 504-0207'
 TEL = '+15865040207'
 EMAIL = 'admin@mirajevent.com'
@@ -289,7 +289,7 @@ def ld(obj):
 
 # ---------------------------------------------------------------- page chrome
 # Speed (Oct 25): start the hero photo download with the CSS instead of after it (LCP)
-HERO = {'home': 'hero', 'services': 'svc', 'about': 'about', 'design': 'dz-hero'}
+HERO = {'home': 'hero', 'services': 'svc', 'about': 'about', 'design': 'dz-hero-v2'}  # dz-hero-v2 = colour-corrected (Oct 28)
 def hero_preload(view):
     k = HERO.get(view)
     if not k:
@@ -498,10 +498,9 @@ PRESS = [('Bloomberg', 'https://www.bloomberg.com/news/articles/2025-04-16/stock
 # WeddingWire dropped (Tariq, Oct 26): the linked Rochester listing shows "No reviews yet"
 LISTINGS = [('The Knot', 'K', 'https://www.theknot.com/marketplace/miraj-events-llc-sterling-heights-mi-2089876')]
 def press_html(cls):
-    links = ''.join('<a class="%s" href="%s" target="_blank" rel="noopener">%s</a>' % (cls, esc(u), esc(n)) for n, u in PRESS)
-    marks = ''.join('<a class="lst-mark" href="%s" target="_blank" rel="noopener" aria-label="Miraj Events on %s" title="Miraj Events on %s">'
-                    '<span aria-hidden="true">%s</span></a>' % (esc(u), n, n, ch) for n, ch, u in LISTINGS)
-    return links + '<span class="lst-marks">' + marks + '</span>'
+    # The Knot shows as plain text in the same style as the press names (Tariq, Oct 28) instead of the round "K" badge
+    return ''.join('<a class="%s" href="%s" target="_blank" rel="noopener">%s</a>' % (cls, esc(u), esc(n))
+                   for n, u in PRESS + [(n, u) for n, _, u in LISTINGS])
 
 
 def pic(name, alt, w, h, cls='', eager=False):
@@ -610,7 +609,7 @@ home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<img src="/assets/img-hero-md.webp" srcset="/assets/img-hero-md.webp 1400w, /assets/img-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
     '<div class="hero-shade" aria-hidden="true"></div>', 1)
 _strip = ('<div class="band band-white rule-top"><div class="wrap">' + photo_strip([
-    ('stage-white', 'Sweetheart table with gold oval chairs before a wall of white blossoms', 'Design direction',
+    ('design-stage', 'White stage with a floral arch of ivory and blush roses, a curved loveseat and a crystal chandelier', 'Design direction',
      'We shape the look with you and oversee the décor team that brings it to life.', '/design'),
     ('ballroom-chandeliers', 'Wood-paneled ballroom with crystal chandeliers and white round tables', 'Reception management',
      'From the grand entrance to the send-off, we run the timeline with your venue and vendors.'),
@@ -842,8 +841,8 @@ DZ_PLAN = (
  '</svg>')
 dz = (
 '<section class="dz-hero">'
-  '<picture class="dz-hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-dz-hero-sm.webp">'
-  '<img src="/assets/img-dz-hero-md.webp" srcset="/assets/img-dz-hero-md.webp 1400w, /assets/img-dz-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
+  '<picture class="dz-hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-dz-hero-v2-sm.webp">'
+  '<img src="/assets/img-dz-hero-v2-md.webp" srcset="/assets/img-dz-hero-v2-md.webp 1400w, /assets/img-dz-hero-v2-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
   '<div class="dz-hero-shade" aria-hidden="true"></div>'
   '<div class="wrap dz-hero-inner"><div class="dz-hero-copy">'
     '<p class="eyebrow">Design direction</p>'
@@ -942,7 +941,7 @@ ct = (
     + _form +
   '</div>'
   + reviews_block('ct').replace('class="rv ct"', 'class="rv ct rv-d"', 1).replace('rvt-ct-', 'rvt-ctd-') +
-  '<figure class="ct4-photo"><img src="/assets/img-contact-side.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
+  '<figure class="ct4-photo"><img src="/assets/img-contact-side-v2.webp" alt="Guests raising a toast at a candlelit long table in a wood-paneled dining room" width="1044" height="1200" loading="lazy" decoding="async"></figure>'
   '<div class="ct4-next">'  # next steps moved to the thank-you page (Oct 26)
     '<p class="ct4-email">Prefer email? <a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></p>'
   '</div>'
