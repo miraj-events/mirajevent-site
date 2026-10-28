@@ -5,6 +5,14 @@
   publish = "site"
   command = ""
 
+# ---------- the default Netlify address → the real domain (Oct 28). Exact host only, so branch deploys
+# (preview--mirajevent.netlify.app) and deploy previews are unaffected. Query strings carry over. ----------
+[[redirects]]
+  from = "https://mirajevent.netlify.app/*"
+  to = "https://www.mirajevent.com/:splat"
+  status = 301
+  force = true
+
 # ---------- 301s for every Squarespace URL (protects SEO + Google Ads links) ----------
 [[redirects]]
   from = "/home"
