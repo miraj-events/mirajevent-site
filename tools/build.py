@@ -136,8 +136,9 @@ def reviews_block(variant=''):
 
 
 # ---------------------------------------------------------------- forms
-HIDDEN_ATTR = ['gclid', 'gbraid', 'wbraid', 'oppref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
-               'landing_page', 'first_referrer', 'ai_referrer', 'page']
+# Oct 28 (Tariq): one readable "Source" line + the exact click id instead of 13 raw tracking fields, so the inquiry
+# email reads cleanly (Netlify lists every declared field, blanks included, in declaration order). site.js attribution().
+HIDDEN_ATTR = ['source', 'click_id', 'landing_page', 'form_page']
 
 def hidden_fields(form_name):
     h = '<input type="hidden" name="form-name" value="%s">' % form_name
@@ -205,14 +206,16 @@ def forms_definition():
     """Static skeletons so Netlify registers every form + field at deploy (forms are submitted by JS)."""
     # every field site.js posts must be listed here, or Netlify drops it. "subject" = the notification email's subject line
     # (site.js fills it with the lead's name, event and date); a field named "email" sets the notification's Reply-To.
+    # Declaration order = the order Netlify shows fields in the dashboard and the notification email: person first,
+    # then the event, then where the lead came from. "value" is no longer posted (it feeds the Ads conversion only).
     common = ''.join('<input type="hidden" name="%s">' % f for f in HIDDEN_ATTR) + '<input type="hidden" name="subject">'
-    inquiry_fields = ['name', 'partner', 'email', 'phone', 'celebration', 'event_date', 'venue', 'guests', 'budget',
-                      'package', 'heard', 'message', 'events_list', 'value']
+    inquiry_fields = ['name', 'partner', 'email', 'phone', 'celebration', 'events_list', 'event_date', 'venue', 'guests',
+                      'budget', 'package', 'heard', 'message']
     def f(name, fields):
         return ('<form name="%s" data-netlify="true" netlify-honeypot="bot-field" hidden>'
                 '<input name="bot-field">%s%s</form>\n' % (name, ''.join('<input name="%s">' % x for x in fields), common))
-    return (f('inquiry', inquiry_fields) + f('inquiry-start', ['email', 'phone', 'name', 'celebration', 'event_date'])
-            + f('quick-inquiry', ['name', 'phone', 'event_date', 'value']) + f('guide-request', ['email']))
+    return (f('inquiry', inquiry_fields) + f('inquiry-start', ['name', 'email', 'phone', 'celebration', 'event_date'])
+            + f('quick-inquiry', ['name', 'phone', 'event_date']) + f('guide-request', ['email']))
 
 
 # ---------------------------------------------------------------- schema

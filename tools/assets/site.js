@@ -25,16 +25,47 @@
       first={t:now,landing_page:location.pathname+location.search,first_referrer:external?ref.slice(0,300):'',ai_referrer:(external&&AI.test(ref))?ref.split('/')[2]:aiUtm};
       store.set('miraj_ft',first);
     }
-    if(Object.keys(hit).length){ hit.t=now; store.set('miraj_click',hit); }
+    if(Object.keys(hit).length){ hit.t=now; hit.lp=location.pathname; store.set('miraj_click',hit); }
     if(aiUtm && !(external && AI.test(ref))){ var b=store.get('miraj_ft')||{}; if(!b.ai_referrer){ b.ai_referrer=aiUtm; store.set('miraj_ft',b); } gt('event','ai_referral',{ai_source:aiUtm}); }
     if(external && AI.test(ref)){ var a=store.get('miraj_ft')||{}; if(!a.ai_referrer){ a.ai_referrer=ref.split('/')[2]; store.set('miraj_ft',a); } gt('event','ai_referral',{ai_source:ref.split('/')[2]}); }
   })();
+  /* What each inquiry email shows (Tariq, Oct 28): one readable "Source" line instead of 13 tracking lines,
+     the exact click id kept for a future offline-conversion upload, the landing page and the page the form was on.
+     Built from the same stored first touch (miraj_ft) + latest ad/UTM click (miraj_click), 90-day window as before. */
+  var AIRX=/chatgpt|openai|perplexity|gemini|bard|copilot|claude|anthropic/i;
+  function aiName(s){ s=String(s||'').toLowerCase(); if(/chatgpt|openai/.test(s)){ return 'ChatGPT'; } if(/perplexity/.test(s)){ return 'Perplexity'; } if(/gemini|bard/.test(s)){ return 'Gemini'; } if(/copilot|bing/.test(s)){ return 'Copilot'; } if(/claude|anthropic/.test(s)){ return 'Claude'; } return s.replace(/^www\./,''); }
+  function refName(r){
+    r=String(r||''); if(!r){ return ''; }
+    if(r.indexOf('android-app://com.google.android.googlequicksearchbox')===0){ return 'Google app (organic)'; }
+    if(r.indexOf('android-app://com.google.android.gm')===0){ return 'Gmail app'; }
+    var h=r.split('/')[2]||r; h=h.toLowerCase().replace(/^www\./,'');
+    if(/(^|\.)google\.[a-z.]+$/.test(h)){ return 'Google search (organic)'; }
+    if(/(^|\.)bing\.com$/.test(h)){ return 'Bing search (organic)'; }
+    if(/(^|\.)duckduckgo\.com$/.test(h)){ return 'DuckDuckGo search (organic)'; }
+    if(/(^|\.)yahoo\.com$/.test(h)){ return 'Yahoo search (organic)'; }
+    if(/(^|\.)instagram\.com$/.test(h)){ return 'Instagram'; }
+    if(/(^|\.)facebook\.com$/.test(h)||h==='fb.me'){ return 'Facebook'; }
+    return h;
+  }
+  var TRACK=/^(gclid|gbraid|wbraid|oppref|utm_[a-z]+|fbclid|msclkid|ttclid|igshid|_gl)$/i;
+  function cleanPath(p){ p=String(p||''); var i=p.indexOf('?'); if(i<0){ return p.slice(0,300); } var q=new URLSearchParams(p.slice(i+1)), drop=[];
+    q.forEach(function(v,n){ if(TRACK.test(n)){ drop.push(n); } }); drop.forEach(function(n){ q.delete(n); }); var s=q.toString(); return (p.slice(0,i)+(s?'?'+s:'')).slice(0,300); }
   function attribution(){
     var ft=store.get('miraj_ft')||{}, ck=store.get('miraj_click')||{};
     if(ck.t && Date.now()-ck.t>90*864e5){ ck={}; }
-    return {gclid:ck.gclid||'',oppref:ck.oppref||'',gbraid:ck.gbraid||'',wbraid:ck.wbraid||'',utm_source:ck.utm_source||'',utm_medium:ck.utm_medium||'',
-      utm_campaign:ck.utm_campaign||'',utm_term:ck.utm_term||'',utm_content:ck.utm_content||'',landing_page:ft.landing_page||'',
-      first_referrer:ft.first_referrer||'',ai_referrer:ft.ai_referrer||'',page:location.pathname};
+    var ids=[]; ['gclid','gbraid','wbraid','oppref'].forEach(function(k){ if(ck[k]){ ids.push(k+':'+ck[k]); } });
+    var tag=ck.utm_content||ck.utm_campaign||'', us=ck.utm_source||'', um=ck.utm_medium||'', src;
+    if(ck.gclid||ck.gbraid||ck.wbraid){ src='Google Ads'+(tag?' · '+tag:''); }
+    else if(ck.oppref){ src='ChatGPT ad'+(tag?' · '+tag:''); }
+    else if(us){
+      if(AIRX.test(us)){ src=aiName(us); }
+      else if(/^google$/i.test(us)&&/^(cpc|ppc|paid)/i.test(um)){ src='Google Ads (no click id)'+(tag?' · '+tag:''); }
+      else if(/^google$/i.test(us)&&/organic/i.test(um)&&/gbp/i.test(ck.utm_campaign||'')){ src='Google Business Profile'; }
+      else { src=us+(um?' / '+um:'')+(ck.utm_campaign?' ('+ck.utm_campaign+')':''); }
+    }
+    else if(ft.ai_referrer){ src=aiName(ft.ai_referrer); }
+    else { src=refName(ft.first_referrer)||'Direct'; }
+    return {source:src.slice(0,150),click_id:ids.join(' ').slice(0,400),landing_page:cleanPath(ck.lp||ft.landing_page||''),form_page:location.pathname};
   }
 
   /* ---------- header: mobile menu + active link ---------- */
@@ -171,6 +202,12 @@
   function fill(form){ var a=attribution(); Object.keys(a).forEach(function(k){ var el=form.querySelector('input[type=hidden][name="'+k+'"]'); if(el){ el.value=a[k]; } }); }
   function encode(fd){ var p=[]; fd.forEach(function(v,k){ p.push(encodeURIComponent(k)+'='+encodeURIComponent(v)); }); return p.join('&'); }
   function post(fd){ return fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:encode(fd)}); }
+  /* fire-and-forget POST that survives the page closing (used for the step-1 "Unfinished" save) */
+  function beacon(fd){
+    var body=encode(fd);
+    try{ if(navigator.sendBeacon&&navigator.sendBeacon('/',new Blob([body],{type:'application/x-www-form-urlencoded'}))){ return; } }catch(e){}
+    try{ fetch('/',{method:'POST',keepalive:true,headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body}).catch(function(){}); }catch(e){}
+  }
   /* subject line of the Netlify notification email, so the inbox shows who, what and when at a glance */
   function subj(label,parts){ return (label+': '+parts.map(function(x){ return String(x||'').trim(); }).filter(Boolean).join(' · ')).slice(0,150); }
   function normPhone(p){ var d=(p||'').replace(/\D/g,''); if(d.length===10){ return '+1'+d; } if(d.length===11&&d[0]==='1'){ return '+'+d; } return d?('+'+d):''; }
@@ -190,18 +227,33 @@
     form.setAttribute('data-step','1');
     form.addEventListener('input',clearErr); form.addEventListener('change',clearErr);
     function showStep(n){ form.setAttribute('data-step',String(n)); steps.forEach(function(s){ s.hidden=(s.getAttribute('data-fstep')!==String(n)); }); var m=$('[data-fstep="'+n+'"] .form-meta span',form); if(meta&&!m){ meta.textContent='Step '+n+' of 2'; } }
+    /* Step-1 save ("Unfinished inquiry"), Tariq Oct 28: sent only if the visitor does NOT finish — when the tab is
+       hidden or closed, or 15 minutes after Continue — and at most once, built from step 1 as it is at that moment.
+       A finished inquiry therefore sends one email. (Rare: someone who switches apps mid-form and then finishes
+       sends both.) Never sent while the final submit is in flight or after it succeeded. */
+    var started=false, sentPartial=false, finishing=false, finished=false, partialTimer=null;
+    function sendPartial(){
+      if(!started||sentPartial||finishing||finished||!form.dataset.start){ return; }
+      sentPartial=true; if(partialTimer){ clearTimeout(partialTimer); partialTimer=null; }
+      var s1=steps[0], fd=new FormData(); fd.append('form-name',form.dataset.start);
+      ['name','email','phone','celebration','event_date'].forEach(function(k){ var el=$('[name="'+k+'"]',s1); if(el&&String(el.value||'').trim()){ fd.append(k,el.value); } });
+      var a=attribution(); Object.keys(a).forEach(function(k){ if(a[k]){ fd.append(k,a[k]); } });
+      var hp=$('[name="bot-field"]',form); if(hp&&hp.value){ fd.append('bot-field',hp.value); } /* lets Netlify's honeypot flag bot partials too */
+      fd.append('subject',subj('Unfinished inquiry – please follow up',[fd.get('name')||fd.get('phone')||fd.get('email'),fd.get('celebration'),fd.get('event_date')]));
+      beacon(fd);
+    }
+    if(form.dataset.start){
+      document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden'){ sendPartial(); } });
+      window.addEventListener('pagehide',sendPartial);
+    }
     var next=$('[data-next]',form);
     if(next){
       next.addEventListener('click',function(){
         var s1=steps[0]; if(!validate(s1)){ return; }
-        /* save step 1 so a partial inquiry is never lost */
-        if(form.dataset.start){ fill(form); var fd=new FormData(); fd.append('form-name',form.dataset.start);
-          ['email','phone','name','celebration','event_date'].forEach(function(k){ var el=$('[name="'+k+'"]',s1); if(el){ fd.append(k,el.value); } });
-          var a=attribution(); Object.keys(a).forEach(function(k){ fd.append(k,a[k]); });
-          var hp=$('[name="bot-field"]',form); if(hp&&hp.value){ fd.append('bot-field',hp.value); } /* lets Netlify's honeypot flag bot partials too */
-          fd.append('subject',subj('Unfinished inquiry – please follow up',[fd.get('name')||fd.get('phone')||fd.get('email'),fd.get('celebration'),fd.get('event_date')]));
+        if(!started){ started=true;
+          if(form.dataset.start){ partialTimer=setTimeout(sendPartial,15*60*1000); }
           /* not "form_start": GA4 enhanced measurement already sends that name on first touch (the Squarespace baseline) */
-          post(fd).catch(function(){}); gt('event','inquiry_step1',{form_name:'inquiry',page_path:location.pathname}); }
+          gt('event','inquiry_step1',{form_name:'inquiry',page_path:location.pathname}); }
         showStep(2);
         form.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
         var first=firstField($('[data-fstep="2"]',form)); if(first){ setTimeout(function(){ first.focus({preventScroll:true}); },350); }
@@ -215,15 +267,16 @@
       fill(form);
       var fd=new FormData(form);
       var ev=fd.getAll('events[]'); fd.delete('events[]'); if(ev.length){ fd.append('events_list',ev.join(', ')); }
-      var val=leadValue(fd); fd.append('value',String(val));
+      var val=leadValue(fd); /* value goes to the thank-you conversion only, not into the email */
       fd.set('subject',fd.get('form-name')==='quick-inquiry'?subj('Quick inquiry',[fd.get('name'),fd.get('phone'),fd.get('event_date')])
         :subj('New inquiry',[fd.get('name'),fd.get('celebration'),fd.get('event_date'),fd.get('package')]));
       Array.from(fd.keys()).forEach(function(k){ if(k!=='form-name' && !String(fd.get(k)||'').trim()){ fd.delete(k); } });
-      busy(form,true);
+      busy(form,true); finishing=true;
       var id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
       var lead={id:id,value:val,pkg:fd.get('package')||'',form:fd.get('form-name'),email:(fd.get('email')||'').trim().toLowerCase(),phone:normPhone(fd.get('phone'))};
       /* the thank-you page counts a conversion only for a lead Netlify accepted: save it after a 2xx, never before */
-      post(fd).then(function(r){ if(!r.ok){ throw new Error(r.status); } store.set('miraj_lead',lead,true); location.href='/thank-you'; }).catch(function(){ fail(form); });
+      post(fd).then(function(r){ if(!r.ok){ throw new Error(r.status); } finished=true; if(partialTimer){ clearTimeout(partialTimer); partialTimer=null; }
+        store.set('miraj_lead',lead,true); location.href='/thank-you'; }).catch(function(){ finishing=false; fail(form); });
     });
   });
 
