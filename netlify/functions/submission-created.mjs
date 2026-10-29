@@ -18,8 +18,9 @@
       obref   the pixel's browser id (__obref cookie), added to "click_id" by site.js for ChatGPT-ad visitors
       user    SHA-256 hashes of email, phone and first/last name (the raw details never leave Netlify), plus the
               visitor's IP address and browser, which Netlify records with every submission
-  - Inquiries from a device marked internal (?internal=1; Source starts "Internal device") and names starting
-    with "TEST" are sent with validate_only: OpenAI checks the format and records nothing.
+  - Inquiries from a device marked internal (?internal=1; Source starts "Internal device"), names starting with
+    "TEST", and forms sent from a Netlify preview address instead of mirajevent.com are sent with validate_only:
+    OpenAI checks the format and records nothing.
 
   Setup: Netlify > Site configuration > Environment variables > OPENAI_ADS_API_KEY (scope: Functions), the key from
   OpenAI Ads Manager > Conversions > Conversion keys. Redeploy after adding it. Without the key this logs one line and stops.
@@ -53,8 +54,18 @@ export function leadId(d) {
   return /^[A-Za-z0-9_-]{4,64}$/.test(v) ? v : '';
 }
 
+/* A form sent from anywhere but the live site (a Netlify preview or branch address) counts as a test, the same rule
+   the site's own tags follow. Netlify records the page address as "referrer"; if it is missing, the lead is treated as live. */
+export function fromLiveSite(d) {
+  let host = '';
+  try { host = new URL(String((d && d.referrer) || '')).hostname; } catch { host = ''; }
+  return !host || /(^|\.)mirajevent\.com$/i.test(host);
+}
+
 export function isTest(d) {
-  return /^test\b/i.test(String((d && d.name) || '').trim()) || /^internal device/i.test(String((d && d.source) || '').trim());
+  return /^test\b/i.test(String((d && d.name) || '').trim())
+    || /^internal device/i.test(String((d && d.source) || '').trim())
+    || !fromLiveSite(d);
 }
 
 export function buildEvent(p) {

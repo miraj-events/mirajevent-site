@@ -38,7 +38,7 @@ python3 tools/build.py
 - **ChatGPT ads server copy** (Oct 28): `netlify/functions/submission-created.mjs` runs on every verified `inquiry` / `quick-inquiry` submission and sends the same `lead_created` event to the OpenAI Conversions API, so leads still count when the pixel is blocked.
   - Same Lead ID as the pixel, so OpenAI keeps one copy. A submission without a Lead ID is not sent.
   - Carries `oppref` and `obref` from `click_id`, SHA-256 hashes of email, phone and first/last name, and the IP address and browser Netlify records.
-  - Inquiries from internal devices and names starting "TEST" are sent `validate_only` (checked, not recorded).
+  - Inquiries from internal devices, names starting "TEST" and forms sent from a Netlify preview address are sent `validate_only` (checked, not recorded).
   - Needs the Netlify environment variable `OPENAI_ADS_API_KEY` (scope Functions), a key from OpenAI Ads Manager → Conversions → Conversion keys. Redeploy after changing it.
   - Logs: Netlify → Logs → Functions → `submission-created`, one line per lead with OpenAI's HTTP status.
 - Every form submission carries hidden fields `source` (one readable line: Google Ads · tag, ChatGPT ad, Google search (organic), Google Business Profile, ig / social, Direct…), `click_id` (gclid/gbraid/wbraid/oppref, plus the pixel's `obref` for ChatGPT-ad visitors), `landing_page`, `form_page` and `lead_id` (built in `site.js` `attribution()`; 90-day window).
