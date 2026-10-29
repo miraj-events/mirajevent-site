@@ -17,7 +17,8 @@
   (function(){
     var q=new URLSearchParams(location.search), now=Date.now();
     var keys=['gclid','gbraid','wbraid','oppref','utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
-    var hit={}; keys.forEach(function(k){ var v=q.get(k); if(v){ hit[k]=v.slice(0,200); } });
+    /* click ids are kept whole (up to 500 characters): Google and OpenAI need the exact value; UTMs are cut at 200 */
+    var hit={}; keys.forEach(function(k){ var v=q.get(k); if(v){ hit[k]=v.slice(0,/^(gclid|gbraid|wbraid|oppref)$/.test(k)?500:200); } });
     var ref=document.referrer||''; var external=ref && ref.indexOf(location.hostname)<0;
     var us=(q.get('utm_source')||'').toLowerCase(); var aiUtm=/chatgpt|openai|perplexity|gemini|copilot|claude|anthropic/.test(us)?us:(q.get('oppref')?'chatgpt-ads':'');
     var first=store.get('miraj_ft');
@@ -54,6 +55,13 @@
     var ft=store.get('miraj_ft')||{}, ck=store.get('miraj_click')||{};
     if(ck.t && Date.now()-ck.t>90*864e5){ ck={}; }
     var ids=[]; ['gclid','gbraid','wbraid','oppref'].forEach(function(k){ if(ck[k]){ ids.push(k+':'+ck[k]); } });
+    /* ChatGPT ads (Oct 28): for a visitor who came from a ChatGPT ad, also keep the OpenAI pixel's browser id (__obref cookie).
+       netlify/functions/submission-created.mjs sends it with the server copy of the lead, so the lead stays credited
+       to the ad even when that copy reaches OpenAI before the thank-you page's pixel does. */
+    if(ck.oppref||ft.ai_referrer==='chatgpt-ads'){ var ob=(document.cookie.match(/(?:^|;\s*)__obref=([^;]+)/)||[])[1]||'';
+      try{ ob=decodeURIComponent(ob); }catch(x){} if(/^[\w.-]{1,200}$/.test(ob)){ ids.push('obref:'+ob); } }
+    /* whole ids only: a cut-off click id is useless to Google or OpenAI */
+    var cid=''; ids.forEach(function(x){ if(cid.length+x.length+1<=1000){ cid+=(cid?' ':'')+x; } });
     var tag=ck.utm_content||ck.utm_campaign||'', us=ck.utm_source||'', um=ck.utm_medium||'', src;
     if(ck.gclid||ck.gbraid||ck.wbraid){ src='Google Ads'+(tag?' · '+tag:''); }
     else if(ck.oppref){ src='ChatGPT ad'+(tag?' · '+tag:''); }
@@ -66,7 +74,7 @@
     else if(ft.ai_referrer){ src=aiName(ft.ai_referrer); }
     else { src=refName(ft.first_referrer)||'Direct'; }
     if(window.MIRAJ_INTERNAL){ src='Internal device (test) · '+src; }
-    return {source:src.slice(0,150),click_id:ids.join(' ').slice(0,400),landing_page:cleanPath(ck.lp||ft.landing_page||''),form_page:location.pathname};
+    return {source:src.slice(0,150),click_id:cid,landing_page:cleanPath(ck.lp||ft.landing_page||''),form_page:location.pathname};
   }
 
   /* ---------- header: mobile menu + active link ---------- */
