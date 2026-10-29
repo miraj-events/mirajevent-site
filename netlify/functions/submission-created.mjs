@@ -117,10 +117,15 @@ async function send(body, key) {
 
 export default async (req) => {
   try {
-    const { payload } = await req.json();
-    const d = (payload && payload.data) || {};
-    const form = (payload && payload.form_name) || d['form-name'];
-    if (!LEAD_FORMS.has(form)) return new Response('skipped: not a lead form');
+    const body = (await req.json()) || {};
+    const payload = body.payload || body;   // Netlify sends { payload: <submission>, site }; a bare submission works too
+    const d = payload.data || {};
+    const form = payload.form_name || d['form-name'] || '';
+    if (!LEAD_FORMS.has(form)) {
+      console.log(`ChatGPT ads server event skipped: "${String(form).slice(0, 40)}" is not a lead form`
+        + ` (event keys: ${Object.keys(body).slice(0, 8).join(', ') || 'none'})`);
+      return new Response('skipped: not a lead form');
+    }
     if (!leadId(d)) {
       console.log(`ChatGPT ads server event skipped: no Lead ID on this ${form} submission (the thank-you pixel still counts it)`);
       return new Response('skipped: no lead id');
@@ -132,8 +137,8 @@ export default async (req) => {
     }
     const event = buildEvent(payload);
     const test = isTest(d);
-    const body = { integration_source: 'miraj-netlify-forms', validate_only: test, events: [event] };
-    const r = await send(body, key);
+    const request = { integration_source: 'miraj-netlify-forms', validate_only: test, events: [event] };
+    const r = await send(request, key);
     const ok = r.status >= 200 && r.status < 300;
     console.log(`ChatGPT ads lead_created ${event.id}${test ? ' (test, validate only)' : ''}`
       + `${event.oppref ? ' [ChatGPT ad click]' : ''}: ${ok ? 'OK' : 'FAILED'} HTTP ${r.status} ${r.text}`);
