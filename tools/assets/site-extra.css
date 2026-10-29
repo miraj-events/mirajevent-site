@@ -901,3 +901,6 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 .ct4{background:#FBFAF7}
 .ct4 .card{box-shadow:0 24px 60px rgba(30,31,33,.10);border-color:#ECE7DD}
 .ct4-photo::after{border-color:rgba(255,255,255,.6)}
+
+/* Footer: areas served (Tariq, Oct 28) — one quiet line under the sign-off, same tone as the legal row */
+.f3-area{margin:2px 0 0;max-width:46ch;font-size:12.5px;line-height:1.55;color:#9C978D}

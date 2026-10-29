@@ -50,6 +50,10 @@ src = src.replace('data-nav="contact">Inquire</a>', 'data-nav="contact">Contact 
 src = src.replace('<a href="#contact">Inquire</a>', '<a href="#contact">Contact Us</a>')
 src = src.replace('<p class="eyebrow">Inquire</p>', '<p class="eyebrow">Contact us</p>')
 src = src.replace('<li><strong>Inquire</strong>', '<li><strong>Contact us</strong>')
+# "Full-service" wording (Tariq, Oct 28): the Full Planning detail on /services and /contact says what it is
+_n = src.count('<p>All of it. You make the choices; we carry the rest.</p>')
+src = src.replace('<p>All of it. You make the choices; we carry the rest.</p>', '<p>Full-service planning. You make the choices; we carry the rest.</p>')
+assert _n >= 1, 'Full Planning detail text not found in the design source'
 # Nav order (Tariq, Oct 25): About before Services (desktop nav, mobile dropdown, footer)
 for _a, _b in [('<a href="#services" data-nav="services">Services</a>\n      <a href="#about" data-nav="about">About</a>',
                 '<a href="#about" data-nav="about">About</a>\n      <a href="#services" data-nav="services">Services</a>'),
@@ -237,6 +241,13 @@ def forms_definition():
 
 
 # ---------------------------------------------------------------- schema
+# Areas served (Tariq, Oct 28): one list feeds the schema and the visible footer line, so what Google reads in the
+# markup matches what people see on every page. Keep it in step with the Google Business Profile's service areas.
+AREA_CITIES_MI = ['Detroit', 'Sterling Heights', 'Troy', 'Rochester Hills', 'Bloomfield Hills', 'Novi',
+                  'Farmington Hills', 'Dearborn', 'Ann Arbor']
+AREA_LINE = ('Serving %s and %s across Oakland, Macomb, Wayne and Washtenaw counties, plus Toledo and Chicago.'
+             % (', '.join(AREA_CITIES_MI[:-1]), AREA_CITIES_MI[-1]))
+
 def org_schema():
     return {
         "@context": "https://schema.org",
@@ -247,14 +258,12 @@ def org_schema():
         "url": SITE + "/",
         "logo": SITE + "/assets/miraj-logo-512.png",
         "image": SITE + "/assets/og-image.png",
-        "description": "Wedding planner and day-of coordinator for multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago.",
+        "description": "Full-service wedding planner and day-of coordinator for multicultural, multi-event weddings across Metro Detroit, Toledo and Chicago.",
         "telephone": "+1-586-504-0207",
         "email": EMAIL,
         "priceRange": "$1,975–$9,500+",
         "address": {"@type": "PostalAddress", "addressLocality": "Sterling Heights", "addressRegion": "MI", "postalCode": "48314", "addressCountry": "US"},
-        "areaServed": [{"@type": "City", "name": c} for c in [
-            "Detroit, MI", "Sterling Heights, MI", "Troy, MI", "Rochester Hills, MI", "Dearborn, MI", "Ann Arbor, MI",
-            "Novi, MI", "Farmington Hills, MI", "Bloomfield Hills, MI", "Toledo, OH", "Chicago, IL"]],
+        "areaServed": [{"@type": "City", "name": c} for c in [c + ', MI' for c in AREA_CITIES_MI] + ["Toledo, OH", "Chicago, IL"]],
         "founder": {"@type": "Person", "name": "Mehreen Buksh"},
         "sameAs": [IG, FB] + [u for _, _, u in LISTINGS],
         "knowsAbout": ["Wedding planning", "Day-of wedding coordination", "Multi-event wedding weekends",
@@ -265,7 +274,7 @@ PACKAGES = [
     ('day-of', 'Day-of Coordination', 1975, 'You planned it. We run it. The final month and the day: confirmations, timeline, rehearsal, setup to send-off.'),
     ('design', 'Design + Coordination', 4750, 'Everything in Day-of, plus the look: concept, floor plan, décor team and the install.'),
     ('planning', 'Planning + Design', 6500, 'Everything in Design + Coordination, plus planning with you from signing: vendors, budget, portal, hotel block.'),
-    ('full', 'Full Planning', 9500, 'Everything in Planning + Design. We lead; you choose.'),
+    ('full', 'Full Planning', 9500, 'Full-service wedding planning: everything in Planning + Design. We lead; you choose.'),
 ]
 
 def services_schema():
@@ -355,18 +364,22 @@ if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
 <a class="skip" href="#main">Skip to content</a>
 '''
 
+# Day-of Coordination in the menus (Tariq, Oct 28): the page was reachable only from /services
 MENU_ITEMS = [('/', 'home', '01', 'Home', 'Welcome'),
               ('/about', 'about', '02', 'About', 'Mehreen &amp; the team'),
               ('/services', 'services', '03', 'Services', 'Packages &amp; pricing'),
-              ('/design', 'design', '04', 'Design', 'Mood boards &amp; floor plans'),
-              ('/contact', 'contact', '05', 'Contact Us', 'Start planning')]
+              ('/day-of-coordination', 'dayof', '04', 'Day-of Coordination', 'You planned it. We run it.'),
+              ('/design', 'design', '05', 'Design', 'Mood boards &amp; floor plans'),
+              ('/contact', 'contact', '06', 'Contact Us', 'Start planning')]
 def header():
     h = between(src, '<header class="site-header">', '</header>')
     h = relink(h, 'x')
     h = logo_use(h)
     h = h.replace('href="#home"', 'href="/"')
     # Design page (Tariq, Oct 25): in the main nav after Services
-    h, n = re.subn(r'(<a href="/services" data-nav="services">Services</a>)', r'\1\n      <a href="/design" data-nav="design">Design</a>', h, count=1)
+    # Day-of (Tariq, Oct 28): between Services and Design; "Day-of" keeps the one-word rhythm and fits from 900px up
+    h, n = re.subn(r'(<a href="/services" data-nav="services">Services</a>)',
+                   r'\1\n      <a href="/day-of-coordination" data-nav="dayof">Day-of</a>\n      <a href="/design" data-nav="design">Design</a>', h, count=1)
     assert n == 1
     # Phone menu v2 (Tariq, Oct 25): compact serif items with gold numerals and gold hairlines + one slim CTA
     mob = ('<nav id="mobnav" class="mobnav" hidden aria-label="Mobile"><div class="wrap mobnav-in">'
@@ -387,19 +400,21 @@ def header():
 def footer(page):
     # Footer v3 (Tariq, Oct 26): graphite band with the gold monogram, a one-line sign-off, compact sentence-case links,
     # phone and email; left-aligned and tight on phones, three columns on desktop
-    nav = ''.join('<a href="%s">%s</a>' % (u, t) for u, t in [('/about', 'About'), ('/services', 'Services'), ('/design', 'Design'), ('/contact', 'Contact')])
+    nav = ''.join('<a href="%s">%s</a>' % (u, t) for u, t in [('/about', 'About'), ('/services', 'Services'),
+                                                               ('/day-of-coordination', 'Day-of coordination'), ('/design', 'Design'), ('/contact', 'Contact')])
     soc = ''.join('<a href="%s" target="_blank" rel="noopener">%s</a>' % (u, t) for u, t in [(IG, 'Instagram'), (FB, 'Facebook')])
     f = ('<div class="wrap f3">'
          '<div class="f3-brand">'
            '<a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram">'
            '<use href="/assets/sprite.svg?v=%s#me-mark" width="2386" height="1632"/></svg><span class="lk-name">MIRAJ EVENTS</span></a>'
            '<p class="f3-tag">Be a guest at your own celebration.</p>'
+           '<p class="f3-area">%s</p>'  # areas served (Tariq, Oct 28)
          '</div>'
          '<nav class="f3-nav" aria-label="Footer"><div class="f3-row">%s</div><div class="f3-row f3-soc">%s</div></nav>'
          '<div class="f3-reach"><a href="tel:%s">%s</a><a href="mailto:%s">%s</a></div>'
          '<div class="f3-legal"><span>© <span id="yr">%s</span> Miraj Events, LLC<span class="f3-loc"> · Metro Detroit, Michigan</span></span>'
            '<span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div>'
-         '</div>') % (VERSION, nav, soc, TEL, PHONE, EMAIL, EMAIL, datetime.date.today().year)
+         '</div>') % (VERSION, AREA_LINE, nav, soc, TEL, PHONE, EMAIL, EMAIL, datetime.date.today().year)
     sticky = ('<aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="%s">Check availability</a></aside>'
               % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form'))
     return ('<footer class="f3-wrap">' + f + '</footer>\n' + sticky + '\n'
@@ -563,7 +578,7 @@ LAYERS = ['The day', 'Design', 'Planning', 'All of it']
 LADDER = [('01', 'Day-of Coordination', 'The final month and the day, setup to send-off.', '$1,975'),
           ('02', 'Design + Coordination', 'Adds design direction: concept, floor plan and décor team.', '$4,750'),
           ('03', 'Planning + Design', 'Adds planning from signing: vendors, budget, hotel block.', '$6,500'),
-          ('04', 'Full Planning', 'All of it. You make the choices; we carry the rest.', '$9,500')]
+          ('04', 'Full Planning', 'Full-service planning. You make the choices; we carry the rest.', '$9,500')]  # "full-service" wording (Tariq, Oct 28)
 def ladder2():
     rows = ''
     for i, (n, name, adds, price) in enumerate(LADDER):
@@ -621,7 +636,7 @@ home = home.replace('<a class="rating" href="#" aria-label="Read our Google revi
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
-     'Detroit wedding planner for multicultural, multi-event weddings. Day-of coordination to full planning across Metro Detroit, Toledo and Chicago.',
+     'Detroit wedding planner for multicultural, multi-event weddings. Day-of coordination to full-service planning across Metro Detroit, Toledo and Chicago.',
      '/', 'home', inq_upgrade(slim=True, h=home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),
      schema=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "Miraj Events", "url": SITE + "/"}])
 
@@ -647,7 +662,7 @@ svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class=
 svc = svc.replace('<h1>Four packages. Each includes the one before it.</h1>',
                   '<h1>Wedding planning packages. Each includes the one before it.</h1>')
 svc = svc.replace('<p class="lead">Starting prices for a single event. Multi-event weekends are packaged together on your call.</p>',
-                  '<p class="lead">Day-of coordination to full planning in Metro Detroit, Toledo and Chicago. Starting prices for a single event; multi-event weekends are packaged together on your call.</p>')
+                  '<p class="lead">Day-of coordination to full-service wedding planning in Metro Detroit, Toledo and Chicago. Starting prices for a single event; multi-event weekends are packaged together on your call.</p>')
 svc = svc.replace('<h2>Day-of Coordination</h2>', '<h2><a href="/day-of-coordination">Day-of Coordination</a></h2>')
 svc = svc.replace('<a class="textlink" href="/contact">Tell us about yours →</a>', '<a class="textlink" href="/contact#contact-form">Tell us about yours →</a>')
 # FAQ cut to 8 key questions (Tariq, Oct 25); cancel + postpone merged into one answer
@@ -683,7 +698,7 @@ _dq = 'and oversee the décor team that brings it to life. Décor itself is bill
 assert svc.count(_dq) == 1
 svc = svc.replace(_dq, 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor. <a href="/design">See how design direction works</a>.</p></details>')
 page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroit',
-     'Wedding planning packages in Metro Detroit: day-of coordination from $1,975, design + coordination, planning + design and full planning.',
+     'Wedding planning packages in Metro Detroit: day-of coordination from $1,975, design + coordination, planning + design and full-service planning.',
      '/services', 'services', svc, schema=[org_schema(), services_schema(), faq_schema(svc)])
 
 # ABOUT
