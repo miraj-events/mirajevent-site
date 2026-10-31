@@ -74,6 +74,7 @@
     else if(ft.ai_referrer){ src=aiName(ft.ai_referrer); }
     else { src=refName(ft.first_referrer)||'Direct'; }
     if(window.MIRAJ_INTERNAL){ src='Internal device (test) · '+src; }
+    else if(window.MIRAJ_OOA){ src='Out of area ('+window.MIRAJ_CC+') · '+src; }
     return {source:src.slice(0,150),click_id:cid,landing_page:cleanPath(ck.lp||ft.landing_page||''),form_page:location.pathname};
   }
 

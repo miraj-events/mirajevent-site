@@ -35,20 +35,26 @@ window.MIRAJ_LIVE=/(^|\.)mirajevent\.com$/.test(location.hostname);
 window.MIRAJ_INTERNAL=(function(){try{var v=new URLSearchParams(location.search).get('internal');
 if(v==='1'){localStorage.setItem('miraj_internal','1');}else if(v==='0'){localStorage.removeItem('miraj_internal');}
 return localStorage.getItem('miraj_internal')==='1';}catch(e){return false;}})();
+/* Out-of-area visitors (Oct 30): Netlify's edge function (netlify/edge-functions/geo.js) sets the cookie miraj_cc to the
+   visitor's country. Outside the US and Canada the page works normally but no analytics or ad tags run, so bots and
+   overseas traffic stay out of GA4, Google Ads, OpenAI and Meta. Inquiries still email, with Source "Out of area (XX)". */
+window.MIRAJ_CC=(document.cookie.match(/(?:^|;\s*)miraj_cc=([A-Z]{2})/)||[])[1]||'';
+window.MIRAJ_OOA=!!window.MIRAJ_CC&&!/^(US|CA)$/.test(window.MIRAJ_CC);
+window.MIRAJ_NOTRACK=window.MIRAJ_INTERNAL||window.MIRAJ_OOA;
 gtag('js',new Date());
-if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
-else{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}
+if(window.MIRAJ_LIVE&&!window.MIRAJ_NOTRACK){gtag('config','G-PVV95TW26B');gtag('config','AW-16694224609',{allow_enhanced_conversions:true});}
+else{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':window.MIRAJ_OOA?'Miraj: out-of-area visitor ('+window.MIRAJ_CC+'), analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}
 </script>
 <!-- OpenAI Ads measurement pixel (DQ1HpbhhjYa76ncDFrtMaF); live domain only -->
 <script>
-(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.MIRAJ_INTERNAL||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
+(function(w,d,s,u){if(!w.MIRAJ_LIVE||w.MIRAJ_NOTRACK||w.oaiq){return;}var q=function(){q.q.push(arguments);};q.q=[];w.oaiq=q;
 var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
 })(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
 if(window.oaiq){oaiq('init',{pixelId:'DQ1HpbhhjYa76ncDFrtMaF'});}
 </script>
 <!-- Meta Pixel (1606455301023906); live domain only -->
 <script>
-if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){
+if(window.MIRAJ_LIVE&&!window.MIRAJ_NOTRACK){
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 var am={};try{var l=/^\/thank-you/.test(location.pathname)?JSON.parse(sessionStorage.getItem('miraj_lead')||'null'):null;if(l){if(l.email){am.em=l.email;}if(l.phone){am.ph=String(l.phone).replace(/\D/g,'');}}}catch(e){}
 fbq('init','1606455301023906',am);fbq('track','PageView');
@@ -117,6 +123,6 @@ fbq('init','1606455301023906',am);fbq('track','PageView');
 </main>
 <footer class="f3-wrap"><div class="wrap f3"><div class="f3-brand"><a class="lockup" href="/" aria-label="Miraj Events home"><svg class="lk-logo" width="110" height="75" viewBox="0 0 2386 1632" role="img" aria-label="Miraj Events monogram"><use href="/assets/sprite.svg?v=fad75640a3#me-mark" width="2386" height="1632"/></svg><span class="lk-name">MIRAJ EVENTS</span></a><p class="f3-tag">Be a guest at your own celebration.</p><p class="f3-area">Serving Detroit, Sterling Heights, Troy, Rochester Hills, Bloomfield Hills, Novi, Farmington Hills, Dearborn and Ann Arbor across Oakland, Macomb, Wayne and Washtenaw counties, plus Toledo and Chicago.</p></div><nav class="f3-nav" aria-label="Footer"><div class="f3-row"><a href="/about">About</a><a href="/services">Services</a><a href="/day-of-coordination">Day-of coordination</a><a href="/design">Design</a><a href="/contact">Contact</a></div><div class="f3-row f3-soc"><a href="https://www.instagram.com/miraj.events/" target="_blank" rel="noopener">Instagram<span class="sr-only"> (opens in a new tab)</span></a><a href="https://www.facebook.com/p/Miraj-Events-61559780220825/" target="_blank" rel="noopener">Facebook<span class="sr-only"> (opens in a new tab)</span></a></div></nav><div class="f3-reach"><a href="tel:+15865040207">(586) 504-0207</a><a href="mailto:admin@mirajevent.com">admin@mirajevent.com</a></div><div class="f3-legal"><span>© <span id="yr">2026</span> Miraj Events, LLC<span class="f3-loc"> · Metro Detroit, Michigan</span></span><span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div></div></footer>
 <aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="/contact#contact-form">Check availability</a></aside>
-<script src="/assets/site.js?v=b0f31e3a76" defer></script>
+<script src="/assets/site.js?v=eddf936995" defer></script>
 </body>
 </html>
