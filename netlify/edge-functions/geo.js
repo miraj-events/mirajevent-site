@@ -7,9 +7,10 @@
   don't load and no conversion fires. An inquiry from abroad still reaches Netlify and the email, with Source
   starting "Out of area (XX)", and the ChatGPT-ads server copy sends it validate_only (checked, not recorded).
 
-  Why: in the week of Oct 23-29, 69 of 154 GA4 users were in the Netherlands (Amsterdam data centers: crawlers,
-  SEO tools, monitors). Ads target Metro Detroit only, so none of this was paid traffic, but it doubled the visitor
-  count and halved every conversion rate.
+  Why: in the week of Oct 23-29, 69 of 154 GA4 users were in the Netherlands. Search Console (checked Oct 31) shows
+  they come from Google searches for "miraj event(s)" and "miraaj events" in Amsterdam, Rotterdam, Eindhoven and
+  The Hague: most likely people looking for a different, similarly named business, not clients. Ads target Metro
+  Detroit only, so none of this was paid traffic, but it doubled the visitor count and halved every conversion rate.
 
   Unknown country: no cookie value is set, and the visitor is tracked normally (never drop a real local visitor).
   Testing on a Netlify preview or branch address (never on mirajevent.com): add ?cc=NL to any page to act as that
