@@ -273,7 +273,7 @@ def org_schema():
         "subjectOf": [{"@type": "Article", "url": u, "publisher": {"@type": "Organization", "name": n.split(' · ')[0]}}
                       for n, u in PRESS],
         "knowsAbout": ["Wedding planning", "Day-of wedding coordination", "Multi-event wedding weekends",
-                       "South Asian weddings", "Arab and Chaldean weddings", "Interfaith weddings", "Event planning"],
+                       "South Asian weddings", "Arab and Chaldean weddings", "West African and Caribbean weddings", "Interfaith weddings", "Event planning"],
     }
 
 PACKAGES = [
@@ -428,7 +428,7 @@ def footer(page):
            '<span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div>'
          '</div>') % (VERSION, AREA_LINE, nav, soc, TEL, PHONE, EMAIL, EMAIL, datetime.date.today().year)
     sticky = ('<aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="%s">Check availability</a></aside>'
-              % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form'))
+              % ('#inquire' if page in ('home', 'dayof', 'multicultural', 'cost') else '/contact#contact-form'))
     return ('<footer class="f3-wrap">' + f + '</footer>\n' + sticky + '\n'
             '<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % VERSION)
 
@@ -442,6 +442,7 @@ def nodate(h):
     return h
 
 CRUMBS = {'/services': 'Services', '/design': 'Design', '/day-of-coordination': 'Day-of Coordination', '/about': 'About',
+          '/multicultural-weddings': 'Multicultural Weddings', '/wedding-planner-cost': 'Wedding Planner Cost',
           '/contact': 'Contact', '/privacy': 'Privacy Policy', '/accessibility': 'Accessibility'}
 def breadcrumbs(path):
     return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
@@ -647,6 +648,10 @@ home = home.replace('<a class="rating" href="#" aria-label="Read our Google revi
                     '<a class="rating" href="#reviews" aria-label="%.1f on Google. Read our reviews"><span class="stars" aria-hidden="true">★★★★★</span><span class="r-txt" aria-hidden="true"><strong>%.1f</strong> on Google</span></a>' % (reviews['rating'], reviews['rating']))
 home = re.sub(r'<div class="proof-quote reveal">.*?</div>\s*</div></div>',
               '<div class="proof-quote reveal" id="reviews">' + reviews_block('home') + '</div>\n  </div></div>', home, flags=re.S)
+# Multicultural page (Nov 1): one text link under the tradition timeline (the wk-note above it is hidden in min copy)
+_wn = '<p class="wk-note">One run-of-show behind every step: vendors, family arrivals, ritual timing.</p>'
+assert home.count(_wn) == 1
+home = home.replace(_wn, _wn + '\n      <a class="textlink wk-link" href="/multicultural-weddings">See every tradition we plan &#8594;</a>')
 page('index.html', 'Miraj Events | Detroit Wedding & Event Planning',
      'Detroit wedding planner for multicultural, multi-event weddings. Day-of coordination to full-service planning across Metro Detroit, Toledo and Chicago.',
      '/', 'home', inq_upgrade(slim=True, h=home.replace('<h2 class="h2">Let\'s check your date.</h2>', '<h2 class="h2">Let&#8217;s start planning your celebration.</h2>', 1)),
@@ -709,6 +714,10 @@ svc = svc.replace(_dc, _dc + '\n        <a class="textlink pk-link" href="/desig
 _dq = 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor.</p></details>'
 assert svc.count(_dq) == 1
 svc = svc.replace(_dq, 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor. <a href="/design">See how design direction works</a>.</p></details>')
+# Multicultural page (Nov 1): linked from the blend-cultures answer
+_bl = "We'll make sure both sides feel at home and nothing important gets rushed.</p></details>"
+assert svc.count(_bl) == 1, 'blend FAQ'
+svc = svc.replace(_bl, "We'll make sure both sides feel at home and nothing important gets rushed. <a href=\"/multicultural-weddings\">See every tradition we plan</a>.</p></details>")
 page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroit',
      'Wedding planning packages in Metro Detroit: day-of coordination from $1,975, design + coordination, planning + design and full-service planning.',
      '/services', 'services', svc, schema=[org_schema(), services_schema(), faq_schema(svc)])
@@ -769,7 +778,7 @@ ab = (
     '<h2 class="h2">More than a decade of <em>planning</em>.</h2>'
     '<p>Mehreen Buksh has been planning events for more than ten years. She started young, organizing youth and community events (booking speakers, building timelines and managing budgets) and went on to lead community, public, private and corporate events before focusing on weddings.</p>'
     '<p>Couples know her for a calm presence, a sharp eye for detail and a habit of solving problems before anyone notices them. She works with a trusted network of vendors across Michigan.</p>'
-    '<p>Today her specialty is the multi-event wedding weekend: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
+    '<p>Today her specialty is the <a href="/multicultural-weddings">multi-event wedding weekend</a>: South Asian, Arab and Chaldean, Hindu and Sikh, West African and interfaith celebrations, often across several days and two faiths. We also run engagement parties, nonprofit galas and milestone celebrations.</p>'
   '</div>'
 '</div></div>'
 '<div class="band band-dark ab3-team" id="team"><div class="wrap">'
@@ -1002,6 +1011,35 @@ page('day-of-coordination.html', 'Day-of Wedding Coordinator in Detroit, MI | Mi
          "offers": {"@type": "Offer", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 1975, "priceCurrency": "USD"}}},
          faq_schema(dayof)])
 
+# MULTICULTURAL WEDDINGS + WEDDING PLANNER COST (Nov 1, AI assistant + search visibility): answer-first pages for
+# "multicultural / South Asian / Arab and Chaldean / West African / interfaith wedding planner Detroit" and
+# "how much does a wedding planner cost in Detroit". Same inquiry form as Home (no package preset), same reviews.
+def guide_page(asset, variant):
+    h = open(os.path.join(ASSETS_SRC, asset), encoding='utf-8').read()
+    h = h.replace('{{REVIEWS}}', reviews_block(variant))
+    f = re.search(r'<div class="band band-white rule-top" id="inquire">.*?</div></div>', home, re.S).group(0)
+    return inq_upgrade(h.replace('{{FORM}}', f))
+
+mc = guide_page('multicultural.html', 'mc')
+page('multicultural-weddings.html', 'Multicultural Wedding Planner in Detroit | Miraj Events',
+     'South Asian, Arab and Chaldean, West African and interfaith weddings in Metro Detroit. One lead planner runs every event of your wedding weekend.',
+     '/multicultural-weddings', 'multicultural', mc, schema=[org_schema(), {
+         "@context": "https://schema.org", "@type": "Service", "name": "Multicultural and multi-event wedding planning",
+         "serviceType": "Wedding planner", "provider": {"@id": SITE + "/#business"},
+         "areaServed": "Metro Detroit, Toledo and Chicago",
+         "offers": {"@type": "Offer", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 1975, "priceCurrency": "USD"}}},
+         faq_schema(mc)])
+
+cost = guide_page('cost.html', 'cost')
+page('wedding-planner-cost.html', 'How Much Does a Wedding Planner Cost in Detroit? | Miraj Events',
+     'Wedding planner prices in Metro Detroit for 2026-27: day-of, partial and full planning ranges, what changes the cost, and Miraj Events starting prices.',
+     '/wedding-planner-cost', 'cost', cost, schema=[org_schema(), {
+         "@context": "https://schema.org", "@type": "Article", "headline": "What does a wedding planner cost in Detroit?",
+         "about": "Wedding planner prices in Metro Detroit", "datePublished": "2026-11-01",
+         "dateModified": datetime.date.today().isoformat(), "author": {"@id": SITE + "/#business"},
+         "publisher": {"@id": SITE + "/#business"}, "mainEntityOfPage": SITE + "/wedding-planner-cost"},
+         faq_schema(cost)])
+
 # THANK YOU (Google Ads Form Fill conversion fires here, same send_to as the Squarespace site)
 th = prep('thanks')
 # Thank-you page v3 (Tariq, Oct 26 pm): a collage that assembles once on arrival (about 3.5 s, then holds still,
@@ -1130,7 +1168,8 @@ for f in os.listdir(os.path.join(ASSETS_SRC, 'static')):
 
 # sitemap + robots + llms
 today = datetime.date.today().isoformat()
-urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2'), ('/accessibility', '0.2')]
+urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'),
+        ('/multicultural-weddings', '0.8'), ('/wedding-planner-cost', '0.8'), ('/privacy', '0.2'), ('/accessibility', '0.2')]
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + ''.join('  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n' % (SITE, u if u != '/' else '/', today, p) for u, p in urls)

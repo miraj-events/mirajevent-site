@@ -1434,3 +1434,27 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 
 /* Footer: areas served (Tariq, Oct 28) — one quiet line under the sign-off, same tone as the legal row */
 .f3-area{margin:2px 0 0;max-width:46ch;font-size:12.5px;line-height:1.55;color:#9C978D}
+
+/* Multicultural weddings + wedding planner cost pages (Nov 1): the events line under each tradition, and the
+   starting-price table (three columns at every width; the service description sits under the service name) */
+.trad-events{margin:8px 0 12px;font-size:13px;line-height:1.55;letter-spacing:.3px;color:var(--gold-deep)}
+.ptable-wrap{border-top:1px solid var(--rule)}
+.ptable{width:100%;border-collapse:collapse;font-size:15px;line-height:1.5}
+.ptable th,.ptable td{padding:18px 16px 18px 0;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.ptable thead th{padding-top:14px;padding-bottom:12px;font-family:var(--body);font-size:11px;letter-spacing:2.2px;text-transform:uppercase;font-weight:400;color:var(--muted)}
+.ptable tbody th{width:48%;font-family:var(--display);font-weight:400;font-size:22px;line-height:1.2;color:var(--fg)}
+.ptable .pt-cov{display:block;margin-top:6px;font-family:var(--body);font-weight:300;font-size:14px;line-height:1.55;color:var(--fg-2)}
+.ptable td{color:var(--fg-2)}
+.pt-us a{display:block;font-family:var(--display);font-size:26px;line-height:1.1;color:var(--gold-deep);text-decoration:none}
+.pt-us a:hover{text-decoration:underline;text-underline-offset:3px}
+.pt-us span{display:block;margin-top:4px;font-size:12px;line-height:1.4;color:var(--muted)}
+.pt-note{margin-top:16px;max-width:80ch;font-size:13px;line-height:1.65;color:var(--muted)}
+@media (max-width:699px){
+  .ptable{font-size:14px}
+  .ptable th,.ptable td{padding:14px 10px 14px 0}
+  .ptable thead th{font-size:10px;letter-spacing:1.6px}
+  .ptable tbody th{width:44%;font-size:19px}
+  .ptable .pt-cov{font-size:13px}
+  .pt-us a{font-size:22px}
+}
+.wk-link{display:inline-block;margin-top:22px}
