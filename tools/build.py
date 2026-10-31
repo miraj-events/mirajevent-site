@@ -24,6 +24,7 @@ TEL = '+15865040207'
 EMAIL = 'admin@mirajevent.com'
 IG = 'https://www.instagram.com/miraj.events/'
 FB = 'https://www.facebook.com/p/Miraj-Events-61559780220825/'
+MAPS_URL = 'https://maps.google.com/?cid=1998831861295189121'  # Google Business Profile (Maps CID)
 import hashlib
 # cache-buster = hash of everything that ends up in site.css / site.js / sprite (assets are cached for a year)
 _h = hashlib.sha1()
@@ -266,6 +267,11 @@ def org_schema():
         "areaServed": [{"@type": "City", "name": c} for c in [c + ', MI' for c in AREA_CITIES_MI] + ["Toledo, OH", "Chicago, IL"]],
         "founder": {"@type": "Person", "name": "Mehreen Buksh"},
         "sameAs": [IG, FB] + [u for _, _, u in LISTINGS],
+        # AI visibility (Oct 31): the Google Business Profile (Maps CID) and the press pieces, so search engines and AI
+        # assistants tie the profile, the listings and the articles to this one business.
+        "hasMap": MAPS_URL,
+        "subjectOf": [{"@type": "Article", "url": u, "publisher": {"@type": "Organization", "name": n.split(' · ')[0]}}
+                      for n, u in PRESS],
         "knowsAbout": ["Wedding planning", "Day-of wedding coordination", "Multi-event wedding weekends",
                        "South Asian weddings", "Arab and Chaldean weddings", "Interfaith weddings", "Event planning"],
     }
