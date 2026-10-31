@@ -36,7 +36,7 @@ VERSION = _h.hexdigest()[:10]
 # fbq('init') for advanced matching; the pixel hashes them in the browser (disclosed on /privacy).
 META_HEAD = '' if not META_PIXEL else '''<!-- Meta Pixel (%s); live domain only -->
 <script>
-if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){
+if(window.MIRAJ_LIVE&&!window.MIRAJ_NOTRACK){
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 var am={};try{var l=/^\\/thank-you/.test(location.pathname)?JSON.parse(sessionStorage.getItem('miraj_lead')||'null'):null;if(l){if(l.email){am.em=l.email;}if(l.phone){am.ph=String(l.phone).replace(/\\D/g,'');}}}catch(e){}
 fbq('init','%s',am);fbq('track','PageView');
@@ -347,13 +347,19 @@ window.MIRAJ_LIVE=/(^|\\.)mirajevent\\.com$/.test(location.hostname);
 window.MIRAJ_INTERNAL=(function(){{try{{var v=new URLSearchParams(location.search).get('internal');
 if(v==='1'){{localStorage.setItem('miraj_internal','1');}}else if(v==='0'){{localStorage.removeItem('miraj_internal');}}
 return localStorage.getItem('miraj_internal')==='1';}}catch(e){{return false;}}}})();
+/* Out-of-area visitors (Oct 30): Netlify's edge function (netlify/edge-functions/geo.js) sets the cookie miraj_cc to the
+   visitor's country. Outside the US and Canada the page works normally but no analytics or ad tags run, so bots and
+   overseas traffic stay out of GA4, Google Ads, OpenAI and Meta. Inquiries still email, with Source "Out of area (XX)". */
+window.MIRAJ_CC=(document.cookie.match(/(?:^|;\\s*)miraj_cc=([A-Z]{{2}})/)||[])[1]||'';
+window.MIRAJ_OOA=!!window.MIRAJ_CC&&!/^(US|CA)$/.test(window.MIRAJ_CC);
+window.MIRAJ_NOTRACK=window.MIRAJ_INTERNAL||window.MIRAJ_OOA;
 gtag('js',new Date());
-if(window.MIRAJ_LIVE&&!window.MIRAJ_INTERNAL){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
-else{{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
+if(window.MIRAJ_LIVE&&!window.MIRAJ_NOTRACK){{gtag('config','{GA4}');gtag('config','{ADS}',{{allow_enhanced_conversions:true}});}}
+else{{console.info(window.MIRAJ_INTERNAL?'Miraj: internal device, analytics and ad tags off.':window.MIRAJ_OOA?'Miraj: out-of-area visitor ('+window.MIRAJ_CC+'), analytics and ad tags off.':'Miraj: staging/preview host, Google Analytics + Ads not sending.');}}
 </script>
 <!-- OpenAI Ads measurement pixel ({OAI_PIXEL}); live domain only -->
 <script>
-(function(w,d,s,u){{if(!w.MIRAJ_LIVE||w.MIRAJ_INTERNAL||w.oaiq){{return;}}var q=function(){{q.q.push(arguments);}};q.q=[];w.oaiq=q;
+(function(w,d,s,u){{if(!w.MIRAJ_LIVE||w.MIRAJ_NOTRACK||w.oaiq){{return;}}var q=function(){{q.q.push(arguments);}};q.q=[];w.oaiq=q;
 var js=d.createElement(s);js.async=true;js.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(js,f);
 }})(window,document,'script','https://bzrcdn.openai.com/sdk/oaiq.min.js');
 if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
@@ -1036,7 +1042,7 @@ conv_js = '''<script>
   var lead=null; try{ lead=JSON.parse(sessionStorage.getItem('miraj_lead')||'null'); }catch(e){}
   var fromSite=document.referrer && document.referrer.indexOf(location.hostname)>-1;
   var nav=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};
-  if(!window.MIRAJ_LIVE||window.MIRAJ_INTERNAL){ console.info('Miraj: conversion skipped (staging host or internal device)', lead); return; }
+  if(!window.MIRAJ_LIVE||window.MIRAJ_NOTRACK){ console.info('Miraj: conversion skipped (staging host, internal device or out-of-area visitor)', lead); return; }
   if(!lead && (!fromSite || nav.type==='reload' || nav.type==='back_forward')){ return; }
   lead=lead||{};
   var tid=lead.id||('ty-'+Date.now());

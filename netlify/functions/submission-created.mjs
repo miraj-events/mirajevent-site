@@ -18,7 +18,8 @@
       obref   the pixel's browser id (__obref cookie), added to "click_id" by site.js for ChatGPT-ad visitors
       user    SHA-256 hashes of email, phone and first/last name (the raw details never leave Netlify), plus the
               visitor's IP address and browser, which Netlify records with every submission
-  - Inquiries from a device marked internal (?internal=1; Source starts "Internal device"), names starting with
+  - Inquiries from a device marked internal (?internal=1; Source starts "Internal device"), from outside the US/Canada
+    (Source starts "Out of area"; see netlify/edge-functions/geo.js), names starting with
     "TEST", and forms sent from a Netlify preview address instead of mirajevent.com are sent with validate_only:
     OpenAI checks the format and records nothing.
 
@@ -65,6 +66,7 @@ export function fromLiveSite(d) {
 export function isTest(d) {
   return /^test\b/i.test(String((d && d.name) || '').trim())
     || /^internal device/i.test(String((d && d.source) || '').trim())
+    || /^out of area/i.test(String((d && d.source) || '').trim())
     || !fromLiveSite(d);
 }
 
