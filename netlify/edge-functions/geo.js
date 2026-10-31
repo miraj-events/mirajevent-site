@@ -33,7 +33,10 @@ export default async (request, context) => {
   return res;
 };
 
+/* GET only (Oct 31): page loads get the cookie; form submissions (POST to /) never pass through this function,
+   so Netlify Forms handles inquiries exactly as it did before the filter. */
 export const config = {
   path: '/*',
   excludedPath: ['/assets/*', '/*.ico', '/*.png', '/*.svg', '/*.txt', '/*.xml', '/*.woff2', '/*.webp'],
+  method: ['GET'],
 };
