@@ -266,7 +266,7 @@ def org_schema():
         "address": {"@type": "PostalAddress", "addressLocality": "Sterling Heights", "addressRegion": "MI", "postalCode": "48314", "addressCountry": "US"},
         "areaServed": [{"@type": "City", "name": c} for c in [c + ', MI' for c in AREA_CITIES_MI] + ["Toledo, OH", "Chicago, IL"]],
         "founder": {"@type": "Person", "name": "Mehreen Buksh"},
-        "sameAs": [IG, FB] + [u for _, _, u in LISTINGS],
+        "sameAs": [IG, FB] + [u for _, _, u in LISTINGS] + SAME_AS_EXTRA,
         # AI visibility (Oct 31): the Google Business Profile (Maps CID) and the press pieces, so search engines and AI
         # assistants tie the profile, the listings and the articles to this one business.
         "hasMap": MAPS_URL,
@@ -525,6 +525,12 @@ PRESS = [('Bloomberg', 'https://www.bloomberg.com/news/articles/2025-04-16/stock
          ('Peerspace · #2 in Detroit', 'https://www.peerspace.com/resources/wedding-planners-in-detroit/')]
 # WeddingWire dropped (Tariq, Oct 26): the linked Rochester listing shows "No reviews yet"
 LISTINGS = [('The Knot', 'K', 'https://www.theknot.com/marketplace/miraj-events-llc-sterling-heights-mi-2089876')]
+# Schema-only profiles (Nov 2): listed in sameAs so search engines and AI assistants tie these listings to this
+# business, but not shown as visible links (WeddingWire stays off the page per Tariq, Oct 26). Add Zola, PartySlate
+# and All Wedding here once each profile is public.
+SAME_AS_EXTRA = ['https://www.yelp.com/biz/miraj-events-troy',
+                 'https://www.weddingwire.com/biz/miraj-events-llc/e0bb1fcf9e27fb41.html',
+                 'https://www.eventective.com/sterling-heights-mi/miraj-events-806951.html']
 def press_html(cls):
     # The Knot shows as plain text in the same style as the press names (Tariq, Oct 28) instead of the round "K" badge
     return ''.join('<a class="%s" href="%s" target="_blank" rel="noopener">%s</a>' % (cls, esc(u), esc(n))
