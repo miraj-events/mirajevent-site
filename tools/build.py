@@ -633,7 +633,7 @@ home = re.sub(r'<ol class="wk" data-w="(\d)"', r'<ol class="wk" id="wk-\1" data-
 assert 'role="tab"' not in home
 home = home.replace('<div class="hero-shade" aria-hidden="true"></div>',
     '<picture class="hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-hero-sm.webp">'
-    '<img src="/assets/img-hero-md.webp" srcset="/assets/img-hero-md.webp 1400w, /assets/img-hero-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
+    '<img src="/assets/img-hero-md.webp" srcset="/assets/img-hero-md.webp 1400w, /assets/img-hero-lg.webp 2400w" sizes="100vw" alt="Reception table with white flowers, greenery and candlelight" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
     '<div class="hero-shade" aria-hidden="true"></div>', 1)
 _strip = ('<div class="band band-white rule-top"><div class="wrap">' + photo_strip([
     ('design-stage', 'White stage with a floral arch of ivory and blush roses, a curved loveseat and a crystal chandelier', 'Design direction',
@@ -660,7 +660,7 @@ _svc_head = svc[_sh_start:_sh_end]
 svc = svc[:_sh_start] + svc[_sh_end:]
 svc = ('<section class="svc-hero">'
        '<picture class="svc-hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-svc-sm.webp">'
-       '<img src="/assets/img-svc-md.webp" srcset="/assets/img-svc-md.webp 1400w, /assets/img-svc-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1050" fetchpriority="high" decoding="async"></picture>'
+       '<img src="/assets/img-svc-md.webp" srcset="/assets/img-svc-md.webp 1400w, /assets/img-svc-lg.webp 2400w" sizes="100vw" alt="Ballroom set for a wedding reception, with chandeliers, floral centerpieces and a head table" width="2400" height="1050" fetchpriority="high" decoding="async"></picture>'
        '<div class="svc-hero-shade" aria-hidden="true"></div>'
        '<div class="wrap svc-hero-inner">' + _svc_head.replace(' reveal', '') + '</div></section>\n') + svc
 svc = svc.replace('<div class="band band-white rule-top rule-bottom"><div class="wrap">\n    <div class="hiw-head',
@@ -742,7 +742,7 @@ def team_fig(name, alt, cap, w=900, h=1200):
 ab = (
 '<section class="ab3-hero">'
   '<picture class="ab3-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-about-sm.webp">'
-  '<img src="/assets/img-about-md.webp" srcset="/assets/img-about-md.webp 1400w, /assets/img-about-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1200" fetchpriority="high" decoding="async"></picture>'
+  '<img src="/assets/img-about-md.webp" srcset="/assets/img-about-md.webp 1400w, /assets/img-about-lg.webp 2400w" sizes="100vw" alt="Ivory and gold settees on a wedding stage framed by flowers and draped fabric" width="2400" height="1200" fetchpriority="high" decoding="async"></picture>'
   '<div class="ab3-shade" aria-hidden="true"></div>'
   '<div class="wrap ab3-inner">'
     '<div class="ab3-copy">'
@@ -869,7 +869,7 @@ DZ_PLAN = (
 dz = (
 '<section class="dz-hero">'
   '<picture class="dz-hero-photo" aria-hidden="true"><source media="(max-width:700px)" srcset="/assets/img-dz-hero-v2-sm.webp">'
-  '<img src="/assets/img-dz-hero-v2-md.webp" srcset="/assets/img-dz-hero-v2-md.webp 1400w, /assets/img-dz-hero-v2-lg.webp 2400w" sizes="100vw" alt="" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
+  '<img src="/assets/img-dz-hero-v2-md.webp" srcset="/assets/img-dz-hero-v2-md.webp 1400w, /assets/img-dz-hero-v2-lg.webp 2400w" sizes="100vw" alt="Sweetheart table with gold-framed chairs in front of a wall of white blossoms" width="2400" height="1350" fetchpriority="high" decoding="async"></picture>'
   '<div class="dz-hero-shade" aria-hidden="true"></div>'
   '<div class="wrap dz-hero-inner"><div class="dz-hero-copy">'
     '<p class="eyebrow">Design direction</p>'
