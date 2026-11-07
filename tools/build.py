@@ -376,22 +376,20 @@ if(window.oaiq){{oaiq('init',{{pixelId:'{OAI_PIXEL}'}});}}
 <a class="skip" href="#main">Skip to content</a>
 '''
 
-# Day-of Coordination in the menus (Tariq, Oct 28): the page was reachable only from /services
+# Day-of page removed (Tariq, Nov 6): /day-of-coordination 301s to /services (netlify.toml); Day-of lives on /services#day-of
 MENU_ITEMS = [('/', 'home', '01', 'Home', 'Welcome'),
               ('/about', 'about', '02', 'About', 'Mehreen &amp; the team'),
               ('/services', 'services', '03', 'Services', 'Packages &amp; pricing'),
-              ('/day-of-coordination', 'dayof', '04', 'Day-of Coordination', 'You planned it. We run it.'),
-              ('/design', 'design', '05', 'Design', 'Mood boards &amp; floor plans'),
-              ('/contact', 'contact', '06', 'Contact Us', 'Start planning')]
+              ('/design', 'design', '04', 'Design', 'Mood boards &amp; floor plans'),
+              ('/contact', 'contact', '05', 'Contact Us', 'Start planning')]
 def header():
     h = between(src, '<header class="site-header">', '</header>')
     h = relink(h, 'x')
     h = logo_use(h)
     h = h.replace('href="#home"', 'href="/"')
     # Design page (Tariq, Oct 25): in the main nav after Services
-    # Day-of (Tariq, Oct 28): between Services and Design; "Day-of" keeps the one-word rhythm and fits from 900px up
     h, n = re.subn(r'(<a href="/services" data-nav="services">Services</a>)',
-                   r'\1\n      <a href="/day-of-coordination" data-nav="dayof">Day-of</a>\n      <a href="/design" data-nav="design">Design</a>', h, count=1)
+                   r'\1\n      <a href="/design" data-nav="design">Design</a>', h, count=1)
     assert n == 1
     # Phone menu v2 (Tariq, Oct 25): compact serif items with gold numerals and gold hairlines + one slim CTA
     mob = ('<nav id="mobnav" class="mobnav" hidden aria-label="Mobile"><div class="wrap mobnav-in">'
@@ -413,7 +411,7 @@ def footer(page):
     # Footer v3 (Tariq, Oct 26): graphite band with the gold monogram, a one-line sign-off, compact sentence-case links,
     # phone and email; left-aligned and tight on phones, three columns on desktop
     nav = ''.join('<a href="%s">%s</a>' % (u, t) for u, t in [('/about', 'About'), ('/services', 'Services'),
-                                                               ('/day-of-coordination', 'Day-of coordination'), ('/design', 'Design'), ('/contact', 'Contact')])
+                                                               ('/design', 'Design'), ('/contact', 'Contact')])
     soc = ''.join('<a href="%s" target="_blank" rel="noopener">%s</a>' % (u, t) for u, t in [(IG, 'Instagram'), (FB, 'Facebook')])
     f = ('<div class="wrap f3">'
          '<div class="f3-brand">'
@@ -428,7 +426,7 @@ def footer(page):
            '<span class="f3-small"><a href="/privacy">Privacy</a><a href="/accessibility">Accessibility</a></span></div>'
          '</div>') % (VERSION, AREA_LINE, nav, soc, TEL, PHONE, EMAIL, EMAIL, datetime.date.today().year)
     sticky = ('<aside class="sticky-wrap" aria-label="Quick contact"><a class="sticky-cta" href="%s">Check availability</a></aside>'
-              % ('#inquire' if page in ('home', 'dayof') else '/contact#contact-form'))
+              % ('#inquire' if page == 'home' else '/contact#contact-form'))
     return ('<footer class="f3-wrap">' + f + '</footer>\n' + sticky + '\n'
             '<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % VERSION)
 
@@ -441,7 +439,7 @@ def nodate(h):
                   '<label for="h-date">Event date or season</label><input id="h-date" name="event_date" type="text" placeholder="e.g. June 2027" autocomplete="off">' + NODATE)
     return h
 
-CRUMBS = {'/services': 'Services', '/design': 'Design', '/day-of-coordination': 'Day-of Coordination', '/about': 'About',
+CRUMBS = {'/services': 'Services', '/design': 'Design', '/about': 'About',
           '/contact': 'Contact', '/privacy': 'Privacy Policy', '/accessibility': 'Accessibility'}
 def breadcrumbs(path):
     return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
@@ -675,7 +673,6 @@ svc = svc.replace('<h1>Four packages. Each includes the one before it.</h1>',
                   '<h1>Wedding planning packages. Each includes the one before it.</h1>')
 svc = svc.replace('<p class="lead">Starting prices for a single event. Multi-event weekends are packaged together on your call.</p>',
                   '<p class="lead">Day-of coordination to full-service wedding planning in Metro Detroit, Toledo and Chicago. Starting prices for a single event; multi-event weekends are packaged together on your call.</p>')
-svc = svc.replace('<h2>Day-of Coordination</h2>', '<h2><a href="/day-of-coordination">Day-of Coordination</a></h2>')
 svc = svc.replace('<a class="textlink" href="/contact">Tell us about yours →</a>', '<a class="textlink" href="/contact#contact-form">Tell us about yours →</a>')
 # FAQ cut to 8 key questions (Tariq, Oct 25); cancel + postpone merged into one answer
 _faq_items = {html.unescape(re.sub(r'<[^>]+>', '', m.group(1))).strip(): m.group(0)
@@ -982,25 +979,7 @@ page('contact.html', 'Contact Miraj Events | Check Your Wedding Date',
      'Check your wedding date with Miraj Events. We reply within hours. Call, text or WhatsApp (586) 504-0207. Wedding planning in Metro Detroit.',
      '/contact', 'contact', ct, schema=[org_schema()])
 
-# DAY-OF landing page (keeps the indexed /day-of-coordination URL alive)
-dayof = open(os.path.join(ASSETS_SRC, 'day-of.html'), encoding='utf-8').read()
-dayof = dayof.replace('{{REVIEWS}}', reviews_block('dayof')).replace('{{IMG}}', pic('head-table', 'Candlelit head table with draped linens and warm florals', 900, 1200, 'dayof-img'))
-dayof_form = re.search(r'<div class="band band-white rule-top" id="inquire">.*?</div></div>', home, re.S).group(0)
-dayof_form = dayof_form.replace('id="inquire"', 'id="inquire"').replace('<option>Wedding weekend (multiple events)</option><option>Wedding (single event)</option>',
-                                                                        '<option>Wedding (single event)</option><option>Wedding weekend (multiple events)</option>')
-dayof_form = dayof_form.replace('data-start="inquiry-start" novalidate>', 'data-start="inquiry-start" data-package="Day-of Coordination" novalidate>')
-dayof = inq_upgrade(dayof.replace('{{FORM}}', dayof_form))
-dayof_faq = [q for q in re.findall(r'<details[^>]*>.*?</details>', svc, re.S)
-             if any(k in q for k in ['How do payments work', 'Do we have to use your vendors', 'Can you run our whole wedding weekend', 'Do you travel', 'postpone'])]
-dayof = dayof.replace('{{FAQ}}', '\n'.join(dayof_faq).replace('<details open>', '<details>'))
-page('day-of-coordination.html', 'Day-of Wedding Coordinator in Detroit, MI | Miraj Events',
-     'Day-of wedding coordinator in Metro Detroit from $1,975. We take over the final month and run your wedding day from setup to send-off.',
-     '/day-of-coordination', 'dayof', dayof, schema=[org_schema(), {
-         "@context": "https://schema.org", "@type": "Service", "name": "Day-of Wedding Coordination",
-         "serviceType": "Day-of wedding coordinator", "provider": {"@id": SITE + "/#business"},
-         "areaServed": "Metro Detroit, Toledo and Chicago",
-         "offers": {"@type": "Offer", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 1975, "priceCurrency": "USD"}}},
-         faq_schema(dayof)])
+# DAY-OF landing page removed (Tariq, Nov 6): see the /day-of-coordination 301 in netlify.toml
 
 # THANK YOU (Google Ads Form Fill conversion fires here, same send_to as the Squarespace site)
 th = prep('thanks')
@@ -1130,7 +1109,7 @@ for f in os.listdir(os.path.join(ASSETS_SRC, 'static')):
 
 # sitemap + robots + llms
 today = datetime.date.today().isoformat()
-urls = [('/', '1.0'), ('/services', '0.9'), ('/day-of-coordination', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2'), ('/accessibility', '0.2')]
+urls = [('/', '1.0'), ('/services', '0.9'), ('/design', '0.8'), ('/contact', '0.8'), ('/about', '0.7'), ('/privacy', '0.2'), ('/accessibility', '0.2')]
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + ''.join('  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n' % (SITE, u if u != '/' else '/', today, p) for u, p in urls)

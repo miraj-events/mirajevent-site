@@ -10,8 +10,8 @@ Static website for **Miraj Events, LLC**, hosted on Netlify. Netlify publishes t
 | `tools/build.py` | Generates `site/` from the approved design + data |
 | `tools/source/preview-v47.html` | Approved design (preview v47, Oct 24 2026) |
 | `tools/data/reviews.json` | Google rating, review count, featured reviews |
-| `tools/assets/` | JS, extra CSS, day-of page, privacy page, llms.txt, icons |
-| `netlify.toml` | 301 redirects for the old Squarespace URLs + headers |
+| `tools/assets/` | JS, extra CSS, privacy page, llms.txt, icons |
+| `netlify.toml` | 301 redirects for the old Squarespace URLs (and /day-of-coordination, removed Nov 6) + headers |
 | `netlify/functions/submission-created.mjs` | Sends each inquiry to ChatGPT ads (OpenAI Conversions API) from the server; see Tracking |
 
 Regenerate after any change:
@@ -22,7 +22,7 @@ python3 tools/build.py
 
 ## Pages
 
-`/` · `/services` · `/day-of-coordination` · `/about` · `/contact` · `/thank-you` (noindex) · `/privacy` · `404`
+`/` · `/services` · `/design` · `/about` · `/contact` · `/thank-you` (noindex) · `/privacy` · `404`
 
 ## Tracking (do not change IDs without updating Google Ads)
 
@@ -49,7 +49,7 @@ python3 tools/build.py
 
 | Form | Purpose |
 |---|---|
-| `inquiry` | Full inquiry (home + contact + day-of) |
+| `inquiry` | Full inquiry (home + contact) |
 | `inquiry-start` | Step 1, sent only if the visitor doesn't finish (tab hidden/closed, or 15 min after Continue), so partial leads are kept |
 | `quick-inquiry` | Short "reach out to me" forms |
 | `guide-request` | Services-guide email request (not counted as a conversion) |

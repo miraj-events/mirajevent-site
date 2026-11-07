@@ -10,7 +10,7 @@
 
 ## Packages (starting prices, single event)
 
-- [Day-of Coordination](https://www.mirajevent.com/day-of-coordination): from $1,975. Begins 4 weeks out; confirmations, timeline, rehearsal, and running the day from setup to send-off.
+- [Day-of Coordination](https://www.mirajevent.com/services#day-of): from $1,975. Begins 4 weeks out; confirmations, timeline, rehearsal, and running the day from setup to send-off.
 - [Design + Coordination](https://www.mirajevent.com/services#design): from $4,750. Adds design: concept, floor plan, décor team and install (décor billed by the vendor).
 - [Planning + Design](https://www.mirajevent.com/services#planning): from $6,500. Adds planning from signing: vendors, budget, client portal, hotel block. Most couples choose this.
 - [Full Planning](https://www.mirajevent.com/services#full): from $9,500. Full-service planning; the client makes the choices, Miraj carries the rest.
@@ -23,7 +23,6 @@
 - [Home](https://www.mirajevent.com/)
 - [Services and pricing](https://www.mirajevent.com/services)
 - [Design direction](https://www.mirajevent.com/design)
-- [Day-of wedding coordination](https://www.mirajevent.com/day-of-coordination)
 - [About](https://www.mirajevent.com/about)
 - [Contact / check your date](https://www.mirajevent.com/contact)
 
