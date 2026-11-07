@@ -142,6 +142,14 @@
   status = 301
   force = true
 
+# Day-of landing page removed (Tariq, Nov 6). Indexed URL, linked from the Oct 28 GBP post and the
+# ChatGPT Day-of ads: send it to Services (Day-of is the first package there). No #anchor, same reason as above.
+[[redirects]]
+  from = "/day-of-coordination"
+  to = "/services"
+  status = 301
+  force = true
+
 # ---------- headers ----------
 [[headers]]
   for = "/*"
