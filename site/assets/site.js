@@ -313,3 +313,17 @@
     });
   });
 })();
+
+/* Outside the US/Canada (Nov 13, Tariq): Dutch visitors kept calling, looking for a similarly named company in the
+   Netherlands. Show who we are and add +1 to the phone number. US and Canadian visitors see nothing different. */
+(function(){
+  var cc=(window.MIRAJ_CC||'').toUpperCase(); if(!cc||cc==='US'||cc==='CA'){ return; }
+  var nl=(cc==='NL'||cc==='BE');
+  var bar=document.createElement('div'); bar.className='intl-note'; bar.setAttribute('role','note');
+  bar.innerHTML='<p><strong>Miraj Events is a wedding planner in Detroit, Michigan, USA.</strong> We are not affiliated with any company of a similar name in the Netherlands or elsewhere.'
+    +(nl?'<br><span lang="nl">Miraj Events is een weddingplanner in Detroit, Michigan (Verenigde Staten). Wij zijn geen Nederlands bedrijf.</span>':'')+'</p>';
+  document.body.insertBefore(bar,document.body.firstChild);
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="tel:+1"]'),function(a){
+    if(/^\(\d{3}\)/.test(a.textContent.trim())){ a.textContent='+1 '+a.textContent.trim()+' (USA)'; }
+  });
+})();

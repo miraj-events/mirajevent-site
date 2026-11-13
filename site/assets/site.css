@@ -1434,3 +1434,6 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 
 /* Footer: areas served (Tariq, Oct 28) — one quiet line under the sign-off, same tone as the legal row */
 .f3-area{margin:2px 0 0;max-width:46ch;font-size:12.5px;line-height:1.55;color:#9C978D}
+
+/* international visitor note (Nov 13) */
+.intl-note{background:#2b2b2b;color:#fbf8f2;font-size:14px;line-height:1.45;padding:10px 16px;text-align:center}.intl-note p{margin:0;max-width:900px;margin-inline:auto}

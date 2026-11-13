@@ -246,7 +246,7 @@ def forms_definition():
 # markup matches what people see on every page. Keep it in step with the Google Business Profile's service areas.
 AREA_CITIES_MI = ['Detroit', 'Sterling Heights', 'Troy', 'Rochester Hills', 'Bloomfield Hills', 'Novi',
                   'Farmington Hills', 'Dearborn', 'Ann Arbor']
-AREA_LINE = ('Serving %s and %s across Oakland, Macomb, Wayne and Washtenaw counties, plus Toledo and Chicago.'
+AREA_LINE = ('Based in Metro Detroit, Michigan, USA. Serving %s and %s across Oakland, Macomb, Wayne and Washtenaw counties, plus Toledo and Chicago.'
              % (', '.join(AREA_CITIES_MI[:-1]), AREA_CITIES_MI[-1]))
 
 def org_schema():
@@ -618,7 +618,7 @@ _wk = _wk.replace('<div class="band" id="weekend">', '<div class="band rule-top"
 home = home[:_wk_i] + _pk + _why + _wk + home[_pr_i:]
 # Hero eyebrow (Tariq, Oct 25): cities on their own line under "Wedding planner"
 home = home.replace('<p class="eyebrow">Wedding planner · Detroit · Toledo · Chicago</p>',
-                    '<div class="hero-ey"><p class="eyebrow">Wedding planner</p><p class="hero-cities">Detroit · Toledo · Chicago</p></div>', 1)
+                    '<div class="hero-ey"><p class="eyebrow">Wedding planner</p><p class="hero-cities">Detroit, Michigan · Toledo · Chicago</p></div>', 1)
 home = home.replace('<div class="hero">', '<div class="hero has-photo">', 1)
 # Accessibility (Oct 25): labelled group for the press strip; tradition chips = toggle buttons controlling the list below
 assert home.count('<div class="hero-press" aria-label="As featured in">') == 1
