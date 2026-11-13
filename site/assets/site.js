@@ -290,7 +290,7 @@
       var fd=new FormData(form);
       var ev=fd.getAll('events[]'); fd.delete('events[]'); if(ev.length){ fd.append('events_list',ev.join(', ')); }
       var val=leadValue(fd); /* value goes to the thank-you conversion only, not into the email */
-      fd.set('subject',fd.get('form-name')==='quick-inquiry'?subj('Quick inquiry',[fd.get('name'),fd.get('phone'),fd.get('event_date')])
+      fd.set('subject',fd.get('form-name')==='quick-inquiry'?subj('Quick inquiry',[fd.get('name'),fd.get('phone'),fd.get('event_date'),fd.get('package')])
         :subj('New inquiry',[fd.get('name'),fd.get('celebration'),fd.get('event_date'),fd.get('package')]));
       Array.from(fd.keys()).forEach(function(k){ if(k!=='form-name' && !String(fd.get(k)||'').trim()){ fd.delete(k); } });
       busy(form,true); finishing=true;

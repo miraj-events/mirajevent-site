@@ -238,7 +238,7 @@ def forms_definition():
         return ('<form name="%s" data-netlify="true" netlify-honeypot="bot-field" hidden>'
                 '<input name="bot-field">%s%s</form>\n' % (name, ''.join('<input name="%s">' % x for x in fields), common))
     return (f('inquiry', inquiry_fields) + f('inquiry-start', ['name', 'email', 'phone', 'celebration', 'event_date'])
-            + f('quick-inquiry', ['name', 'phone', 'event_date']) + f('guide-request', ['email']))
+            + f('quick-inquiry', ['name', 'phone', 'event_date', 'package']) + f('guide-request', ['email']))
 
 
 # ---------------------------------------------------------------- schema
@@ -706,6 +706,44 @@ svc = svc.replace(_dc, _dc + '\n        <a class="textlink pk-link" href="/desig
 _dq = 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor.</p></details>'
 assert svc.count(_dq) == 1
 svc = svc.replace(_dq, 'and oversee the décor team that brings it to life. Décor itself is billed by the vendor. <a href="/design">See how design direction works</a>.</p></details>')
+# Services conversion fixes (Tariq, Nov 13: visitors land on /services and stop).
+# 1) a "Check your date" button on every package card, 2) the 3-field form moved directly under the packages
+# (with the package pre-filled from the button), 3) a sticky "Check your date / Text us" bar on phones.
+_PKG_NAMES = {'day-of': 'Day-of Coordination', 'design': 'Design + Coordination', 'planning': 'Planning + Design', 'full': 'Full Planning'}
+_cards = re.findall(r'<div class="pk[^"]*" id="([a-z-]+)">', svc)
+assert set(_cards) == set(_PKG_NAMES), _cards
+# insert the button as the last child of each card: just before the card's closing tag
+_parts = re.split(r'(?=<div class="pk[^"]*" id="[a-z-]+">)', svc)
+_out = [_parts[0]]
+for _p in _parts[1:]:
+    _pid = re.match(r'<div class="pk[^"]*" id="([a-z-]+)">', _p).group(1)
+    _end = _p.index('\n      </div>')  # card close (cards are indented 6 spaces)
+    _out.append(_p[:_end] + ('\n        <a class="btn btn-gold pk-cta" href="#check-date" data-pkg="%s">Check your date</a>' % esc(_PKG_NAMES[_pid])) + _p[_end:])
+svc = ''.join(_out)
+assert svc.count('class="btn btn-gold pk-cta"') == 4
+# move the short form band up, right after the package grid band
+_sf = re.search(r'\n  <div class="band band-dark short-form".*?</form>\n  </div></div>\n', svc, re.S)
+assert _sf
+_sf_html = _sf.group(0)
+svc = svc[:_sf.start()] + svc[_sf.end():]
+_sf_html = (_sf_html.replace('<div class="band band-dark short-form"', '<div class="band band-dark short-form" id="check-date"', 1)
+            .replace('<h2 class="h2" style="font-size:clamp(28px,3vw,40px)">Not ready for the full form?</h2><p class="lead">Leave your details. We\'ll reach out.</p>',
+                     '<h2 class="h2" style="font-size:clamp(28px,3vw,40px)">Check your date.</h2><p class="lead">Three quick fields. We reply within hours with availability and a customized package.</p>', 1)
+            .replace('<input type="hidden" name="lead_id">', '<input type="hidden" name="lead_id"><input type="hidden" name="package" id="s-pkg">', 1)
+            .replace('>Reach out to me</button>', '>Check my date</button>', 1))
+assert 'id="s-pkg"' in _sf_html and 'Check your date.' in _sf_html
+# split the packages band just before the add-ons so the form sits right under the cards + note
+_ad = svc.index('    <div class="addons reveal">', svc.index('<div class="pk-grid">'))
+svc = svc[:_ad] + '  </div></div>\n' + _sf_html + '\n  <div class="band"><div class="wrap">\n' + svc[_ad:]
+svc += ('\n<div class="m-sticky" aria-label="Quick contact"><a class="btn btn-gold" href="#check-date">Check your date</a>'
+        '<a class="btn btn-outline" href="sms:+15865040207">Text us</a></div>'
+        '\n<style>.pk-cta{margin-top:auto;align-self:flex-start}.pk{display:flex;flex-direction:column}'
+        '.m-sticky{display:none}@media (max-width:700px){.m-sticky{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:50;'
+        'padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--ivory,#fbf8f2);box-shadow:0 -4px 16px rgba(0,0,0,.12)}'
+        '.m-sticky .btn{flex:1;justify-content:center;text-align:center}body{padding-bottom:72px}}</style>'
+        '\n<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".pk-cta");if(!a){return;}'
+        'var i=document.getElementById("s-pkg");if(i){i.value=a.getAttribute("data-pkg")||"";}'
+        'var n=document.getElementById("s-name");if(n){setTimeout(function(){n.focus({preventScroll:true});},400);}});</script>')
 page('services.html', 'Wedding Planning Services & Pricing | Miraj Events Detroit',
      'Wedding planning packages in Metro Detroit: day-of coordination from $1,975, design + coordination, planning + design and full-service planning.',
      '/services', 'services', svc, schema=[org_schema(), services_schema(), faq_schema(svc)])
