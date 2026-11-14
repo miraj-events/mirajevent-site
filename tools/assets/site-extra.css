@@ -904,3 +904,16 @@ h2.eyebrow{font-family:var(--body);font-weight:400;line-height:1.7}
 
 /* Footer: areas served (Tariq, Oct 28) — one quiet line under the sign-off, same tone as the legal row */
 .f3-area{margin:2px 0 0;max-width:46ch;font-size:12.5px;line-height:1.55;color:#9C978D}
+
+/* international visitor note (Nov 13) */
+.intl-note{background:#2b2b2b;color:#fbf8f2;font-size:14px;line-height:1.45;padding:10px 16px;text-align:center}
+.intl-note p{margin:0 auto;max-width:900px}
+.intl-note.intl-nl{background:#b3261e;font-size:17px;padding:16px;border-bottom:4px solid #7a1913}
+.intl-note.intl-nl .intl-en{font-size:13px;opacity:.9;margin-top:6px}
+.intl-modal{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+.intl-box{background:#fbf8f2;color:#2b2b2b;max-width:460px;width:100%;padding:28px 24px;border-top:6px solid #b3261e;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.intl-box h2{font-size:28px;margin:4px 0 12px;color:#b3261e}
+.intl-box p{margin:0 0 12px;font-size:16px;line-height:1.5}
+.intl-box .intl-en{font-size:13px;color:#666}
+.intl-flag{font-size:40px;margin:0}
+.intl-box .btn{margin-top:8px;width:100%;justify-content:center}

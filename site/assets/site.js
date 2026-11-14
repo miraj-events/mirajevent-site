@@ -290,7 +290,7 @@
       var fd=new FormData(form);
       var ev=fd.getAll('events[]'); fd.delete('events[]'); if(ev.length){ fd.append('events_list',ev.join(', ')); }
       var val=leadValue(fd); /* value goes to the thank-you conversion only, not into the email */
-      fd.set('subject',fd.get('form-name')==='quick-inquiry'?subj('Quick inquiry',[fd.get('name'),fd.get('phone'),fd.get('event_date')])
+      fd.set('subject',fd.get('form-name')==='quick-inquiry'?subj('Quick inquiry',[fd.get('name'),fd.get('phone'),fd.get('event_date'),fd.get('package')])
         :subj('New inquiry',[fd.get('name'),fd.get('celebration'),fd.get('event_date'),fd.get('package')]));
       Array.from(fd.keys()).forEach(function(k){ if(k!=='form-name' && !String(fd.get(k)||'').trim()){ fd.delete(k); } });
       busy(form,true); finishing=true;
@@ -312,4 +312,34 @@
       post(fd).then(function(r){ if(!r.ok){ throw 0; } form.innerHTML='<p class="small gf-done" role="status" tabindex="-1">Thank you. We’ll email you the services guide.</p>'; var dn=$('.gf-done',form); if(dn){ dn.focus(); } gt('event','guide_request',{page_path:location.pathname}); }).catch(function(){ fail(form); });
     });
   });
+})();
+
+/* Outside the US/Canada (Nov 13, Tariq): Dutch visitors kept calling, looking for a similarly named company in the
+   Netherlands. NL/BE visitors get an unmissable Dutch notice (pop-up once per session + a bold bar); other foreign
+   visitors get the English bar. Phone numbers gain "+1 ... (USA)". US and Canadian visitors see nothing different. */
+(function(){
+  var cc=(window.MIRAJ_CC||'').toUpperCase(); if(!cc||cc==='US'||cc==='CA'){ return; }
+  var nl=(cc==='NL'||cc==='BE');
+  var bar=document.createElement('div'); bar.className='intl-note'+(nl?' intl-nl':''); bar.setAttribute('role','note');
+  bar.innerHTML=nl
+    ?'<p lang="nl"><strong>Let op: dit is Miraj Events in Detroit, Verenigde Staten (VS).</strong> Wij zijn géén Nederlands bedrijf en hebben niets te maken met een Nederlands bedrijf met een vergelijkbare naam. Bel ons niet voor evenementen in Nederland.</p>'
+     +'<p class="intl-en">This is Miraj Events in Detroit, Michigan, USA. Not affiliated with any company in the Netherlands.</p>'
+    :'<p><strong>Miraj Events is a wedding planner in Detroit, Michigan, USA.</strong> We are not affiliated with any company of a similar name in the Netherlands or elsewhere.</p>';
+  document.body.insertBefore(bar,document.body.firstChild);
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="tel:+1"]'),function(a){
+    if(/^\(\d{3}\)/.test(a.textContent.trim())){ a.textContent='+1 '+a.textContent.trim()+(nl?' (VS)':' (USA)'); }
+  });
+  if(!nl){ return; }
+  var seen=false; try{ seen=sessionStorage.getItem('miraj_nl_seen')==='1'; }catch(e){}
+  if(seen){ return; }
+  var m=document.createElement('div'); m.className='intl-modal'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-labelledby','intl-h'); m.setAttribute('lang','nl');
+  m.innerHTML='<div class="intl-box"><p class="intl-flag" aria-hidden="true">🇺🇸</p><h2 id="intl-h">Verkeerde Miraj?</h2>'
+    +'<p>Dit is <strong>Miraj Events in Detroit, Michigan, in de Verenigde Staten</strong>. Wij zijn een Amerikaanse weddingplanner.</p>'
+    +'<p>Wij zijn <strong>geen Nederlands bedrijf</strong> en hebben geen relatie met bedrijven in Nederland met een vergelijkbare naam. Ons telefoonnummer is een Amerikaans nummer.</p>'
+    +'<p class="intl-en">This is Miraj Events in Detroit, USA, not a company in the Netherlands.</p>'
+    +'<button type="button" class="btn btn-gold intl-ok">Begrepen / Understood</button></div>';
+  document.body.appendChild(m);
+  var ok=m.querySelector('.intl-ok'); ok.focus();
+  function close(){ m.remove(); try{ sessionStorage.setItem('miraj_nl_seen','1'); }catch(e){} }
+  ok.addEventListener('click',close); document.addEventListener('keydown',function(e){ if(e.key==='Escape' && document.body.contains(m)){ close(); } });
 })();
